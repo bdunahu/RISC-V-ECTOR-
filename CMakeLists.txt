@@ -1,13 +1,36 @@
-cmake_minimum_required(VERSION 3.11)
+cmake_minimum_required(VERSION 3.5)
 project(risc_vector)
 
+# cpp standard
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_COMPILER "g++")
-set(SRCDIR src)
-set(PYTHON_VERSION 3.10)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(CMAKE_CXX_COMPILER "g++")
+
+# header files
+include_directories(
+	${PROJECT_SOURCE_DIR}/inc
+)
+
+# gather source files
+file(GLOB_RECURSE SRCS "src/*.cc")
+list(REMOVE_ITEM SRCS "${CMAKE_CURRENT_SOURCE_DIR}/src/rv.cc")
+
+# find python3 components
 find_package(Python3 COMPONENTS Development REQUIRED)
 
-add_executable(${PROJECT_NAME} ${SRCDIR}/rv.cc)
+# binary executable
+add_executable(${PROJECT_NAME} ${SRCS} src/rv.cc)
+target_link_libraries(${PROJECT_NAME} PRIVATE Python3::Python)
 
-target_link_libraries(${PROJECT_NAME} Python3::Python)
+find_package(Catch2 REQUIRED)
+set(TESTDIR tests)
+
+# test executable
+add_executable(tests ${SRCS} ${TESTDIR}/tests.cc)
+target_link_libraries(tests PRIVATE Catch2::Catch2 PRIVATE Python3::Python)
+
+# test discovery
+include(CTest)
+include(Catch)
+catch_discover_tests(tests)
