@@ -30,7 +30,7 @@ set(TESTDIR tests)
 
 # test executable
 add_executable(tests ${SRCS} ${TESTDIR}/tests.cc)
-target_link_libraries(tests PRIVATE Catch2::Catch2 PRIVATE Python3::Python)
+target_link_libraries(tests PRIVATE Catch2::Catch2WithMain PRIVATE Python3::Python)
 
 # test discovery
 include(CTest)
