@@ -1,23 +1,25 @@
-#ifndef DRAM_H
-#define DRAM_H
+#ifndef CACHE_H
+#define CACHE_H
 #include <storage.h>
 
-class Dram : public Storage
+class Cache : public Storage
 {
   public:
   /**
    * Constructor.
    * @param The number of `lines` contained in memory. The total number of
    * words is this number multiplied by 4.
+   * @param The next lowest level in storage. Methods from this object are
+   * called in case of a cache miss.
    * @param The number of clock cycles each access takes.
-   * @return A new memory object.
+   * @return A new cache object.
    */
-  Dram(int lines, int delay);
-  ~Dram();
+  Cache(int lines, Storage *lower, int delay);
+  ~Cache();
 
   Response *write(Accessor accessor, signed int data, int address) override;
   Response *read(Accessor accessor, int address) override;
   int **view(int base, int lines) override;
 };
 
-#endif /* DRAM_H_INCLUDED */
+#endif /* CACHE_H_INCLUDED */
