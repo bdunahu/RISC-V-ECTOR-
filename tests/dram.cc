@@ -3,6 +3,6 @@
 
 TEST_CASE("Constructor initialize test 1", "[dram]")
 {
-  Dram *d = new Dram(1, 4);
-  delete d;
+	Dram *d = new Dram(1, 4);
+	delete d;
 }
