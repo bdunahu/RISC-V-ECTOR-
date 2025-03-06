@@ -1,10 +1,12 @@
 #include "storage.h"
+#include "definitions.h"
 #include <algorithm>
 
-std::vector<std::array<signed int, 4>> Storage::view(int base, int lines)
+std::vector<std::array<signed int, LINE_SIZE>>
+Storage::view(int base, int lines)
 {
-	base = (base / 4) * 4;
-	std::vector<std::array<signed int, 4>> ret(lines + 1);
+	base = (base / LINE_SIZE) * LINE_SIZE;
+	std::vector<std::array<signed int, LINE_SIZE>> ret(lines + 1);
 	std::copy(
 		this->data->begin() + base, this->data->begin() + base + lines,
 		ret.begin());

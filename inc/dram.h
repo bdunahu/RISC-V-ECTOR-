@@ -8,7 +8,7 @@ class Dram : public Storage
 	/**
 	 * Constructor.
 	 * @param The number of `lines` contained in memory. The total number of
-	 * words is this number multiplied by 4.
+	 * words is this number multiplied by LINE_SIZE.
 	 * @param The number of clock cycles each access takes.
 	 * @return A new memory object.
 	 */

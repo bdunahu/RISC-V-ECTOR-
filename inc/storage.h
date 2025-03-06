@@ -1,5 +1,6 @@
 #ifndef STORAGE_H
 #define STORAGE_H
+#include "definitions.h"
 #include "response.h"
 #include <array>
 #include <vector>
@@ -37,13 +38,13 @@ class Storage
 	 * @return A matrix of data values, where each row is a line and each column
 	 * is a word.
 	 */
-	std::vector<std::array<signed int, 4>> view(int base, int lines);
+	std::vector<std::array<signed int, LINE_SIZE>> view(int base, int lines);
 
   protected:
 	/**
 	 * The data currently stored in this level of storage.
 	 */
-	std::vector<std::array<signed int, 4>> *data;
+	std::vector<std::array<signed int, LINE_SIZE>> *data;
 	/**
 	 * A pointer to the next lowest level of storage.
 	 * Used in case of cache misses.

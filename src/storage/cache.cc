@@ -1,10 +1,11 @@
 #include "cache.h"
+#include "definitions.h"
 #include "response.h"
 #include <bits/stdc++.h>
 
 Cache::Cache(int lines, Storage *lower, int delay)
 {
-	this->data = new std::vector<std::array<signed int, 4>>;
+	this->data = new std::vector<std::array<signed int, LINE_SIZE>>;
 	this->data->resize(lines);
 	this->lower = lower;
 	this->delay = delay;
