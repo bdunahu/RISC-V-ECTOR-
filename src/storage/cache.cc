@@ -1,8 +1,10 @@
-#include <cache.h>
+#include "cache.h"
+#include "response.h"
+#include <bits/stdc++.h>
 
 Cache::Cache(int lines, Storage *lower, int delay)
 {
-	this->data = new std::vector<std::array<unsigned int, 4>>;
+	this->data = new std::vector<std::array<signed int, 4>>;
 	this->data->resize(lines);
 	this->lower = lower;
 	this->delay = delay;
@@ -17,5 +19,3 @@ Response *Cache::write(Accessor accessor, signed int data, int address)
 }
 
 Response *Cache::read(Accessor accessor, int address) { return nullptr; }
-
-int **Cache::view(int base, int lines) { return nullptr; }

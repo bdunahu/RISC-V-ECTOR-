@@ -1,9 +1,10 @@
-#include <dram.h>
-#include <response.h>
+#include "dram.h"
+#include "response.h"
+#include <algorithm>
 
 Dram::Dram(int lines, int delay)
 {
-	this->data = new std::vector<std::array<unsigned int, 4>>;
+	this->data = new std::vector<std::array<signed int, 4>>;
 	this->data->resize(lines);
 	this->delay = delay;
 	this->lower = nullptr;
@@ -17,5 +18,3 @@ Response *Dram::write(Accessor accessor, signed int data, int address)
 }
 
 Response *Dram::read(Accessor accessor, int address) { return nullptr; }
-
-int **Dram::view(int base, int lines) { return nullptr; }

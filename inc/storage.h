@@ -37,13 +37,13 @@ class Storage
 	 * @return A matrix of data values, where each row is a line and each column
 	 * is a word.
 	 */
-	virtual int **view(int base, int lines) = 0;
+	std::vector<std::array<signed int, 4>> view(int base, int lines);
 
   protected:
 	/**
 	 * The data currently stored in this level of storage.
 	 */
-	std::vector<std::array<unsigned int, 4>> *data;
+	std::vector<std::array<signed int, 4>> *data;
 	/**
 	 * A pointer to the next lowest level of storage.
 	 * Used in case of cache misses.

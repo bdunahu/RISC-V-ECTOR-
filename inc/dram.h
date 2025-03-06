@@ -17,7 +17,6 @@ class Dram : public Storage
 
 	Response *write(Accessor accessor, signed int data, int address) override;
 	Response *read(Accessor accessor, int address) override;
-	int **view(int base, int lines) override;
 };
 
 #endif /* DRAM_H_INCLUDED */
