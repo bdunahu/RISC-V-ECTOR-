@@ -11,6 +11,7 @@ enum Accessor {
 	FETCH,
 	L1CACHE,
 	IDLE,
+	SIDE,
 };
 
 class Storage
@@ -21,7 +22,7 @@ class Storage
 	 * @param the source making the request.
 	 * @param the data (hexadecimal) to write.
 	 * @param the address to write to.
-	 * @return a status code reflecting the state of the storage level.
+	 * @return a status code reflecting the state of the request.
 	 */
 	virtual Response *
 	write(Accessor accessor, signed int data, int address) = 0;
@@ -29,7 +30,7 @@ class Storage
 	 * Get the data at `address`.
 	 * @param the source making the request.
 	 * @param the address being accessed.
-	 * @return a status code reflecting the state of the storage level, and the
+	 * @return a status code reflecting the state of the request, and the
 	 * data being returned.
 	 */
 	virtual Response *read(Accessor accessor, int address) = 0;
@@ -43,6 +44,10 @@ class Storage
 	std::vector<std::array<signed int, LINE_SIZE>> view(int base, int lines);
 
   protected:
+	/**
+	 * Helper for `write`.
+	 */
+	void do_write(signed int, int);
 	/**
 	 * The data currently stored in this level of storage.
 	 */

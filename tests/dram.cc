@@ -234,3 +234,42 @@ TEST_CASE(
 
 	delete d;
 }
+
+TEST_CASE(
+	"Sidedoor bypasses delay",
+	"[dram]")
+{
+	Dram *d = new Dram(1, 3);
+	std::array<signed int, LINE_SIZE> expected = {0, 0, 0, 0};
+	std::array<signed int, LINE_SIZE> actual = d->view(0, 1)[0];
+	CHECK(expected == actual);
+
+	signed int w1 = 0x11223344;
+	signed int w2 = 0x55667788;
+
+	// MEMORY CYCLE 1
+	Response *r = d->write(MEMORY, w1, 0x00000000);
+	actual = d->view(0, 1)[0];
+	REQUIRE(expected == actual);
+	REQUIRE(r->status == WAIT);
+	delete r;
+
+	// MEMORY CYCLE 2
+	actual = d->view(0, 1)[0];
+	r = d->write(MEMORY, w1, 0x00000000);
+	actual = d->view(0, 1)[0];
+	REQUIRE(expected == actual);
+	REQUIRE(r->status == WAIT);
+	delete r;
+	// SIDE CYCLE 1
+	r = d->write(SIDE, w2, 0x00000001);
+	actual = d->view(0, 1)[0];
+	REQUIRE(r->status == OK);
+	delete r;
+
+	expected.at(1) = w2;
+	actual = d->view(0, 1)[0];
+	CHECK(expected == actual);
+
+	delete d;
+}

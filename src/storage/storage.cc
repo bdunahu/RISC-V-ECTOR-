@@ -12,3 +12,12 @@ Storage::view(int base, int lines)
 		ret.begin());
 	return ret;
 }
+
+void Storage::do_write(signed data, int address)
+{
+	int line = address / LINE_SIZE;
+	int word = address % LINE_SIZE;
+
+	this->servicing = IDLE;
+	this->data->at(line).at(word) = data;
+}

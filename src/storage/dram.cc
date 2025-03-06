@@ -19,22 +19,23 @@ Response *Dram::write(Accessor accessor, signed int data, int address)
 	struct Response *r = new Response();
 	r->status = WAIT;
 
-	/* Do this first--then process the first cycle immediately. */
-	if (this->servicing == IDLE) {
-		this->servicing = accessor;
-		this->wait_time = delay;
-	}
+	if (accessor == SIDE) {
+		this->do_write(data, address);
+		r->status = OK;
+	} else {
+		/* Do this first--then process the first cycle immediately. */
+		if (this->servicing == IDLE) {
+			this->servicing = accessor;
+			this->wait_time = delay;
+		}
 
-	if (this->servicing == accessor) {
-		if (this->wait_time == 0) {
-			int line = address / LINE_SIZE;
-			int word = address % LINE_SIZE;
-
-			this->servicing = IDLE;
-			this->data->at(line).at(word) = data;
-			r->status = OK;
-		} else {
-			--this->wait_time;
+		if (this->servicing == accessor) {
+			if (this->wait_time == 0) {
+				this->do_write(data, address);
+				r->status = OK;
+			} else {
+				--this->wait_time;
+			}
 		}
 	}
 
