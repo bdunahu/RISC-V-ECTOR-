@@ -3,12 +3,14 @@
 #include "definitions.h"
 #include "response.h"
 #include <array>
+#include <unordered_map>
 #include <vector>
 
 enum Accessor {
 	MEMORY,
 	FETCH,
 	L1CACHE,
+	IDLE,
 };
 
 class Storage
@@ -55,6 +57,14 @@ class Storage
 	 * requests.
 	 */
 	int delay;
+	/**
+	 * The accessor currently being serviced.
+	 */
+	enum Accessor servicing;
+	/**
+	 * The number of cycles until the currently request is completed.
+	 */
+	int wait_time;
 };
 
 #endif /* STORAGE_H_INCLUDED */
