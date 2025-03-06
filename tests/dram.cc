@@ -48,6 +48,7 @@ TEST_CASE(
 	actual = d->view(0, 1)[0];
 	REQUIRE(expected == actual);
 	REQUIRE(r->status == WAIT);
+	delete r;
 
 	// MEMORY CYCLE 2
 	r = d->write(MEMORY, w, 0x00000000);
@@ -170,6 +171,7 @@ TEST_CASE(
 	actual = d->view(0, 1)[0];
 	REQUIRE(expected == actual);
 	REQUIRE(r->status == WAIT);
+	delete r;
 
 	// MEMORY CYCLE 2
 	actual = d->view(0, 1)[0];
