@@ -14,9 +14,9 @@ Cache::Cache(int lines, Storage *lower, int delay)
 
 Cache::~Cache() { delete this->data; }
 
-Response *Cache::write(Accessor accessor, signed int data, int address)
+Response Cache::write(Accessor accessor, signed int data, int address)
 {
-	return new Response();
+	return WAIT;
 }
 
-Response *Cache::read(Accessor accessor, int address) { return nullptr; }
+Response Cache::read(Accessor accessor, int address) { return WAIT; }

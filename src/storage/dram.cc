@@ -14,14 +14,13 @@ Dram::Dram(int lines, int delay)
 
 Dram::~Dram() { delete this->data; }
 
-Response *Dram::write(Accessor accessor, signed int data, int address)
+Response Dram::write(Accessor accessor, signed int data, int address)
 {
-	struct Response *r = new Response();
-	r->status = WAIT;
+	Response r = WAIT;
 
 	if (accessor == SIDE) {
 		this->do_write(data, address);
-		r->status = OK;
+		r = OK;
 	} else {
 		/* Do this first--then process the first cycle immediately. */
 		if (this->servicing == IDLE) {
@@ -32,7 +31,7 @@ Response *Dram::write(Accessor accessor, signed int data, int address)
 		if (this->servicing == accessor) {
 			if (this->wait_time == 0) {
 				this->do_write(data, address);
-				r->status = OK;
+				r = OK;
 			} else {
 				--this->wait_time;
 			}
@@ -42,4 +41,4 @@ Response *Dram::write(Accessor accessor, signed int data, int address)
 	return r;
 }
 
-Response *Dram::read(Accessor accessor, int address) { return nullptr; }
+Response Dram::read(Accessor accessor, int address) { return WAIT; }

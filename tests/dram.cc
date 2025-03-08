@@ -22,14 +22,13 @@ TEST_CASE(
 
 	signed int w = 0x11223344;
 
-	Response *r = d->write(MEMORY, w, 0x00000000);
-	REQUIRE(r->status == OK);
+	Response r = d->write(MEM, w, 0x00000000);
+	REQUIRE(r == OK);
 
 	expected.at(0) = w;
 	actual = d->view(0, 1)[0];
 	REQUIRE(expected == actual);
 
-	delete r;
 	delete d;
 }
 
@@ -44,30 +43,26 @@ TEST_CASE(
 	signed int w = 0x11223344;
 
 	// MEMORY CYCLE 1
-	Response *r = d->write(MEMORY, w, 0x00000000);
+	Response r = d->write(MEM, w, 0x00000000);
 	actual = d->view(0, 1)[0];
 	REQUIRE(expected == actual);
-	REQUIRE(r->status == WAIT);
-	delete r;
+	REQUIRE(r == WAIT);
 
 	// MEMORY CYCLE 2
-	r = d->write(MEMORY, w, 0x00000000);
+	r = d->write(MEM, w, 0x00000000);
 	actual = d->view(0, 1)[0];
 	REQUIRE(expected == actual);
-	REQUIRE(r->status == WAIT);
-	delete r;
+	REQUIRE(r == WAIT);
 
 	// MEMORY CYCLE 3
-	r = d->write(MEMORY, w, 0x00000000);
+	r = d->write(MEM, w, 0x00000000);
 	actual = d->view(0, 1)[0];
 	REQUIRE(expected == actual);
-	REQUIRE(r->status == WAIT);
-	delete r;
+	REQUIRE(r == WAIT);
 
 	// MEMORY CYCLE 4
-	r = d->write(MEMORY, w, 0x00000000);
-	REQUIRE(r->status == OK);
-	delete r;
+	r = d->write(MEM, w, 0x00000000);
+	REQUIRE(r == OK);
 
 	expected.at(0) = w;
 	actual = d->view(0, 1)[0];
@@ -90,37 +85,32 @@ TEST_CASE(
 	signed int w2 = 0x55667788;
 
 	// MEMORY CYCLE 1
-	Response *r = d->write(MEMORY, w1, 0x00000000);
+	Response r = d->write(MEM, w1, 0x00000000);
 	actual = d->view(0, 1)[0];
 	REQUIRE(expected == actual);
-	REQUIRE(r->status == WAIT);
-	delete r;
+	REQUIRE(r == WAIT);
 
 	// MEMORY CYCLE 2
 	actual = d->view(0, 1)[0];
-	r = d->write(MEMORY, w1, 0x00000000);
+	r = d->write(MEM, w1, 0x00000000);
 	actual = d->view(0, 1)[0];
 	REQUIRE(expected == actual);
-	REQUIRE(r->status == WAIT);
-	delete r;
+	REQUIRE(r == WAIT);
 
 	// MEMORY CYCLE 3
-	r = d->write(MEMORY, w1, 0x00000000);
+	r = d->write(MEM, w1, 0x00000000);
 	actual = d->view(0, 1)[0];
 	REQUIRE(expected == actual);
-	REQUIRE(r->status == WAIT);
-	delete r;
+	REQUIRE(r == WAIT);
 
 	// MEMORY CYCLE 4
-	r = d->write(MEMORY, w1, 0x00000000);
-	REQUIRE(r->status == OK);
-	delete r;
+	r = d->write(MEM, w1, 0x00000000);
+	REQUIRE(r == OK);
 	// NOTE: servicing on the same clock cycle should probably not be allowed
 	// FETCH CYCLE 1
 	r = d->write(FETCH, w2, 0x00000001);
 	actual = d->view(0, 1)[0];
-	REQUIRE(r->status == WAIT);
-	delete r;
+	REQUIRE(r == WAIT);
 
 	expected.at(0) = w1;
 	actual = d->view(0, 1)[0];
@@ -130,21 +120,18 @@ TEST_CASE(
 	r = d->write(FETCH, w2, 0x00000001);
 	actual = d->view(0, 1)[0];
 	REQUIRE(expected == actual);
-	REQUIRE(r->status == WAIT);
-	delete r;
+	REQUIRE(r == WAIT);
 
 	// FETCH CYCLE 3
 	r = d->write(FETCH, w2, 0x00000001);
 	actual = d->view(0, 1)[0];
 	REQUIRE(expected == actual);
-	REQUIRE(r->status == WAIT);
-	delete r;
+	REQUIRE(r == WAIT);
 
 	// FETCH CYCLE 4
 	r = d->write(FETCH, w2, 0x00000001);
 	actual = d->view(0, 1)[0];
-	REQUIRE(r->status == OK);
-	delete r;
+	REQUIRE(r == OK);
 
 	expected.at(1) = w2;
 	actual = d->view(0, 1)[0];
@@ -167,45 +154,38 @@ TEST_CASE(
 	signed int w2 = 0x55667788;
 
 	// MEMORY CYCLE 1
-	Response *r = d->write(MEMORY, w1, 0x00000000);
+	Response r = d->write(MEM, w1, 0x00000000);
 	actual = d->view(0, 1)[0];
 	REQUIRE(expected == actual);
-	REQUIRE(r->status == WAIT);
-	delete r;
+	REQUIRE(r == WAIT);
 
 	// MEMORY CYCLE 2
 	actual = d->view(0, 1)[0];
-	r = d->write(MEMORY, w1, 0x00000000);
+	r = d->write(MEM, w1, 0x00000000);
 	actual = d->view(0, 1)[0];
 	REQUIRE(expected == actual);
-	REQUIRE(r->status == WAIT);
-	delete r;
+	REQUIRE(r == WAIT);
 	// FETCH CYCLE 1
 	r = d->write(FETCH, w2, 0x00000001);
 	actual = d->view(0, 1)[0];
-	REQUIRE(r->status == WAIT);
-	delete r;
+	REQUIRE(r == WAIT);
 
-	r = d->write(MEMORY, w1, 0x00000000);
+	r = d->write(MEM, w1, 0x00000000);
 	actual = d->view(0, 1)[0];
 	REQUIRE(expected == actual);
-	REQUIRE(r->status == WAIT);
-	delete r;
+	REQUIRE(r == WAIT);
 	// FETCH CYCLE 1
 	r = d->write(FETCH, w2, 0x00000001);
 	actual = d->view(0, 1)[0];
-	REQUIRE(r->status == WAIT);
-	delete r;
+	REQUIRE(r == WAIT);
 
-	r = d->write(MEMORY, w1, 0x00000000);
-	REQUIRE(r->status == OK);
-	delete r;
+	r = d->write(MEM, w1, 0x00000000);
+	REQUIRE(r == OK);
 	// NOTE: servicing on the same clock cycle should probably not be allowed
 	// FETCH CYCLE 1
 	r = d->write(FETCH, w2, 0x00000001);
 	actual = d->view(0, 1)[0];
-	REQUIRE(r->status == WAIT);
-	delete r;
+	REQUIRE(r == WAIT);
 
 	expected.at(0) = w1;
 	actual = d->view(0, 1)[0];
@@ -214,19 +194,16 @@ TEST_CASE(
 	r = d->write(FETCH, w2, 0x00000001);
 	actual = d->view(0, 1)[0];
 	REQUIRE(expected == actual);
-	REQUIRE(r->status == WAIT);
-	delete r;
+	REQUIRE(r == WAIT);
 
 	r = d->write(FETCH, w2, 0x00000001);
 	actual = d->view(0, 1)[0];
 	REQUIRE(expected == actual);
-	REQUIRE(r->status == WAIT);
-	delete r;
+	REQUIRE(r == WAIT);
 
 	r = d->write(FETCH, w2, 0x00000001);
 	actual = d->view(0, 1)[0];
-	REQUIRE(r->status == OK);
-	delete r;
+	REQUIRE(r == OK);
 
 	expected.at(1) = w2;
 	actual = d->view(0, 1)[0];
@@ -235,9 +212,7 @@ TEST_CASE(
 	delete d;
 }
 
-TEST_CASE(
-	"Sidedoor bypasses delay",
-	"[dram]")
+TEST_CASE("Sidedoor bypasses delay", "[dram]")
 {
 	Dram *d = new Dram(1, 3);
 	std::array<signed int, LINE_SIZE> expected = {0, 0, 0, 0};
@@ -248,24 +223,21 @@ TEST_CASE(
 	signed int w2 = 0x55667788;
 
 	// MEMORY CYCLE 1
-	Response *r = d->write(MEMORY, w1, 0x00000000);
+	Response r = d->write(MEM, w1, 0x00000000);
 	actual = d->view(0, 1)[0];
 	REQUIRE(expected == actual);
-	REQUIRE(r->status == WAIT);
-	delete r;
+	REQUIRE(r == WAIT);
 
 	// MEMORY CYCLE 2
 	actual = d->view(0, 1)[0];
-	r = d->write(MEMORY, w1, 0x00000000);
+	r = d->write(MEM, w1, 0x00000000);
 	actual = d->view(0, 1)[0];
 	REQUIRE(expected == actual);
-	REQUIRE(r->status == WAIT);
-	delete r;
+	REQUIRE(r == WAIT);
 	// SIDE CYCLE 1
 	r = d->write(SIDE, w2, 0x00000001);
 	actual = d->view(0, 1)[0];
-	REQUIRE(r->status == OK);
-	delete r;
+	REQUIRE(r == OK);
 
 	expected.at(1) = w2;
 	actual = d->view(0, 1)[0];

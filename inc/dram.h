@@ -15,8 +15,8 @@ class Dram : public Storage
 	Dram(int lines, int delay);
 	~Dram();
 
-	Response *write(Accessor accessor, signed int data, int address) override;
-	Response *read(Accessor accessor, int address) override;
+	Response write(Accessor accessor, signed int data, int address) override;
+	Response read(Accessor accessor, int address) override;
 };
 
 #endif /* DRAM_H_INCLUDED */

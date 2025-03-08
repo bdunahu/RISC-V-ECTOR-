@@ -7,7 +7,7 @@
 #include <vector>
 
 enum Accessor {
-	MEMORY,
+	MEM,
 	FETCH,
 	L1CACHE,
 	IDLE,
@@ -24,8 +24,7 @@ class Storage
 	 * @param the address to write to.
 	 * @return a status code reflecting the state of the request.
 	 */
-	virtual Response *
-	write(Accessor accessor, signed int data, int address) = 0;
+	virtual Response write(Accessor accessor, signed int data, int address) = 0;
 	/**
 	 * Get the data at `address`.
 	 * @param the source making the request.
@@ -33,7 +32,7 @@ class Storage
 	 * @return a status code reflecting the state of the request, and the
 	 * data being returned.
 	 */
-	virtual Response *read(Accessor accessor, int address) = 0;
+	virtual Response read(Accessor accessor, int address) = 0;
 	/**
 	 * Sidedoor view of `lines` of memory starting at `base`.
 	 * @param The base line to start getting memory from.

@@ -17,8 +17,8 @@ class Cache : public Storage
 	Cache(int lines, Storage *lower, int delay);
 	~Cache();
 
-	Response *write(Accessor accessor, signed int data, int address) override;
-	Response *read(Accessor accessor, int address) override;
+	Response write(Accessor accessor, signed int data, int address) override;
+	Response read(Accessor accessor, int address) override;
 };
 
 #endif /* CACHE_H_INCLUDED */
