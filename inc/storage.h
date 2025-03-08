@@ -2,16 +2,33 @@
 #define STORAGE_H
 #include "definitions.h"
 #include "response.h"
+#include <algorithm>
 #include <array>
-#include <unordered_map>
+#include <deque>
 #include <vector>
 
 enum Accessor {
 	MEM,
 	FETCH,
 	L1CACHE,
-	IDLE,
 	SIDE,
+};
+
+/**
+ * Wrapper class for std::deque.
+ *
+ * Implements a deque that does not push duplicate objects.
+ */
+template <typename T> class Deque : public std::deque<T>
+{
+  public:
+	using std::deque<T>::deque;
+
+	void push_back(const T &value)
+	{
+		if (std::find(this->begin(), this->end(), value) == this->end())
+			std::deque<T>::push_back(value);
+	}
 };
 
 class Storage
@@ -41,6 +58,10 @@ class Storage
 	 * is a word.
 	 */
 	std::vector<std::array<signed int, LINE_SIZE>> view(int base, int lines);
+	/**
+	 * Advances to the next job if the current job is completed.
+	 */
+	void resolve();
 
   protected:
 	/**
@@ -62,11 +83,11 @@ class Storage
 	 */
 	int delay;
 	/**
-	 * The accessor currently being serviced.
+	 * The accessors currently being serviced, in first come first serve order.
 	 */
-	enum Accessor servicing;
+	Deque<enum Accessor> deque;
 	/**
-	 * The number of cycles until the currently request is completed.
+	 * The number of cycles until the current request is completed.
 	 */
 	int wait_time;
 };

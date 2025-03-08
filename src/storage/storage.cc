@@ -18,6 +18,15 @@ void Storage::do_write(signed data, int address)
 	int line = address / LINE_SIZE;
 	int word = address % LINE_SIZE;
 
-	this->servicing = IDLE;
 	this->data->at(line).at(word) = data;
+}
+
+void Storage::resolve()
+{
+	if (this->wait_time == 0) {
+		this->deque.pop_front();
+		this->wait_time = delay;
+	} else {
+		--this->wait_time;
+	}
 }

@@ -2,14 +2,15 @@
 #include "definitions.h"
 #include "response.h"
 #include <algorithm>
+#include <iostream>
 
 Dram::Dram(int lines, int delay)
 {
 	this->data = new std::vector<std::array<signed int, LINE_SIZE>>;
 	this->data->resize(lines);
 	this->delay = delay;
+	this->wait_time = this->delay;
 	this->lower = nullptr;
-	this->servicing = IDLE;
 }
 
 Dram::~Dram() { delete this->data; }
@@ -23,17 +24,12 @@ Response Dram::write(Accessor accessor, signed int data, int address)
 		r = OK;
 	} else {
 		/* Do this first--then process the first cycle immediately. */
-		if (this->servicing == IDLE) {
-			this->servicing = accessor;
-			this->wait_time = delay;
-		}
+		this->deque.push_back(accessor);
 
-		if (this->servicing == accessor) {
+		if (this->deque.front() == accessor) {
 			if (this->wait_time == 0) {
 				this->do_write(data, address);
 				r = OK;
-			} else {
-				--this->wait_time;
 			}
 		}
 	}
