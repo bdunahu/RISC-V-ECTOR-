@@ -76,10 +76,11 @@ int main(int argc, char **argv)
 		Cli cli;
 		cli.run();
 	} else {
+		global_log->log(INFO, "Starting QT...");
 		QApplication a(argc, argv);
 		Gui w;
 		w.show();
-		return a.exec();
+		a.exec();
 	}
 
 	global_log->log(INFO, "Cleaning up...");
