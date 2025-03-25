@@ -1,5 +1,6 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
+#include "response.h"
 #include "stage.h"
 
 /**
@@ -15,7 +16,6 @@ class Controller : public Stage
 	 * @return A newly allocated controller object.
 	 */
 	Controller(Storage *storage, bool is_pipelined);
-	~Controller();
 
 	/**
 	 * Direct the simulator to run for `number` clock cycles.
@@ -34,13 +34,9 @@ class Controller : public Stage
 	 * @return the pc.
 	 */
 	int get_pc();
+	Response advance();
 
   private:
-	/**
-	 * Helper for run_for.
-	 * Advances the simulation by a single cycle.
-	 */
-	void advance();
 	/**
 	 * The current clock cycle.
 	 */
