@@ -2,6 +2,7 @@
 #define CONTROLLER_H
 #include "response.h"
 #include "stage.h"
+#include "instrDTO.h"
 
 /**
  * Houses the clock, and acts as the main API to the GUI.
@@ -11,11 +12,12 @@ class Controller : public Stage
   public:
 	/**
 	 * Constructor.
+	 * @param The stage(s) to interface with.
 	 * @param The storage object to use.
 	 * @param Whether or not efficient pipelining will be used.
 	 * @return A newly allocated controller object.
 	 */
-	Controller(Storage *storage, bool is_pipelined);
+	Controller(Stage *stage, Storage *storage, bool is_pipelined);
 
 	/**
 	 * Direct the simulator to run for `number` clock cycles.
@@ -34,13 +36,7 @@ class Controller : public Stage
 	 * @return the pc.
 	 */
 	int get_pc();
-	Response advance();
-
-  private:
-	/**
-	 * The current clock cycle.
-	 */
-	int clock_cycle;
+	Response advance(InstrDTO &i) override;
 };
 
 #endif /* CONTROLLER_H_INCLUDED */

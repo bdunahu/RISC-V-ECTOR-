@@ -1,15 +1,19 @@
 #include "if.h"
-#include "logger.h"
+#include "accessor.h"
+#include "instrDTO.h"
 #include "response.h"
 
-static Logger *global_log = Logger::getInstance();
-
-Response IF::advance()
+Response IF::advance(InstrDTO &i)
 {
-	global_log->log(INFO, "hello from fetch!");
-	return OK;
+	Response r;
+	signed int bits;
+
+	r = this->storage->read_word(this->id, this->pc, bits);
+	if (r == OK) {
+		++this->pc;
+		i.set_if_cycle(this->clock_cycle);
+		i.set_instr_bits(bits);
+	}
+
+	return r;
 }
-
-
-
-

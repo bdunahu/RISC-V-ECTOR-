@@ -7,3 +7,5 @@ Stage::Stage(Stage *next) {
 std::array<int, GPR_NUM> Stage::gprs;
 int Stage::pc;
 Storage *Stage::storage;
+bool Stage::is_pipelined;
+int Stage::clock_cycle;
