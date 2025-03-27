@@ -12,12 +12,12 @@ class IFPipeFixture
 	{
 		Dram *d;
 
-		d = new Dram(3);
+		d = new Dram(this->m_delay);
 		// 0xC00 is a nop
 		p = {0xC000, 0xC001, 0xC002, 0xC003};
 		d->load(p);
 
-		this->c = new Cache(d, 1);
+		this->c = new Cache(d, this->c_delay);
 		this->f = new IF(nullptr);
 		this->ct = new Controller(this->f, this->c, true);
 	}
@@ -35,7 +35,7 @@ class IFPipeFixture
 		int i;
 		Response r;
 
-		for (i = 0; i <= MEM_DELAY; ++i) {
+		for (i = 0; i < this->m_delay + 1; ++i) {
 			r = this->ct->advance(instr);
 			// check response
 			CHECK(r == BLOCKED);
@@ -51,7 +51,7 @@ class IFPipeFixture
 		int i;
 		Response r;
 
-		for (i = 0; i <= L1_CACHE_DELAY; ++i) {
+		for (i = 0; i < this->c_delay; ++i) {
 			r = this->ct->advance(instr);
 			// check response
 			CHECK(r == WAIT);
@@ -61,6 +61,8 @@ class IFPipeFixture
 		CHECK(r == OK);
 	}
 
+	int m_delay = 3;
+	int c_delay = 1;
 	std::vector<signed int> p;
 	Cache *c;
 	IF *f;
@@ -72,7 +74,7 @@ TEST_CASE_METHOD(IFPipeFixture, "fetch returns single instuction", "[if_pipe]")
 	InstrDTO instr;
 	int expected_cycles;
 
-	expected_cycles = MEM_DELAY + L1_CACHE_DELAY + 2;
+	expected_cycles = this->m_delay + this->c_delay + 1;
 	this->fetch_through(instr);
 
 	CHECK(instr.get_if_cycle() == expected_cycles);
@@ -84,14 +86,13 @@ TEST_CASE_METHOD(IFPipeFixture, "fetch returns two instuctions", "[if_pipe]")
 	InstrDTO instr;
 	int expected_cycles;
 
-	expected_cycles = MEM_DELAY + L1_CACHE_DELAY + 2;
+	expected_cycles = this->m_delay + this->c_delay + 1;
 	this->fetch_through(instr);
 
 	CHECK(instr.get_if_cycle() == expected_cycles);
 	REQUIRE(instr.get_instr_bits() == this->p[0]);
 
-	// is this right???
-	expected_cycles += L1_CACHE_DELAY + 2;
+	expected_cycles += this->c_delay + 1;
 	this->fetch_cache(instr);
 
 	CHECK(instr.get_if_cycle() == expected_cycles);
