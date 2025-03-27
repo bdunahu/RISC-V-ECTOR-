@@ -5,7 +5,7 @@
 Controller::Controller(Stage *stage, Storage *storage, bool is_pipelined)
 	: Stage(stage)
 {
-	this->clock_cycle = 0;
+	this->clock_cycle = 1;
 	this->storage = storage;
 	this->is_pipelined = is_pipelined;
 	this->pc = 0x0;

@@ -43,7 +43,7 @@ TEST_CASE_METHOD(
 
 	gprs = this->ct->get_gprs();
 
-	CHECK(this->ct->get_clock_cycle() == 0);
+	CHECK(this->ct->get_clock_cycle() == 1);
 	CHECK(std::all_of(
 		gprs.begin(), gprs.end(), [](int value) { return value == 0; }));
 	// change me later
