@@ -1,34 +1,23 @@
 #include "controller.h"
-#include "ex.h"
-#include "id.h"
-#include "if.h"
-#include "mm.h"
 #include "response.h"
 #include "storage.h"
-#include "wb.h"
 
-Controller::Controller(Storage *storage, bool is_pipelined)
-	: Stage(nullptr)
+Controller::Controller(Stage *stage, Storage *storage, bool is_pipelined)
+	: Stage(stage)
 {
-	this->clock_cycle = 0;
+	this->clock_cycle = 1;
 	this->storage = storage;
 	this->is_pipelined = is_pipelined;
 	this->pc = 0x0;
 	this->gprs = {0};
-
-	IF *f = new IF(nullptr);
-	ID *d = new ID(f);
-	EX *e = new EX(d);
-	MM *m = new MM(e);
-	WB *w = new WB(m);
-	this->next = w;
 }
 
 void Controller::run_for(int number)
 {
+	InstrDTO instr;
 	int i;
 	for (i = 0; i < number; ++i) {
-		this->advance();
+		this->advance(instr);
 	}
 }
 
@@ -38,9 +27,11 @@ std::array<int, GPR_NUM> Controller::get_gprs() { return this->gprs; }
 
 int Controller::get_pc() { return this->pc; }
 
-Response Controller::advance()
+Response Controller::advance(InstrDTO &i)
 {
-	this->next->advance();
+	Response r;
+ 
+	r = this->next->advance(i);
 	++this->clock_cycle;
-	return OK;
+	return r;
 }

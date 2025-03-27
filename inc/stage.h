@@ -1,6 +1,7 @@
 #ifndef STAGE_H
 #define STAGE_H
 #include "definitions.h"
+#include "instrDTO.h"
 #include "response.h"
 #include "storage.h"
 #include <array>
@@ -8,14 +9,21 @@
 class Stage
 {
   public:
+	/**
+	 * Constructor.
+	 * @param The next stage in the pipeline.
+	 * @return A newly allocated stage object.
+	 */
 	Stage(Stage *next);
 	virtual ~Stage() = default;
 	/**
 	 * Advances this stage by a single clock cycle.
+	 * @param a DTO object containing various information about an instruction
+	 * moving through the pipeline.
 	 * @return a response, indicating whether this pipeline stage is stalled,
 	 * busy, or done.
 	 */
-	virtual Response advance() = 0;
+	virtual Response advance(InstrDTO &i) = 0;
 
   protected:
 	/**
@@ -37,7 +45,11 @@ class Stage
 	/**
 	 * A flag indicating whether pipelining should be used.
 	 */
-	bool is_pipelined;
+	static bool is_pipelined;
+	/**
+	 * The current clock cycle.
+	 */
+	static int clock_cycle;
 };
 
 #endif /* STAGE_H_INCLUDED */
