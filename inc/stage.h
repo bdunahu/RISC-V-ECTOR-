@@ -4,6 +4,7 @@
 #include "instrDTO.h"
 #include "response.h"
 #include "storage.h"
+#include "accessor.h"
 #include <array>
 
 class Stage
@@ -27,13 +28,17 @@ class Stage
 
   protected:
 	/**
+	 * The name of the pipeline stage.
+	 */
+	Accessor id;
+	/**
 	 * The shared pool of general-purpose integer registers.
 	 */
-	static std::array<int, GPR_NUM> gprs;
+	static std::array<signed int, GPR_NUM> gprs;
 	/**
 	 * The address of the currently executing instruction.
 	 */
-	static int pc;
+	static unsigned int pc;
 	/**
 	 * A pointer to the next stage in the pipeline.
 	 */

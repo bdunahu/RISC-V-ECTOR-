@@ -7,7 +7,12 @@
 class WB : public Stage
 {
   public:
-	using Stage::Stage;
+	/**
+	 * Constructor.
+	 * @param The next stage in the pipeline.
+	 * @return A newly allocated WB object.
+	 */
+	WB(Stage *next);
 
 	Response advance(InstrDTO &i) override;
 };

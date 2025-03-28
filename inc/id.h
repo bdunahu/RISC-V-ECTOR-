@@ -7,7 +7,12 @@
 class ID : public Stage
 {
   public:
-	using Stage::Stage;
+	/**
+	 * Constructor.
+	 * @param The next stage in the pipeline.
+	 * @return A newly allocated ID object.
+	 */
+	ID(Stage *next);
 
 	Response advance(InstrDTO &i) override;
 };

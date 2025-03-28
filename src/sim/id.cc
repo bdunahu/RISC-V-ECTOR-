@@ -1,12 +1,9 @@
 #include "id.h"
+#include "accessor.h"
 #include "instrDTO.h"
-#include "logger.h"
 #include "response.h"
+#include "stage.h"
 
-static Logger *global_log = Logger::getInstance();
+ID::ID(Stage *stage) : Stage(stage) { this->id = DCDE; }
 
-Response ID::advance(InstrDTO &i)
-{
-	global_log->log(INFO, "hello from decode!");
-	return OK;
-}
+Response ID::advance(InstrDTO &i) { return OK; }

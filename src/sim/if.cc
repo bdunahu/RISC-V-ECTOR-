@@ -2,6 +2,9 @@
 #include "accessor.h"
 #include "instrDTO.h"
 #include "response.h"
+#include "stage.h"
+
+IF::IF(Stage *stage) : Stage(stage) { this->id = FETCH; }
 
 Response IF::advance(InstrDTO &i)
 {
