@@ -77,7 +77,7 @@ TEST_CASE_METHOD(IFPipeFixture, "fetch returns single instuction", "[if_pipe]")
 	expected_cycles = this->m_delay + this->c_delay + 2;
 	this->fetch_through(instr);
 
-	CHECK(instr.get_if_cycle() == expected_cycles);
+	CHECK(instr.get_time_of(FETCH) == expected_cycles);
 	REQUIRE(instr.get_instr_bits() == this->p[0]);
 }
 
@@ -89,12 +89,12 @@ TEST_CASE_METHOD(IFPipeFixture, "fetch returns two instuctions", "[if_pipe]")
 	expected_cycles = this->m_delay + this->c_delay + 2;
 	this->fetch_through(instr);
 
-	CHECK(instr.get_if_cycle() == expected_cycles);
+	CHECK(instr.get_time_of(FETCH) == expected_cycles);
 	REQUIRE(instr.get_instr_bits() == this->p[0]);
 
 	expected_cycles += this->c_delay + 1;
 	this->fetch_cache(instr);
 
-	CHECK(instr.get_if_cycle() == expected_cycles);
+	CHECK(instr.get_time_of(FETCH) == expected_cycles);
 	REQUIRE(instr.get_instr_bits() == this->p[1]);
 }

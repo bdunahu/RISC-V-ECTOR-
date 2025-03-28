@@ -14,7 +14,7 @@ Response IF::advance(InstrDTO &i)
 	r = this->storage->read_word(this->id, this->pc, bits);
 	if (r == OK) {
 		++this->pc;
-		i.set_if_cycle(this->clock_cycle);
+		i.set_time_of(this->id, this->clock_cycle);
 		i.set_instr_bits(bits);
 	}
 

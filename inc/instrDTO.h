@@ -2,6 +2,8 @@
 #define INSTRDTO_H
 #include <string>
 #include <functional>
+#include <unordered_map>
+#include "accessor.h"
 
 class InstrDTO
 {
@@ -13,9 +15,9 @@ class InstrDTO
 	~InstrDTO() = default;
 
 	/**
-	 * @return if_cycle
+	 * @return hist entry for Accessor
 	 */
-	int get_if_cycle();
+	int get_time_of(Accessor);
 	/**
 	 * @return id_cycle
 	 */
@@ -42,13 +44,9 @@ class InstrDTO
 	std::string get_oper_name();
 
 	/**
-	 * @param if_cycle
+	 * @param set hist key
 	 */
-	void set_if_cycle(int);
-	/**
-	 * @param id_cycle
-	 */
-	void set_id_cycle(int);
+	void set_time_of(Accessor, int);
 	/**
 	 * @param instr_bits
 	 */
@@ -68,13 +66,9 @@ class InstrDTO
 
   private:
 	/**
-	 * The clock cycle this instruction finished being fetched.
+	 * The clock cycle each stage finished an operation.
 	 */
-	int if_cycle;
-	/**
-	 * The clock cycle this instruction finished being identified.
-	 */
-	int id_cycle;
+	std::unordered_map<Accessor, int> hist;
 	/**
 	 * The raw bits encoding the instruction.
 	 */
