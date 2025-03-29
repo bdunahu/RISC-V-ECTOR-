@@ -1,26 +1,23 @@
 #ifndef GUI_H
 #define GUI_H
-#include <QWidget>
 
-namespace Ui
-{
-class gui;
+#include <QMainWindow>
+
+QT_BEGIN_NAMESPACE
+namespace Ui {
+class GUI;
 }
 QT_END_NAMESPACE
 
-class Gui : public QWidget
+class GUI : public QMainWindow
 {
-	Q_OBJECT
+    Q_OBJECT
 
-  public:
-	Gui(QWidget *parent = nullptr);
-	~Gui();
+public:
+    GUI(QWidget *parent = nullptr);
+    ~GUI();
 
-  private slots:
-	void on_pushButton_clicked();
-
-  private:
-	Ui::gui *ui;
-	void loadTxtFile();
+private:
+    Ui::GUI *ui;
 };
 #endif // GUI_H
