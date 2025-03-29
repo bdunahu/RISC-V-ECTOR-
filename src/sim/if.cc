@@ -6,7 +6,7 @@
 
 IF::IF(Stage *stage) : Stage(stage) { this->id = FETCH; }
 
-Response IF::advance(InstrDTO &i)
+Response IF::advance(InstrDTO &i, Response p)
 {
 	Response r;
 	signed int bits;

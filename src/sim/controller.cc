@@ -19,7 +19,7 @@ void Controller::run_for(int number)
 	InstrDTO instr;
 	int i;
 	for (i = 0; i < number; ++i) {
-		this->advance(instr);
+		this->advance(instr, OK);
 	}
 }
 
@@ -29,11 +29,11 @@ std::array<int, GPR_NUM> Controller::get_gprs() { return this->gprs; }
 
 int Controller::get_pc() { return this->pc; }
 
-Response Controller::advance(InstrDTO &i)
+Response Controller::advance(InstrDTO &i, Response p)
 {
 	Response r;
 
-	r = this->next->advance(i);
+	r = this->next->advance(i, p);
 	++this->clock_cycle;
 	return r;
 }

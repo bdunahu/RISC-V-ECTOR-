@@ -36,7 +36,7 @@ class IFPipeFixture
 		Response r;
 
 		for (i = 0; i < this->m_delay + 1; ++i) {
-			r = this->ct->advance(instr);
+			r = this->ct->advance(instr, OK);
 			// check response
 			CHECK(r == BLOCKED);
 		}
@@ -52,11 +52,11 @@ class IFPipeFixture
 		Response r;
 
 		for (i = 0; i < this->c_delay; ++i) {
-			r = this->ct->advance(instr);
+			r = this->ct->advance(instr, OK);
 			// check response
 			CHECK(r == WAIT);
 		}
-		r = this->ct->advance(instr);
+		r = this->ct->advance(instr, OK);
 		// check response
 		CHECK(r == OK);
 	}

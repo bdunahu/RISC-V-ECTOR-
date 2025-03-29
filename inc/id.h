@@ -15,7 +15,7 @@ class ID : public Stage
 	 */
 	ID(Stage *next);
 
-	Response advance(InstrDTO &i) override;
+	Response advance(InstrDTO &i, Response p) override;
 
 	/**
 	 * Parse an instruction into a type, opcode, and fields. If the type is

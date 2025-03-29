@@ -6,7 +6,7 @@
 
 MM::MM(Stage *stage) : Stage(stage) { this->id = MEM; } 
 
-Response MM::advance(InstrDTO &i)
+Response MM::advance(InstrDTO &i, Response p)
 {
 	return OK;
 }

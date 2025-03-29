@@ -15,7 +15,7 @@ class IF : public Stage
 	 */
 	IF(Stage *next);
 
-	Response advance(InstrDTO &i) override;
+	Response advance(InstrDTO &i, Response p) override;
 };
 
 #endif /* IF_H_INCLUDED */

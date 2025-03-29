@@ -22,10 +22,12 @@ class Stage
 	 * Advances this stage by a single clock cycle.
 	 * @param a DTO object containing various information about an instruction
 	 * moving through the pipeline.
-	 * @return a response, indicating whether this pipeline stage is stalled,
+	 * @param a response, indicating whether or not the parent pipe stage is
+	 * busy.
+	 * @return a response, indicating whether this pipeline stage is stalling,
 	 * busy, or done.
 	 */
-	virtual Response advance(InstrDTO &i) = 0;
+	virtual Response advance(InstrDTO &i, Response p) = 0;
 
   protected:
 	/**

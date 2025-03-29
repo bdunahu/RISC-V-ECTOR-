@@ -8,7 +8,7 @@
 
 ID::ID(Stage *stage) : Stage(stage) { this->id = DCDE; }
 
-Response ID::advance(InstrDTO &i)
+Response ID::advance(InstrDTO &i, Response p)
 {
 	Response r;
 	signed int s1, s2, s3;
