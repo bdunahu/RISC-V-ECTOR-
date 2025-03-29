@@ -1,5 +1,6 @@
 #include "id.h"
 #include "accessor.h"
+#include "instr.h"
 #include "instrDTO.h"
 #include "logger.h"
 #include "response.h"
@@ -12,54 +13,70 @@ ID::ID(Stage *stage) : Stage(stage) { this->id = DCDE; }
 
 Response ID::advance(InstrDTO &i) { Response r; }
 
+// TODO this function is ugly
 void ID::get_instr_fields(
-	signed int &s1,
-	signed int &s2,
-	signed int &s3,
-	unsigned int &type,
-	unsigned int &opcode)
+	signed int &s1, signed int &s2, signed int &s3, Mnemonic &m)
 {
-	// unsigned int &opcode;
-	int opcode_bits;
+	unsigned int type, s0b, s1b, s2b;
+	this->split_instr(s1, type, m);
 
-	type = GET_LS_BITS(s1, TYPE_SIZE);
-	opcode_bits = (type == 0b0) ? R_OPCODE_SIZE : OPCODE_SIZE;
-
+	// define the parsing bounds
+	s0b = REG_SIZE;
 	switch (type) {
-	case 0:
+	case 0b00:
 		// R-TYPE
-		opcode += GET_MID_BITS(s1, TYPE_SIZE, TYPE_SIZE + opcode_bits);
-		s3 = GET_MID_BITS(
-			s1, TYPE_SIZE + opcode_bits + (REG_SIZE * 2),
-			TYPE_SIZE + opcode_bits + (REG_SIZE * 3));
-		s2 = GET_MID_BITS(
-			s1, TYPE_SIZE + opcode_bits + REG_SIZE,
-			TYPE_SIZE + opcode_bits + (REG_SIZE * 2));
-		s1 = GET_MID_BITS(
-			s1, TYPE_SIZE + opcode_bits,
-			TYPE_SIZE + opcode_bits + REG_SIZE);
+		s1b = s0b + REG_SIZE;
+		s2b = s1b + REG_SIZE;
 		break;
-	case 1:
+	case 0b01:
 		// I-TYPE
-		opcode = GET_MID_BITS(s1, TYPE_SIZE, TYPE_SIZE + opcode_bits);
-		s3 = GET_MID_BITS(
-			s1, TYPE_SIZE + opcode_bits + (REG_SIZE * 2), WORD_SPEC);
-		s2 = GET_MID_BITS(
-			s1, TYPE_SIZE + opcode_bits + REG_SIZE,
-			TYPE_SIZE + opcode_bits + (REG_SIZE * 2));
-		s1 = GET_MID_BITS(
-			s1, TYPE_SIZE + opcode_bits, TYPE_SIZE + opcode_bits + REG_SIZE);
+		s1b = s0b + REG_SIZE;
+		s2b = WORD_SPEC;
 		break;
-	case 2:
+	case 0b10:
 		// J-TYPE
-		opcode = GET_MID_BITS(s1, TYPE_SIZE, TYPE_SIZE + opcode_bits);
-		s2 = GET_MID_BITS(s1, TYPE_SIZE + OPCODE_SIZE + REG_SIZE, WORD_SPEC);
-		s1 = GET_MID_BITS(
-			s1, TYPE_SIZE + OPCODE_SIZE, TYPE_SIZE + OPCODE_SIZE + REG_SIZE);
-		break;
-	default:
-		global_log->log(
-			DEBUG,
-			string_format("%s returning invalid type: %d", __FUNCTION__, type));
+		s1b = WORD_SPEC;
 	}
+
+	if (type != 0b10)
+		s3 = GET_MID_BITS(s1, s1b, s2b);
+
+	s2 = GET_MID_BITS(s1, s0b, s1b);
+	s1 = GET_LS_BITS(s1, s0b);
+}
+
+void ID::split_instr(signed int &raw, unsigned int &type, Mnemonic &m)
+{
+	unsigned int opcode, opcode_size;
+
+	type = GET_LS_BITS(raw, TYPE_SIZE);
+	opcode_size = (type == 0b0) ? R_OPCODE_SIZE : OPCODE_SIZE;
+	opcode = GET_MID_BITS(raw, TYPE_SIZE, TYPE_SIZE + opcode_size);
+	try {
+		m = instr::mnemonic_map.at((opcode << 2) + type);
+	} catch (std::out_of_range const &) {
+		m = NOP;
+	}
+
+	raw = (unsigned int)raw >> (TYPE_SIZE + opcode_size);
+}
+
+Response ID::dereference_register(signed int &v)
+{
+	Response r;
+	r = OK;
+
+	if (v < 0 || v >= GPR_NUM + V_NUM) {
+		global_log->log(
+			ERROR, string_format(
+					   "instruction tried to access register %d, which does "
+					   "not exist",
+					   v));
+		exit(EXIT_FAILURE);
+	} else if (v >= GPR_NUM)
+		v = this->vrs[v % GPR_NUM];
+	else
+		v = this->gprs[v];
+
+	return r;
 }

@@ -36,6 +36,10 @@ class Stage
 	 */
 	static std::array<signed int, GPR_NUM> gprs;
 	/**
+	 * The shared pool of general-purpose vector registers.
+	 */
+	static std::array<signed int, V_NUM> vrs;
+	/**
 	 * The address of the currently executing instruction.
 	 */
 	static unsigned int pc;

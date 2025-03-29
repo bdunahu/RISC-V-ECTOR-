@@ -4,6 +4,7 @@
 #include "dram.h"
 #include "if.h"
 #include "instrDTO.h"
+#include "instr.h"
 #include <catch2/catch_test_macros.hpp>
 
 class IDPipeFixture
@@ -49,110 +50,98 @@ class IDPipeFixture
 	Controller *ct;
 };
 
-TEST_CASE_METHOD(IDPipeFixture, "Parse invalid type", "[utils]")
+TEST_CASE_METHOD(IDPipeFixture, "Parse invalid type", "[id]")
 {
 	signed int s1 = 0, s2 = 0, s3 = 0;
-	unsigned int type = 0, opcode = 0;
+	Mnemonic m;
 
 	s1 = 0x00FF00FF;
-	this->d->get_instr_fields(s1, s2, s3, type, opcode);
-
-	REQUIRE(type == 0b11);
-	// behavior does nothing
-	CHECK(s1 == 0x00FF00FF);
-	CHECK(s2 == 0b0);
-	CHECK(s3 == 0b0);
-	CHECK(opcode == 0b0);
+	this->d->get_instr_fields(s1, s2, s3, m);
+	CHECK(m == NOP);
 }
 
-TEST_CASE_METHOD(IDPipeFixture, "Parse arbitrary r-type # one", "[utils]")
+TEST_CASE_METHOD(IDPipeFixture, "Parse arbitrary r-type # one", "[id]")
 {
 	signed int s1 = 0, s2 = 0, s3 = 0;
-	unsigned int type = 0, opcode = 0;
+	Mnemonic m;
 
-	s1 = 0xCCCCCCCC;
-	this->d->get_instr_fields(s1, s2, s3, type, opcode);
+	s1 = 0xCCCCCC0C;
+	this->d->get_instr_fields(s1, s2, s3, m);
 
-	REQUIRE(type == 0b00);
-	CHECK(s1 == 0b11001);
+	CHECK(s1 == 0b11000);
 	CHECK(s2 == 0b01100);
 	CHECK(s3 == 0b00110);
-	CHECK(opcode == 0b10011);
+	CHECK(m == MUL);
 }
 
-TEST_CASE_METHOD(IDPipeFixture, "Parse arbitrary r-type # two", "[utils]")
+TEST_CASE_METHOD(IDPipeFixture, "Parse arbitrary r-type # two", "[id]")
 {
 	signed int s1 = 0, s2 = 0, s3 = 0;
-	unsigned int type = 0, opcode = 0;
+	Mnemonic m;
 
-	s1 = 0x99AABBCC;
-	this->d->get_instr_fields(s1, s2, s3, type, opcode);
+	s1 = 0x99AABB0C;
+	this->d->get_instr_fields(s1, s2, s3, m);
 
-	REQUIRE(type == 0b00);
-	CHECK(s1 == 0b10111);
+	CHECK(s1 == 0b10110);
 	CHECK(s2 == 0b01011);
 	CHECK(s3 == 0b10101);
-	CHECK(opcode == 0b10011);
+	CHECK(m == MUL);
 }
 
-TEST_CASE_METHOD(IDPipeFixture, "Parse arbitrary i-type # one", "[utils]")
+TEST_CASE_METHOD(IDPipeFixture, "Parse arbitrary i-type # one", "[id]")
 {
 	signed int s1 = 0, s2 = 0, s3 = 0;
-	unsigned int type = 0, opcode = 0;
+	Mnemonic m;
 
 	s1 = 0xDDDDDDDD;
-	this->d->get_instr_fields(s1, s2, s3, type, opcode);
+	this->d->get_instr_fields(s1, s2, s3, m);
 
-	REQUIRE(type == 0b01);
 	CHECK(s1 == 0b10111);
 	CHECK(s2 == 0b11011);
 	CHECK(s3 == 0xDDDD);
-	CHECK(opcode == 0b0111);
+	CHECK(m == SFTLI);
 }
 
-TEST_CASE_METHOD(IDPipeFixture, "Parse arbitrary i-type # two", "[utils]")
+TEST_CASE_METHOD(IDPipeFixture, "Parse arbitrary i-type # two", "[id]")
 {
 	signed int s1 = 0, s2 = 0, s3 = 0;
-	unsigned int type = 0, opcode = 0;
+	Mnemonic m;
 
 	s1 = 0xAABBCCDD;
-	this->d->get_instr_fields(s1, s2, s3, type, opcode);
+	this->d->get_instr_fields(s1, s2, s3, m);
 
-	REQUIRE(type == 0b01);
 	CHECK(s1 == 0b10011);
 	CHECK(s2 == 0b11001);
 	CHECK(s3 == 0xAABB);
-	CHECK(opcode == 0b0111);
+	CHECK(m == SFTLI);
 }
 
-TEST_CASE_METHOD(IDPipeFixture, "Parse arbitrary j-type # one", "[utils]")
+TEST_CASE_METHOD(IDPipeFixture, "Parse arbitrary j-type # one", "[id]")
 {
 	signed int s1 = 0, s2 = 0, s3 = 0;
-	unsigned int type = 0, opcode = 0;
+	Mnemonic m;
 
-	s1 = 0xEEEEEEEE;
-	this->d->get_instr_fields(s1, s2, s3, type, opcode);
+	s1 = 0xEEEEEE1E;
+	this->d->get_instr_fields(s1, s2, s3, m);
 
-	REQUIRE(type == 0b10);
-	CHECK(s1 == 0b11011);
+	CHECK(s1 == 0b11000);
 	CHECK(s2 == 0b111011101110111011101);
-	CHECK(opcode == 0b1011);
+	CHECK(m == BOF);
 	// behavior does nothing
 	CHECK(s3 == 0b0);
 }
 
-TEST_CASE_METHOD(IDPipeFixture, "Parse arbitrary j-type # two", "[utils]")
+TEST_CASE_METHOD(IDPipeFixture, "Parse arbitrary j-type # two", "[id]")
 {
 	signed int s1 = 0, s2 = 0, s3 = 0;
-	unsigned int type = 0, opcode = 0;
+	Mnemonic m;
 
-	s1 = 0xBBCCDDEE;
-	this->d->get_instr_fields(s1, s2, s3, type, opcode);
+	s1 = 0xBBCCDD0E;
+	this->d->get_instr_fields(s1, s2, s3, m);
 
-	REQUIRE(type == 0b10);
-	CHECK(s1 == 0b10111);
+	CHECK(s1 == 0b10100);
 	CHECK(s2 == 0b101110111100110011011);
-	CHECK(opcode == 0b1011);
+	CHECK(m == JAL);
 	// behavior does nothing
 	CHECK(s3 == 0b0);
 }
