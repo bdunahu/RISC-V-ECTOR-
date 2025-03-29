@@ -14,7 +14,7 @@ class WB : public Stage
 	 */
 	WB(Stage *next);
 
-	Response advance(InstrDTO &i, Response p) override;
+	Response advance(InstrDTO &next_instr, Response p) override;
 };
 
 #endif /* WB_H_INCLUDED */

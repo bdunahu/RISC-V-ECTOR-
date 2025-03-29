@@ -29,11 +29,11 @@ std::array<int, GPR_NUM> Controller::get_gprs() { return this->gprs; }
 
 int Controller::get_pc() { return this->pc; }
 
-Response Controller::advance(InstrDTO &i, Response p)
+Response Controller::advance(InstrDTO &next_instr, Response p)
 {
 	Response r;
 
-	r = this->next->advance(i, p);
+	r = this->next->advance(next_instr, p);
 	++this->clock_cycle;
 	return r;
 }

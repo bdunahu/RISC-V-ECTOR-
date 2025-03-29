@@ -7,6 +7,7 @@
 #include "storage.h"
 #include <array>
 #include <set>
+#include <memory>
 
 class Stage
 {
@@ -17,17 +18,16 @@ class Stage
 	 * @return A newly allocated stage object.
 	 */
 	Stage(Stage *next);
-	virtual ~Stage() = default;
+	virtual ~Stage();
 	/**
 	 * Advances this stage by a single clock cycle.
-	 * @param a DTO object containing various information about an instruction
-	 * moving through the pipeline.
+	 * @param a DTO object containing the next instruction to be processed.
 	 * @param a response, indicating whether or not the parent pipe stage is
-	 * busy.
+	 * ready to accept a new instruction object next cycle.
 	 * @return a response, indicating whether this pipeline stage is stalling,
 	 * busy, or done.
 	 */
-	virtual Response advance(InstrDTO &i, Response p) = 0;
+	virtual Response advance(InstrDTO &next_instr, Response p) = 0;
 
   protected:
 	/**
@@ -57,10 +57,6 @@ class Stage
 	 */
 	static unsigned int pc;
 	/**
-	 * A pointer to the next stage in the pipeline.
-	 */
-	Stage *next;
-	/**
 	 * A pointer to the top-level storage device.
 	 */
 	static Storage *storage;
@@ -72,6 +68,18 @@ class Stage
 	 * The current clock cycle.
 	 */
 	static int clock_cycle;
+	/**
+	 * A pointer to the next stage in the pipeline.
+	 */
+	Stage *next;
+	/**
+	 * A pointer to the current instruction this stage is processing.
+	 */
+	std::unique_ptr<InstrDTO> curr_instr;
+	/**
+	 * The current status of this stage.
+	 */
+	Response status;
 
   private:
 	/**

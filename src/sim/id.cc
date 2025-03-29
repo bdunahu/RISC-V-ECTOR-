@@ -8,15 +8,16 @@
 
 ID::ID(Stage *stage) : Stage(stage) { this->id = DCDE; }
 
-Response ID::advance(InstrDTO &i, Response p)
+Response ID::advance(InstrDTO &next_instr, Response p)
 {
 	Response r;
-	signed int s1, s2, s3;
-	Mnemonic m;
+	r = OK;
+	// signed int s1, s2, s3;
+	// Mnemonic m;
 
-	s1 = i.get_instr_bits();
+	// s1 = next_instr.get_instr_bits();
 
-	get_instr_fields(s1, s2, s3, m);
+	// get_instr_fields(s1, s2, s3, m);
 	return r;
 }
 

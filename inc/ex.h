@@ -14,7 +14,7 @@ class EX : public Stage
 	 */
 	EX(Stage *next);
 
-	Response advance(InstrDTO &i, Response p) override;
+	Response advance(InstrDTO &next_instr, Response p) override;
 };
 
 #endif /* EX_H_INCLUDED */

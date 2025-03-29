@@ -15,7 +15,17 @@ class IF : public Stage
 	 */
 	IF(Stage *next);
 
-	Response advance(InstrDTO &i, Response p) override;
+	Response advance(InstrDTO &next_instr, Response p) override;
+
+  private:
+	/**
+	 * Performs a fetch only if a current fetch is not pending. Pending means
+	 * that a fetch has completed successfully, but the caller stage in the
+	 * pipeline is not ready to receive it. In this case, `curr_instr` is not
+	 * the nullptr.
+	 * @return STALLED if we are waiting on the storage devices, OK otherwise.
+	 */
+	void fetch_with_buffer();
 };
 
 #endif /* IF_H_INCLUDED */

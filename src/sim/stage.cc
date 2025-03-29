@@ -5,7 +5,14 @@
 
 static Logger *global_log = Logger::getInstance();
 
-Stage::Stage(Stage *next) { this->next = next; }
+Stage::Stage(Stage *next)
+{
+	this->next = next;
+	this->curr_instr = nullptr;
+	this->status = OK;
+}
+
+Stage::~Stage() { delete this->next; };
 
 std::array<int, GPR_NUM> Stage::gprs;
 std::array<int, V_NUM> Stage::vrs;
@@ -19,7 +26,7 @@ Response Stage::check_out(unsigned int &v)
 {
 	Response r;
 	if (this->is_checked_out(v))
-		r = STALLED;
+		r = BLOCKED;
 	else {
 		r = OK;
 		v = this->check_out_register(v);
