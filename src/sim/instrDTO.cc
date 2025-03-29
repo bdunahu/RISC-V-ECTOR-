@@ -19,6 +19,8 @@ signed int InstrDTO::get_s2() { return this->s2; }
 
 signed int InstrDTO::get_s3() { return this->s3; }
 
+Mnemonic InstrDTO::get_mnemonic() { return this->mnemonic; }
+
 void InstrDTO::set_time_of(Accessor a, int i) { this->hist[a] = i; }
 
 void InstrDTO::set_instr_bits(signed int instr) { this->instr_bits = instr; }
@@ -28,3 +30,5 @@ void InstrDTO::set_s1(signed int s) { this->s1 = s; }
 void InstrDTO::set_s2(signed int s) { this->s2 = s; }
 
 void InstrDTO::set_s3(signed int s) { this->s3 = s; }
+
+void InstrDTO::set_mnemonic(Mnemonic m) { this->mnemonic = m; }

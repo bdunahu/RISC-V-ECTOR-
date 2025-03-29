@@ -5,13 +5,20 @@
 #include "logger.h"
 #include "response.h"
 #include "stage.h"
-#include "utils.h"
-
-static Logger *global_log = Logger::getInstance();
 
 ID::ID(Stage *stage) : Stage(stage) { this->id = DCDE; }
 
-Response ID::advance(InstrDTO &i) { Response r; }
+Response ID::advance(InstrDTO &i)
+{
+	Response r;
+	signed int s1, s2, s3;
+	Mnemonic m;
+
+	s1 = i.get_instr_bits();
+
+	get_instr_fields(s1, s2, s3, m);
+	return r;
+}
 
 // TODO this function is ugly
 void ID::get_instr_fields(
@@ -53,30 +60,10 @@ void ID::split_instr(signed int &raw, unsigned int &type, Mnemonic &m)
 	opcode_size = (type == 0b0) ? R_OPCODE_SIZE : OPCODE_SIZE;
 	opcode = GET_MID_BITS(raw, TYPE_SIZE, TYPE_SIZE + opcode_size);
 	try {
-		m = instr::mnemonic_map.at((opcode << 2) + type);
+		m = instr::mnemonic_map.at((opcode << TYPE_SIZE) + type);
 	} catch (std::out_of_range const &) {
 		m = NOP;
 	}
 
 	raw = (unsigned int)raw >> (TYPE_SIZE + opcode_size);
-}
-
-Response ID::dereference_register(signed int &v)
-{
-	Response r;
-	r = OK;
-
-	if (v < 0 || v >= GPR_NUM + V_NUM) {
-		global_log->log(
-			ERROR, string_format(
-					   "instruction tried to access register %d, which does "
-					   "not exist",
-					   v));
-		exit(EXIT_FAILURE);
-	} else if (v >= GPR_NUM)
-		v = this->vrs[v % GPR_NUM];
-	else
-		v = this->gprs[v];
-
-	return r;
 }

@@ -1,11 +1,12 @@
 #ifndef STAGE_H
 #define STAGE_H
+#include "accessor.h"
 #include "definitions.h"
 #include "instrDTO.h"
 #include "response.h"
 #include "storage.h"
-#include "accessor.h"
 #include <array>
+#include <set>
 
 class Stage
 {
@@ -27,6 +28,16 @@ class Stage
 	virtual Response advance(InstrDTO &i) = 0;
 
   protected:
+	/**
+	 * Facilitates register checkout.
+	 * It does this by checking that the register passed in is not currently
+	 * checked out. If true, then replaces r with the value of the register and
+	 * returns OK. If false, returns STALLED.
+	 *
+	 * @param the registers number, to be dereferenced.
+	 * @return OK if `r` is not checked out, STALLED otherwise.
+	 */
+	Response check_out(unsigned int &r);
 	/**
 	 * The name of the pipeline stage.
 	 */
@@ -59,6 +70,33 @@ class Stage
 	 * The current clock cycle.
 	 */
 	static int clock_cycle;
+
+  private:
+	/**
+	 * Helper for `check_out`.
+	 * Returns true if r are not checked out, false otherwise.
+	 * @param a list of register numbers.
+	 * @return true if registers are not in checked_out, false otherwise.
+	 */
+	bool is_checked_out(unsigned int r);
+	/**
+	 * Helper for `check_out`.
+	 * Checks out a single register, and places it in checked_out.
+	 * @param a register number.
+	 * @return the value in the register.
+	 */
+	signed int check_out_register(unsigned int r);
+	// TODO fix this comment after writeback stage
+	/**
+	 * Helper for `check_out_register`
+	 * @param the register number.
+	 * @return the value in the associated register.
+	 */
+	signed int dereference_register(unsigned int r);
+	/**
+	 * The set of registers currently checked out.
+	 */
+	static std::set<unsigned int> checked_out;
 };
 
 #endif /* STAGE_H_INCLUDED */

@@ -1,9 +1,10 @@
 #ifndef INSTRDTO_H
 #define INSTRDTO_H
-#include <string>
-#include <functional>
-#include <unordered_map>
 #include "accessor.h"
+#include "instr.h"
+#include <functional>
+#include <string>
+#include <unordered_map>
 
 class InstrDTO
 {
@@ -39,9 +40,9 @@ class InstrDTO
 	 */
 	signed int get_s3();
 	/**
-	 * @return the string representation of oper.
+	 * @return the mnemonic of the instruction
 	 */
-	std::string get_oper_name();
+	Mnemonic get_mnemonic();
 
 	/**
 	 * @param set hist key
@@ -63,6 +64,10 @@ class InstrDTO
 	 * @param s3
 	 */
 	void set_s3(signed int);
+	/**
+	 * @param the mnemonic of the instruction
+	 */
+	void set_mnemonic(Mnemonic);
 
   private:
 	/**
@@ -82,10 +87,10 @@ class InstrDTO
 	signed int s1;
 	signed int s2;
 	signed int s3;
-  /**
-   * The operation to be conducted during the execute phase.
-   */
-	std::function<void()> instr;
+	/**
+	 * The mnemonic of the operation.
+	 */
+	Mnemonic mnemonic;
 };
 
 #endif /* INSTRDTO_H_INCLUDED */
