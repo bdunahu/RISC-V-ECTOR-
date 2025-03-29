@@ -34,7 +34,42 @@ class ID : public Stage
 	void get_instr_fields(
 		signed int &s1, signed int &s2, signed int &s3, Mnemonic &m);
 
+	/* The following methods are made public so that they may be tested, and are
+	 * not to be called from outside classes during standard execution.
+	 */
+
+	/**
+	 * Facilitates register checkout and data hazard management.
+	 * It does this by checking that the register passed in is not currently
+	 * checked out. If true, then replaces r with the value of the register and
+	 * returns OK. If false, returns STALLED.
+	 *
+	 * @param the registers number, to be dereferenced.
+	 * @return OK if `r` is not checked out, STALLED otherwise.
+	 */
+	Response read_guard(signed int &r);
+	/**
+	 * Facilitates register checkout and data hazard management.
+	 * Checks out a register and returns it.
+	 *
+	 * @param the registers number, to be dereferenced and checked out.
+	 */
+	void write_guard(signed int &r);
+
   private:
+	// TODO write me
+	/**
+	 * Helper for ``
+	 * Attempts to parse and dereference instruction arguments. If a desc
+
+	 * @param the resulting first field. To call this function properly, this
+	 * field must contain the section of the instruction to be parsed.
+	 * @param the resulting second field.
+	 * @param the resulting third field.
+	 */
+	void decode_R_type(signed int &s1, signed int &s2, signed int &s3);
+	void decode_I_type(signed int &s1, signed int &s2, signed int &s3);
+	void decode_J_type(signed int &s1, signed int &s2);
 	/**
 	 * Helper for `get_instr_fields`.
 	 * Given a raw instruction, returns the mnemonic and type.
@@ -44,14 +79,6 @@ class ID : public Stage
 	 * @param the resulting type.
 	 */
 	void split_instr(signed int &raw, unsigned int &type, Mnemonic &m);
-	/**
-	 * Facilitates checking out a register by dereferencing the register
-	 specified by the first parameter. Registers that are checked out cannot be
-	 checked out until they are checked in.
-	 * @param
-	 * @return the contents of the register.
-	 */
-	Response dereference_register(signed int &);
 };
 
-#endif /* ID_D_INCLUDED */
+#endif /* ID_H_INCLUDED */

@@ -5,52 +5,85 @@
 #include "logger.h"
 #include "response.h"
 #include "stage.h"
+#include <algorithm>
 
 ID::ID(Stage *stage) : Stage(stage) { this->id = DCDE; }
 
 Response ID::advance(InstrDTO &next_instr, Response p)
 {
 	Response r;
-	r = OK;
-	// signed int s1, s2, s3;
-	// Mnemonic m;
+	signed int s1, s2, s3;
+	Mnemonic m;
 
-	// s1 = next_instr.get_instr_bits();
+	s1 = next_instr.get_instr_bits();
 
-	// get_instr_fields(s1, s2, s3, m);
+	get_instr_fields(s1, s2, s3, m);
 	return r;
+}
+
+void ID::decode_R_type(signed int &s1, signed int &s2, signed int &s3)
+{
+	unsigned int s0b, s1b, s2b;
+	Response r1, r2;
+
+	s0b = REG_SIZE;
+	s1b = s0b + REG_SIZE;
+	s2b = s1b + REG_SIZE;
+	s3 = GET_MID_BITS(s1, s1b, s2b);
+	s2 = GET_MID_BITS(s1, s0b, s1b);
+	s1 = GET_LS_BITS(s1, s0b);
+
+	r1 = this->read_guard(s1);
+	r2 = this->read_guard(s2);
+	this->write_guard(s3);
+
+	this->status = std::max(r1, r2);
+}
+void ID::decode_I_type(signed int &s1, signed int &s2, signed int &s3)
+{
+	unsigned int s0b, s1b, s2b;
+
+	s0b = REG_SIZE;
+	s1b = s0b + REG_SIZE;
+	s2b = WORD_SPEC;
+	s3 = GET_MID_BITS(s1, s1b, s2b);
+	s2 = GET_MID_BITS(s1, s0b, s1b);
+	s1 = GET_LS_BITS(s1, s0b);
+
+	this->status = this->read_guard(s1);
+	this->write_guard(s2);
+}
+
+void ID::decode_J_type(signed int &s1, signed int &s2)
+{
+	unsigned int s0b, s1b;
+
+	s0b = REG_SIZE;
+	s1b = WORD_SPEC;
+	s2 = GET_MID_BITS(s1, s0b, s1b);
+	s1 = GET_LS_BITS(s1, s0b);
+
+	this->status = this->read_guard(*&s1);
 }
 
 // TODO this function is ugly
 void ID::get_instr_fields(
 	signed int &s1, signed int &s2, signed int &s3, Mnemonic &m)
 {
-	unsigned int type, s0b, s1b, s2b;
+	unsigned int type;
 	this->split_instr(s1, type, m);
 
-	// define the parsing bounds
-	s0b = REG_SIZE;
 	switch (type) {
 	case 0b00:
-		// R-TYPE
-		s1b = s0b + REG_SIZE;
-		s2b = s1b + REG_SIZE;
+		this->decode_R_type(s1, s2, s3);
 		break;
 	case 0b01:
-		// I-TYPE
-		s1b = s0b + REG_SIZE;
-		s2b = WORD_SPEC;
+		this->decode_I_type(s1, s2, s3);
 		break;
 	case 0b10:
-		// J-TYPE
-		s1b = WORD_SPEC;
+		this->decode_J_type(s1, s2);
+		break;
 	}
-
-	if (type != 0b10)
-		s3 = GET_MID_BITS(s1, s1b, s2b);
-
-	s2 = GET_MID_BITS(s1, s0b, s1b);
-	s1 = GET_LS_BITS(s1, s0b);
 }
 
 void ID::split_instr(signed int &raw, unsigned int &type, Mnemonic &m)
@@ -67,4 +100,22 @@ void ID::split_instr(signed int &raw, unsigned int &type, Mnemonic &m)
 	}
 
 	raw = (unsigned int)raw >> (TYPE_SIZE + opcode_size);
+}
+
+Response ID::read_guard(signed int &v)
+{
+	Response r;
+	if (this->is_checked_out(v))
+		r = BLOCKED;
+	else {
+		r = OK;
+		v = this->dereference_register(v);
+	}
+	return r;
+}
+
+void ID::write_guard(signed int &v)
+{
+	this->checked_out.push_back(v);
+	v = this->dereference_register(v);
 }
