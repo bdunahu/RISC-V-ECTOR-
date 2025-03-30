@@ -113,17 +113,17 @@ TEST_CASE_METHOD(IFPipeFixture, "fetch waits with old instruction",
 	expected_cycles = this->m_delay + (this->c_delay * 2) + 1;
 
 	for (j = 0; j < this->m_delay + 1; ++j) {
-		i = this->ct->advance(BLOCKED);
+		i = this->ct->advance(STALLED);
 		// check response
 		CHECK(i == nullptr);
 	}
 	for (j = 0; j < this->c_delay; ++j) {
-		i = this->ct->advance(BLOCKED);
+		i = this->ct->advance(STALLED);
 		// check response
 		CHECK(i == nullptr);
 	}
 	for (j = 0; j < expected_cycles - fetch_cycles; ++j) {
-		i = this->ct->advance(BLOCKED);
+		i = this->ct->advance(STALLED);
 		// check response
 		CHECK(i != nullptr);
 	}

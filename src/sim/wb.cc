@@ -6,4 +6,4 @@
 
 WB::WB(Stage *stage) : Stage(stage) { this->id = WRITE; }
 
-InstrDTO *WB::advance(Response p) { return nullptr; }
+void WB::advance_helper() {}

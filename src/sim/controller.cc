@@ -36,3 +36,5 @@ InstrDTO *Controller::advance(Response p)
 	++this->clock_cycle;
 	return r;
 }
+
+void Controller::advance_helper() {}

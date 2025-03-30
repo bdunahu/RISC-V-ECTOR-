@@ -14,8 +14,7 @@ class ID : public Stage
 	 * @return A newly allocated ID object.
 	 */
 	ID(Stage *next);
-
-	InstrDTO *advance(Response p) override;
+	using Stage::advance;
 
 	/* The following methods are made public so that they may be tested, and are
 	 * not to be called from outside classes during standard execution.
@@ -56,10 +55,7 @@ class ID : public Stage
 	void write_guard(signed int &r);
 
   private:
-	/**
-	 * Decodes `curr_instr` and sets status to BLOCKED if a data hazard occurs.
-	 */
-	void advance_helper();
+	void advance_helper() override;
 	/**
 	 * Helper for `get_instr_fields`
 	 * Attempts to parse and dereference instruction arguments. Uses read and

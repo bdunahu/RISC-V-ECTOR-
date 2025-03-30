@@ -199,4 +199,4 @@ EX::EX(Stage *stage) : Stage(stage)
 	};
 }
 
-InstrDTO *EX::advance(Response p) { return nullptr; }
+void EX::advance_helper() {}

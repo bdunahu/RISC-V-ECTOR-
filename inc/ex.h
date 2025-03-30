@@ -14,10 +14,10 @@ class EX : public Stage
 	 * @return A newly allocated EX object.
 	 */
 	EX(Stage *next);
-
-	InstrDTO *advance(Response p) override;
+	using Stage::advance;
 
   private:
+	void advance_helper();
 	/**
 	 * Maps each mnemonic to a function which carries out the instruction's base
 	 * logic.

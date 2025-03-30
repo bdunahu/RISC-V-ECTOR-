@@ -1,8 +1,8 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
+#include "instrDTO.h"
 #include "response.h"
 #include "stage.h"
-#include "instrDTO.h"
 
 /**
  * Houses the clock, and acts as the main API to the GUI.
@@ -18,7 +18,8 @@ class Controller : public Stage
 	 * @return A newly allocated controller object.
 	 */
 	Controller(Stage *stage, Storage *storage, bool is_pipelined);
-
+	InstrDTO *advance(Response p) override;
+	
 	/**
 	 * Direct the simulator to run for `number` clock cycles.
 	 * @param the number of clock cycles to run for.
@@ -36,7 +37,9 @@ class Controller : public Stage
 	 * @return the pc.
 	 */
 	int get_pc();
-	InstrDTO *advance(Response p) override;
+
+  private:
+	void advance_helper() override;
 };
 
 #endif /* CONTROLLER_H_INCLUDED */
