@@ -21,6 +21,18 @@ Storage *Stage::storage;
 bool Stage::is_pipelined;
 int Stage::clock_cycle;
 
+void Stage::set_condition(CC c, bool v)
+{
+	if (v)
+		this->gprs[3] = this->gprs[3] & 1 << c;
+	else
+		this->gprs[3] = this->gprs[3] & ~(1 << c);
+}
+
+bool Stage::get_condition(CC c) {
+	return (this->gprs[3] >> c) & 1;
+}
+
 signed int Stage::dereference_register(signed int v)
 {
 	signed int r;

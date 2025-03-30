@@ -9,6 +9,13 @@
 #include <deque>
 #include <memory>
 
+enum CC {
+	GT,
+	EQ,
+	UF,
+	OF,
+};
+
 class Stage
 {
   public:
@@ -30,6 +37,17 @@ class Stage
 	virtual InstrDTO *advance(Response p) = 0;
 
   protected:
+	/**
+	 * Sets the bit in the condition code register corresponding to `c`.
+	 * @param the condition code to set.
+	 * @param the truthy value to set it to.
+	 */
+	void set_condition(CC c, bool v);
+	/**
+	 * Gets the bit in the condition code register correspondng to `c`.
+	 * @param the condition code to retrieve,
+	 */
+	bool get_condition(CC c);
 	/**
 	 * Helper for `check_out`.
 	 * Returns true if r are not checked out, false otherwise.
