@@ -15,7 +15,7 @@ class ID : public Stage
 	 */
 	ID(Stage *next);
 
-	Response advance(InstrDTO &next_instr, Response p) override;
+	InstrDTO *advance(Response p) override;
 
 	/* The following methods are made public so that they may be tested, and are
 	 * not to be called from outside classes during standard execution.

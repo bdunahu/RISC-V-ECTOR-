@@ -8,21 +8,24 @@
 
 ID::ID(Stage *stage) : Stage(stage) { this->id = DCDE; }
 
-Response ID::advance(InstrDTO &next_instr, Response p)
+InstrDTO *ID::advance(Response p)
 {
+	InstrDTO *r = nullptr;
 	Response n;
 
 	this->advance_helper();
 	if (this->status == OK && p == OK) {
-	  // mutual consent
+		// mutual consent
 		this->curr_instr->set_time_of(this->id, this->clock_cycle);
-		next_instr = *this->curr_instr;
+		r = new InstrDTO(*this->curr_instr);
+		delete curr_instr;
 		curr_instr = nullptr;
 	}
 
 	n = (p != OK || this->status != OK) ? BLOCKED : OK;
 	// the power of consent
-	n = this->next->advance(curr_instr, n);
+	this->curr_instr = this->next->advance(n);
+	return r;
 }
 
 void ID::get_instr_fields(

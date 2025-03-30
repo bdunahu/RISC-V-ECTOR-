@@ -30,35 +30,36 @@ class IFPipeFixture
 	/**
 	 * Fetch a clean line not in cache.
 	 */
-	void fetch_through(InstrDTO &instr)
+	InstrDTO *fetch_through()
 	{
+		InstrDTO *r;
 		int i;
-		Response r;
 
 		for (i = 0; i < this->m_delay + 1; ++i) {
-			r = this->ct->advance(instr, OK);
+			r = this->ct->advance(OK);
 			// check response
-			CHECK(r == STALLED);
+			CHECK(r == nullptr);
 		}
-		this->fetch_cache(instr);
+		return this->fetch_cache();
 	}
 
 	/**
 	 * Fetch a line in cache.
 	 */
-	void fetch_cache(InstrDTO &instr)
+	InstrDTO *fetch_cache()
 	{
+		InstrDTO *r;
 		int i;
-		Response r;
 
 		for (i = 0; i < this->c_delay; ++i) {
-			r = this->ct->advance(instr, OK);
+			r = this->ct->advance(OK);
 			// check response
-			CHECK(r == STALLED);
+			CHECK(r == nullptr);
 		}
-		r = this->ct->advance(instr, OK);
+		r = this->ct->advance(OK);
 		// check response
-		CHECK(r == OK);
+		CHECK(r != nullptr);
+		return r;
 	}
 
 	int m_delay = 3;
@@ -71,60 +72,65 @@ class IFPipeFixture
 
 TEST_CASE_METHOD(IFPipeFixture, "fetch returns single instuction", "[if_pipe]")
 {
-	InstrDTO instr;
+	InstrDTO *i;
 	int expected_cycles;
 
 	expected_cycles = this->m_delay + this->c_delay + 2;
-	this->fetch_through(instr);
+	i = this->fetch_through();
+	CHECK(i->get_time_of(FETCH) == expected_cycles);
+	REQUIRE(i->get_instr_bits() == this->p[0]);
 
-	CHECK(instr.get_time_of(FETCH) == expected_cycles);
-	REQUIRE(instr.get_instr_bits() == this->p[0]);
+	delete i;
 }
 
 TEST_CASE_METHOD(IFPipeFixture, "fetch returns two instuctions", "[if_pipe]")
 {
-	InstrDTO instr;
+	InstrDTO *i;
 	int expected_cycles;
 
 	expected_cycles = this->m_delay + this->c_delay + 2;
-	this->fetch_through(instr);
+	i = this->fetch_through();
 
-	CHECK(instr.get_time_of(FETCH) == expected_cycles);
-	REQUIRE(instr.get_instr_bits() == this->p[0]);
+	CHECK(i->get_time_of(FETCH) == expected_cycles);
+	REQUIRE(i->get_instr_bits() == this->p[0]);
+	delete i;
 
 	expected_cycles += this->c_delay + 1;
-	this->fetch_cache(instr);
+	i = this->fetch_cache();
 
-	CHECK(instr.get_time_of(FETCH) == expected_cycles);
-	REQUIRE(instr.get_instr_bits() == this->p[1]);
+	CHECK(i->get_time_of(FETCH) == expected_cycles);
+	REQUIRE(i->get_instr_bits() == this->p[1]);
+	delete i;
 }
 
-TEST_CASE_METHOD(IFPipeFixture, "fetch waits with old instruction", "[if_pipe]")
+TEST_CASE_METHOD(IFPipeFixture, "fetch waits with old instruction",
+"[if_pipe]")
 {
-	Response r;
-	InstrDTO instr;
-	int i, expected_cycles, fetch_cycles;
+	InstrDTO *i;
+	int j, expected_cycles, fetch_cycles;
 
 	fetch_cycles = this->m_delay + this->c_delay + 2;
 	expected_cycles = this->m_delay + (this->c_delay * 2) + 1;
 
-	for (i = 0; i < this->m_delay + 1; ++i) {
-		r = this->ct->advance(instr, BLOCKED);
+	for (j = 0; j < this->m_delay + 1; ++j) {
+		i = this->ct->advance(BLOCKED);
 		// check response
-		CHECK(r == STALLED);
+		CHECK(i == nullptr);
 	}
-	for (i = 0; i < this->c_delay; ++i) {
-		r = this->ct->advance(instr, BLOCKED);
+	for (j = 0; j < this->c_delay; ++j) {
+		i = this->ct->advance(BLOCKED);
 		// check response
-		CHECK(r == STALLED);
+		CHECK(i == nullptr);
 	}
-	for (i = 0; i < expected_cycles - fetch_cycles; ++i) {
-		r = this->ct->advance(instr, BLOCKED);
+	for (j = 0; j < expected_cycles - fetch_cycles; ++j) {
+		i = this->ct->advance(BLOCKED);
 		// check response
-		CHECK(r == OK);
+		CHECK(i != nullptr);
 	}
 
-	r = this->ct->advance(instr, OK);
-	CHECK(instr.get_time_of(FETCH) == expected_cycles);
-	REQUIRE(instr.get_instr_bits() == this->p[0]);
+	i = this->ct->advance(OK);
+	CHECK(i->get_time_of(FETCH) == expected_cycles);
+	REQUIRE(i->get_instr_bits() == this->p[0]);
+
+	delete i;
 }
