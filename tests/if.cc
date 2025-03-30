@@ -36,9 +36,9 @@ class IFPipeFixture
 		Response r;
 
 		for (i = 0; i < this->m_delay + 1; ++i) {
-			r = this->ct->advance(instr);
+			r = this->ct->advance(instr, OK);
 			// check response
-			CHECK(r == BLOCKED);
+			CHECK(r == STALLED);
 		}
 		this->fetch_cache(instr);
 	}
@@ -52,11 +52,11 @@ class IFPipeFixture
 		Response r;
 
 		for (i = 0; i < this->c_delay; ++i) {
-			r = this->ct->advance(instr);
+			r = this->ct->advance(instr, OK);
 			// check response
-			CHECK(r == WAIT);
+			CHECK(r == STALLED);
 		}
-		r = this->ct->advance(instr);
+		r = this->ct->advance(instr, OK);
 		// check response
 		CHECK(r == OK);
 	}
@@ -77,7 +77,7 @@ TEST_CASE_METHOD(IFPipeFixture, "fetch returns single instuction", "[if_pipe]")
 	expected_cycles = this->m_delay + this->c_delay + 2;
 	this->fetch_through(instr);
 
-	CHECK(instr.get_if_cycle() == expected_cycles);
+	CHECK(instr.get_time_of(FETCH) == expected_cycles);
 	REQUIRE(instr.get_instr_bits() == this->p[0]);
 }
 
@@ -89,12 +89,42 @@ TEST_CASE_METHOD(IFPipeFixture, "fetch returns two instuctions", "[if_pipe]")
 	expected_cycles = this->m_delay + this->c_delay + 2;
 	this->fetch_through(instr);
 
-	CHECK(instr.get_if_cycle() == expected_cycles);
+	CHECK(instr.get_time_of(FETCH) == expected_cycles);
 	REQUIRE(instr.get_instr_bits() == this->p[0]);
 
 	expected_cycles += this->c_delay + 1;
 	this->fetch_cache(instr);
 
-	CHECK(instr.get_if_cycle() == expected_cycles);
+	CHECK(instr.get_time_of(FETCH) == expected_cycles);
 	REQUIRE(instr.get_instr_bits() == this->p[1]);
+}
+
+TEST_CASE_METHOD(IFPipeFixture, "fetch waits with old instruction", "[if_pipe]")
+{
+	Response r;
+	InstrDTO instr;
+	int i, expected_cycles, fetch_cycles;
+
+	fetch_cycles = this->m_delay + this->c_delay + 2;
+	expected_cycles = this->m_delay + (this->c_delay * 2) + 1;
+
+	for (i = 0; i < this->m_delay + 1; ++i) {
+		r = this->ct->advance(instr, BLOCKED);
+		// check response
+		CHECK(r == STALLED);
+	}
+	for (i = 0; i < this->c_delay; ++i) {
+		r = this->ct->advance(instr, BLOCKED);
+		// check response
+		CHECK(r == STALLED);
+	}
+	for (i = 0; i < expected_cycles - fetch_cycles; ++i) {
+		r = this->ct->advance(instr, BLOCKED);
+		// check response
+		CHECK(r == OK);
+	}
+
+	r = this->ct->advance(instr, OK);
+	CHECK(instr.get_time_of(FETCH) == expected_cycles);
+	REQUIRE(instr.get_instr_bits() == this->p[0]);
 }

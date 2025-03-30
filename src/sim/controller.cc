@@ -10,6 +10,8 @@ Controller::Controller(Stage *stage, Storage *storage, bool is_pipelined)
 	this->is_pipelined = is_pipelined;
 	this->pc = 0x0;
 	this->gprs = {0};
+	// grant side-door access
+	this->id = SIDE;
 }
 
 void Controller::run_for(int number)
@@ -17,7 +19,7 @@ void Controller::run_for(int number)
 	InstrDTO instr;
 	int i;
 	for (i = 0; i < number; ++i) {
-		this->advance(instr);
+		this->advance(instr, OK);
 	}
 }
 
@@ -27,11 +29,11 @@ std::array<int, GPR_NUM> Controller::get_gprs() { return this->gprs; }
 
 int Controller::get_pc() { return this->pc; }
 
-Response Controller::advance(InstrDTO &i)
+Response Controller::advance(InstrDTO &next_instr, Response p)
 {
 	Response r;
- 
-	r = this->next->advance(i);
+
+	r = this->next->advance(next_instr, p);
 	++this->clock_cycle;
 	return r;
 }

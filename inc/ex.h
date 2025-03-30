@@ -7,9 +7,14 @@
 class EX : public Stage
 {
   public:
-	using Stage::Stage;
+	/**
+	 * Constructor.
+	 * @param The next stage in the pipeline.
+	 * @return A newly allocated EX object.
+	 */
+	EX(Stage *next);
 
-	Response advance(InstrDTO &i) override;
+	Response advance(InstrDTO &next_instr, Response p) override;
 };
 
 #endif /* EX_H_INCLUDED */

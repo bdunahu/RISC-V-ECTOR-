@@ -7,9 +7,14 @@
 class MM : public Stage
 {
   public:
-	using Stage::Stage;
+	/**
+	 * Constructor.
+	 * @param The next stage in the pipeline.
+	 * @return A newly allocated MM object.
+	 */
+	MM(Stage *next);
 
-	Response advance(InstrDTO &i) override;
+	Response advance(InstrDTO &next_instr, Response p) override;
 };
 
 #endif /* MM_H_INCLUDED */

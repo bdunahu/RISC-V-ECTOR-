@@ -1,12 +1,9 @@
 #include "ex.h"
+#include "accessor.h"
 #include "instrDTO.h"
-#include "logger.h"
 #include "response.h"
+#include "stage.h"
 
-static Logger *global_log = Logger::getInstance();
+EX::EX(Stage *stage) : Stage(stage) { this->id = EXEC; }
 
-Response EX::advance(InstrDTO &i)
-{
-	global_log->log(INFO, "hello from execute!");
-	return OK;
-}
+Response EX::advance(InstrDTO &next_instr, Response p) { return OK; }

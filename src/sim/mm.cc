@@ -1,12 +1,12 @@
 #include "mm.h"
-#include "logger.h"
-#include "response.h"
+#include "accessor.h"
 #include "instrDTO.h"
+#include "response.h"
+#include "stage.h"
 
-static Logger *global_log = Logger::getInstance();
+MM::MM(Stage *stage) : Stage(stage) { this->id = MEM; } 
 
-Response MM::advance(InstrDTO &i)
+Response MM::advance(InstrDTO &next_instr, Response p)
 {
-	global_log->log(INFO, "hello from memory!");
 	return OK;
 }

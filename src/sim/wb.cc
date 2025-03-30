@@ -1,12 +1,9 @@
 #include "wb.h"
+#include "accessor.h"
 #include "instrDTO.h"
-#include "logger.h"
 #include "response.h"
+#include "stage.h"
 
-static Logger *global_log = Logger::getInstance();
+WB::WB(Stage *stage) : Stage(stage) { this->id = WRITE; }
 
-Response WB::advance(InstrDTO &i)
-{
-	global_log->log(INFO, "hello from write back!");
-	return OK;
-}
+Response WB::advance(InstrDTO &next_instr, Response p) { return OK; }
