@@ -22,7 +22,7 @@ Response ID::advance(InstrDTO &next_instr, Response p)
 
 	n = (p != OK || this->status != OK) ? BLOCKED : OK;
 	// the power of consent
-	n = this->next->advance(next_instr, n);
+	n = this->next->advance(curr_instr, n);
 }
 
 void ID::get_instr_fields(
