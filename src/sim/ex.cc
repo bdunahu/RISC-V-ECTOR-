@@ -8,7 +8,7 @@
 
 // clang-format off
 #define INIT_INSTRUCTION(mnemonic, body)					\
-	{mnemonic, [this](signed int &s1, signed int &s2) { \
+	{mnemonic, [this](signed int &s1, signed int s2) { \
 		body; \
 	}}
 // clang-format on
@@ -22,74 +22,181 @@ EX::EX(Stage *stage) : Stage(stage)
 		INIT_INSTRUCTION(
 			ADD,
 			{
-				this->overflow_guard(s1, s2);
 				s1 = s1 + s2;
+				(void)this;
 			}),
 
 		INIT_INSTRUCTION(
 			SUB,
 			{
-				this->overflow_guard(s1, -s2);
 				s1 = s1 - s2;
+				(void)this;
 			}),
 
-		INIT_INSTRUCTION(MUL, {}),
-		INIT_INSTRUCTION(QUOT, {}),
-		INIT_INSTRUCTION(REM, {}),
-		INIT_INSTRUCTION(SFTR, {}),
-		INIT_INSTRUCTION(SFTL, {}),
-		INIT_INSTRUCTION(AND, {}),
-		INIT_INSTRUCTION(OR, {}),
-		INIT_INSTRUCTION(NOT, {}),
-		INIT_INSTRUCTION(XOR, {}),
-		INIT_INSTRUCTION(ADDV, {}),
-		INIT_INSTRUCTION(SUBV, {}),
-		INIT_INSTRUCTION(MULV, {}),
-		INIT_INSTRUCTION(DIVV, {}),
-		INIT_INSTRUCTION(CMP, {}),
-		INIT_INSTRUCTION(CEV, {}),
+		INIT_INSTRUCTION(
+			MUL,
+			{
+				s1 = s1 * s2;
+				(void)this;
+			}),
+
+		INIT_INSTRUCTION(
+			QUOT,
+			{
+				s1 = s1 / s2;
+				(void)this;
+			}),
+
+		INIT_INSTRUCTION(
+			REM,
+			{
+				s1 = s1 % s2;
+				(void)this;
+			}),
+
+		INIT_INSTRUCTION(
+			SFTR,
+			{
+				s1 = s1 >> s2;
+				(void)this;
+			}),
+
+		INIT_INSTRUCTION(
+			SFTL,
+			{
+				s1 = s1 << s2;
+				(void)this;
+			}),
+
+		INIT_INSTRUCTION(
+			AND,
+			{
+				s1 = s1 & s2;
+				(void)this;
+			}),
+
+		INIT_INSTRUCTION(
+			OR,
+			{
+				s1 = s1 | s2;
+				(void)this;
+			}),
+
+		INIT_INSTRUCTION(
+			NOT,
+			{
+				s1 = ~s1;
+				(void)s2;
+				(void)this;
+			}),
+
+		INIT_INSTRUCTION(
+			XOR,
+			{
+				s1 = s1 ^ s2;
+				(void)this;
+			}),
+
+		INIT_INSTRUCTION(
+			ADDV,
+			{
+				(void)s2;
+				(void)s1;
+				(void)this;
+			}),
+
+		INIT_INSTRUCTION(
+			SUBV,
+			{
+				(void)s2;
+				(void)s1;
+				(void)this;
+			}),
+
+		INIT_INSTRUCTION(
+			MULV,
+			{
+				(void)s2;
+				(void)s1;
+				(void)this;
+			}),
+
+		INIT_INSTRUCTION(
+			DIVV,
+			{
+				(void)s2;
+				(void)s1;
+				(void)this;
+			}),
+
+		INIT_INSTRUCTION(
+			CMP,
+			{
+				(s1 > s2) ? this->set_condition(GT, true)
+						  : this->set_condition(GT, false);
+				(s1 == s2) ? this->set_condition(EQ, true)
+						   : this->set_condition(EQ, false);
+			}),
+
+		INIT_INSTRUCTION(
+			CEV,
+			{
+				(void)s2;
+				(void)s1;
+				(void)this;
+			}),
 
 		/* I type instructions */
 		INIT_INSTRUCTION(LOAD, {}),
+
 		INIT_INSTRUCTION(LOADV, {}),
+
 		INIT_INSTRUCTION(ADDI, {}),
+
 		INIT_INSTRUCTION(SUBI, {}),
+
 		INIT_INSTRUCTION(SFTRI, {}),
+
 		INIT_INSTRUCTION(SFTL, {}),
+
 		INIT_INSTRUCTION(ANDI, {}),
+
 		INIT_INSTRUCTION(ORI, {}),
+
 		INIT_INSTRUCTION(XORI, {}),
+
 		INIT_INSTRUCTION(STORE, {}),
+
 		INIT_INSTRUCTION(STOREV, {}),
 
 		/* J type instructions */
 		INIT_INSTRUCTION(JMP, {}),
+
 		INIT_INSTRUCTION(JRL, {}),
+
 		INIT_INSTRUCTION(JAL, {}),
+
 		INIT_INSTRUCTION(BEQ, {}),
+
 		INIT_INSTRUCTION(BGT, {}),
+
 		INIT_INSTRUCTION(BUF, {}),
+
 		INIT_INSTRUCTION(BOF, {}),
+
 		INIT_INSTRUCTION(PUSH, {}),
+
 		INIT_INSTRUCTION(POP, {}),
 
 		/* NOP */
-		INIT_INSTRUCTION(NOP, (void)s2; (void)s1;),
+		INIT_INSTRUCTION(
+			NOP,
+			{
+				(void)s2;
+				(void)s1;
+				(void)this;
+			}),
 	};
 }
 
 InstrDTO *EX::advance(Response p) { return nullptr; }
-
-void EX::overflow_guard(signed int a, signed int b)
-{
-	if (a >= 0 && b >= 0 && (a > MAX_INT - b)) {
-		this->set_condition(OF, true);
-		this->set_condition(UF, false);
-	} else if (a < 0 && b < 0 && (a < (-MAX_INT) - 1 - b)) {
-		this->set_condition(OF, false);
-		this->set_condition(UF, true);
-	} else {
-		this->set_condition(OF, false);
-		this->set_condition(UF, false);
-	}
-}

@@ -19,19 +19,13 @@ class EX : public Stage
 
   private:
 	/**
-	 * Sets the (over|under)flow condition code if adding `a` and `b` results in
-	 * either.
-	 * @param the first operand
-	 * @param the second operand
-	 */
-	void overflow_guard(signed int a, signed int b);
-	/**
 	 * Maps each mnemonic to a function which carries out the instruction's base
 	 * logic.
+	 * All instructions store the result into s1.
 	 */
 	std::unordered_map<
 		Mnemonic,
-		std::function<void(signed int &s1, signed int &s2)>>
+		std::function<void(signed int &s1, signed int s2)>>
 		instr_map;
 };
 
