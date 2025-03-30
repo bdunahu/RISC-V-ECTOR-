@@ -45,11 +45,6 @@ class EXFixture
 	Controller *ct;
 };
 
-std::unordered_map<Mnemonic, signed int> results = {
-	{ADD, 42},
-	{SUB, 83958},
-};
-
 TEST_CASE_METHOD(EXFixture, "ADD within bounds", "[ex]")
 {
 	signed int s1 = 0, s2 = 0;
@@ -421,5 +416,198 @@ TEST_CASE_METHOD(EXFixture, "CMP greater", "[ex]")
 // }
 
 // TEST_CASE_METHOD(EXFixture, "CEQ greater", "[ex]")
+// {
+// }
+
+TEST_CASE_METHOD(EXFixture, "LOAD", "[ex]")
+{
+	signed int s1 = 0, s2 = 0;
+	Mnemonic m;
+	InstrDTO *i;
+
+	m = LOAD;
+	s1 = 42000, s2 = -41958;
+	i = execute_instr(s1, s2, m);
+
+	CHECK(i->get_s1() == 42);
+	CHECK(!ct->get_condition(OF));
+	CHECK(!ct->get_condition(UF));
+
+	delete i;
+}
+
+// TEST_CASE_METHOD(EXFixture, "LOADV", "[ex]")
+// {
+// }
+
+TEST_CASE_METHOD(EXFixture, "ADDI within bounds", "[ex]")
+{
+	signed int s1 = 0, s2 = 0;
+	Mnemonic m;
+	InstrDTO *i;
+
+	m = ADDI;
+	s1 = 42000, s2 = -41958;
+	i = execute_instr(s1, s2, m);
+
+	CHECK(i->get_s1() == 42);
+	CHECK(!ct->get_condition(OF));
+	CHECK(!ct->get_condition(UF));
+
+	delete i;
+}
+
+// TEST_CASE_METHOD(EXFixture, "ADDI overflow", "[ex]")
+// {
+// }
+
+// TEST_CASE_METHOD(EXFixture, "ADDI underflow", "[ex]")
+// {
+// }
+
+TEST_CASE_METHOD(EXFixture, "SUBI within bounds", "[ex]")
+{
+	signed int s1 = 0, s2 = 0;
+	Mnemonic m;
+	InstrDTO *i;
+
+	m = SUBI;
+	s1 = 200, s2 = 131;
+	i = execute_instr(s1, s2, m);
+
+	CHECK(i->get_s1() == 69);
+	CHECK(!ct->get_condition(OF));
+	CHECK(!ct->get_condition(UF));
+
+	delete i;
+}
+
+// TEST_CASE_METHOD(EXFixture, "SUBI overflow", "[ex]")
+// {
+// }
+
+// TEST_CASE_METHOD(EXFixture, "SUBI underflow", "[ex]")
+// {
+// }
+
+TEST_CASE_METHOD(EXFixture, "SFTRI within bounds", "[ex]")
+{
+	signed int s1 = 0, s2 = 0;
+	Mnemonic m;
+	InstrDTO *i;
+
+	m = SFTRI;
+	s1 = 1300, s2 = 6;
+	i = execute_instr(s1, s2, m);
+
+	CHECK(i->get_s1() == 20);
+	CHECK(!ct->get_condition(OF));
+	CHECK(!ct->get_condition(UF));
+
+	delete i;
+}
+
+// TEST_CASE_METHOD(EXFixture, "SFTRI overflow", "[ex]")
+// {
+// }
+
+// TEST_CASE_METHOD(EXFixture, "SFTRI underflow", "[ex]")
+// {
+// }
+
+TEST_CASE_METHOD(EXFixture, "SFTLI within bounds", "[ex]")
+{
+	signed int s1 = 0, s2 = 0;
+	Mnemonic m;
+	InstrDTO *i;
+
+	m = SFTLI;
+	s1 = 13, s2 = 6;
+	i = execute_instr(s1, s2, m);
+
+	CHECK(i->get_s1() == 832);
+	CHECK(!ct->get_condition(OF));
+	CHECK(!ct->get_condition(UF));
+
+	delete i;
+}
+
+// TEST_CASE_METHOD(EXFixture, "SFTLI overflow", "[ex]")
+// {
+// }
+
+// TEST_CASE_METHOD(EXFixture, "SFTLI underflow", "[ex]")
+// {
+// }
+
+TEST_CASE_METHOD(EXFixture, "ANDI", "[ex]")
+{
+	signed int s1 = 0, s2 = 0;
+	Mnemonic m;
+	InstrDTO *i;
+
+	m = ANDI;
+	s1 = 1234, s2 = 5678;
+	i = execute_instr(s1, s2, m);
+
+	CHECK(i->get_s1() == 1026);
+	CHECK(!ct->get_condition(OF));
+	CHECK(!ct->get_condition(UF));
+
+	delete i;
+}
+
+TEST_CASE_METHOD(EXFixture, "ORI", "[ex]")
+{
+	signed int s1 = 0, s2 = 0;
+	Mnemonic m;
+	InstrDTO *i;
+
+	m = ORI;
+	s1 = 1234, s2 = 5678;
+	i = execute_instr(s1, s2, m);
+
+	CHECK(i->get_s1() == 5886);
+	CHECK(!ct->get_condition(OF));
+	CHECK(!ct->get_condition(UF));
+
+	delete i;
+}
+
+TEST_CASE_METHOD(EXFixture, "XORI", "[ex]")
+{
+	signed int s1 = 0, s2 = 0;
+	Mnemonic m;
+	InstrDTO *i;
+
+	m = XORI;
+	s1 = 1234, s2 = 5678;
+	i = execute_instr(s1, s2, m);
+
+	CHECK(i->get_s1() == 4860);
+	CHECK(!ct->get_condition(OF));
+	CHECK(!ct->get_condition(UF));
+
+	delete i;
+}
+
+TEST_CASE_METHOD(EXFixture, "STORE", "[ex]")
+{
+	signed int s1 = 0, s2 = 0;
+	Mnemonic m;
+	InstrDTO *i;
+
+	m = LOAD;
+	s1 = 42000, s2 = -41958;
+	i = execute_instr(s1, s2, m);
+
+	CHECK(i->get_s1() == 42);
+	CHECK(!ct->get_condition(OF));
+	CHECK(!ct->get_condition(UF));
+
+	delete i;
+}
+
+// TEST_CASE_METHOD(EXFixture, "STOREV", "[ex]")
 // {
 // }

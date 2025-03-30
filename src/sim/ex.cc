@@ -147,27 +147,84 @@ EX::EX(Stage *stage) : Stage(stage)
 			}),
 
 		/* I type instructions */
-		INIT_INSTRUCTION(LOAD, {}),
+		INIT_INSTRUCTION(
+			LOAD,
+			{
+				s1 = s1 + s2;
+				(void)this;
+			}),
 
-		INIT_INSTRUCTION(LOADV, {}),
+		INIT_INSTRUCTION(
+			LOADV,
+			{
+				(void)s2;
+				(void)s1;
+				(void)this;
+			}),
 
-		INIT_INSTRUCTION(ADDI, {}),
+		INIT_INSTRUCTION(
+			ADDI,
+			{
+				s1 = s1 + s2;
+				(void)this;
+			}),
 
-		INIT_INSTRUCTION(SUBI, {}),
+		INIT_INSTRUCTION(
+			SUBI,
+			{
+				s1 = s1 - s2;
+				(void)this;
+			}),
 
-		INIT_INSTRUCTION(SFTRI, {}),
+		INIT_INSTRUCTION(
+			SFTRI,
+			{
+				s1 = s1 >> s2;
+				(void)this;
+			}),
 
-		INIT_INSTRUCTION(SFTL, {}),
+		INIT_INSTRUCTION(
+			SFTLI,
+			{
+				s1 = s1 << s2;
+				(void)this;
+			}),
 
-		INIT_INSTRUCTION(ANDI, {}),
+		INIT_INSTRUCTION(
+			ANDI,
+			{
+				s1 = s1 & s2;
+				(void)this;
+			}),
 
-		INIT_INSTRUCTION(ORI, {}),
+		INIT_INSTRUCTION(
+			ORI,
+			{
+				s1 = s1 | s2;
+				(void)this;
+			}),
 
-		INIT_INSTRUCTION(XORI, {}),
+		INIT_INSTRUCTION(
+			XORI,
+			{
+				s1 = s1 ^ s2;
+				(void)this;
+			}),
 
-		INIT_INSTRUCTION(STORE, {}),
+		INIT_INSTRUCTION(
+			STORE,
+			{
+				s1 = s1 + s2;
+				(void)this;
+			}),
 
-		INIT_INSTRUCTION(STOREV, {}),
+		INIT_INSTRUCTION(
+			STOREV,
+			{
+				(void)s2;
+				(void)s1;
+				(void)this;
+			}),
 
 		/* J type instructions */
 		INIT_INSTRUCTION(JMP, {}),
@@ -199,10 +256,11 @@ EX::EX(Stage *stage) : Stage(stage)
 	};
 }
 
-void EX::advance_helper() {
+void EX::advance_helper()
+{
 	signed int s1, s2;
 	Mnemonic m;
-	
+
 	// it may be good to ensure we are not doing
 	// work that has already been done
 	if (this->curr_instr) {
