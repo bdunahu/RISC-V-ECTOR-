@@ -5,8 +5,6 @@
 #include "stage.h"
 #include "utils.h"
 
-static Logger *global_log = Logger::getInstance();
-
 DUM::DUM(Stage *stage) : Stage(stage) { this->id = IDLE; }
 
 InstrDTO *DUM::advance(Response p)
@@ -24,15 +22,7 @@ InstrDTO *DUM::advance(Response p)
 	return r;
 }
 
-void DUM::advance_helper()
-{
-	if (this->curr_instr)
-		global_log->log(
-			DEBUG, string_format(
-					  "Using bits: %i ", this->curr_instr->get_instr_bits()));
-	else
-		global_log->log(DEBUG, "curr_instr is null");
-}
+void DUM::advance_helper() {}
 
 void DUM::set_curr_instr(InstrDTO *d)
 {

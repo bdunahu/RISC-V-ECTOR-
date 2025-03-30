@@ -125,6 +125,8 @@ TEST_CASE_METHOD(IDFixture, "Parse arbitrary r-type # two", "[id]")
 	CHECK(i->get_s2() == 0x00000000);
 	CHECK(i->get_s3() == 0x00000000);
 	CHECK(i->get_mnemonic() == SUB);
+
+	delete i;
 }
 
 TEST_CASE_METHOD(IDFixture, "Parse arbitrary i-type # one", "[id]")
@@ -144,6 +146,8 @@ TEST_CASE_METHOD(IDFixture, "Parse arbitrary i-type # one", "[id]")
 	CHECK(i->get_s2() == 0x00000000);
 	CHECK(i->get_s3() == 0xF);
 	CHECK(i->get_mnemonic() == SFTLI);
+
+	delete i;
 }
 
 TEST_CASE_METHOD(IDFixture, "Parse arbitrary i-type # two", "[id]")
@@ -163,6 +167,8 @@ TEST_CASE_METHOD(IDFixture, "Parse arbitrary i-type # two", "[id]")
 	CHECK(i->get_s2() == 0x00000000);
 	CHECK(i->get_s3() == 0xCC);
 	CHECK(i->get_mnemonic() == STORE);
+
+	delete i;
 }
 
 TEST_CASE_METHOD(IDFixture, "Parse arbitrary j-type # one", "[id]")
@@ -181,6 +187,8 @@ TEST_CASE_METHOD(IDFixture, "Parse arbitrary j-type # one", "[id]")
 	CHECK(i->get_s1() == 0x00000000); // registers are empty
 	CHECK(i->get_s2() == 0x3456);
 	CHECK(i->get_mnemonic() == BOF);
+
+	delete i;
 }
 
 TEST_CASE_METHOD(IDFixture, "Parse arbitrary j-type # two", "[id]")
@@ -199,6 +207,8 @@ TEST_CASE_METHOD(IDFixture, "Parse arbitrary j-type # two", "[id]")
 	CHECK(i->get_s1() == 0x00000000); // registers are empty
 	CHECK(i->get_s2() == 0xBBCCF);
 	CHECK(i->get_mnemonic() == JAL);
+
+	delete i;
 }
 
 TEST_CASE_METHOD(IDFixture, "read does not conflict with read", "[id]")
