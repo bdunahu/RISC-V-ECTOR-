@@ -12,10 +12,8 @@ class IDFixture
   public:
 	IDFixture()
 	{
-		Dram *dr;
-
 		this->dr = new Dram(3);
-		this->c = new Cache(dr, 1);
+		this->c = new Cache(this->dr, 1);
 		IF *f = new IF(nullptr);
 		this->d = new ID(f);
 		this->ct = new Controller(this->d, this->c, true);
