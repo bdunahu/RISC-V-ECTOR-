@@ -25,7 +25,7 @@ class IF : public Stage
 	 * the nullptr.
 	 * @return STALLED if we are waiting on the storage devices, OK otherwise.
 	 */
-	void fetch_with_buffer();
+	void advance_helper();
 };
 
 #endif /* IF_H_INCLUDED */

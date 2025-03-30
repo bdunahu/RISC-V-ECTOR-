@@ -17,6 +17,10 @@ class ID : public Stage
 
 	Response advance(InstrDTO &next_instr, Response p) override;
 
+	/* The following methods are made public so that they may be tested, and are
+	 * not to be called from outside classes during standard execution.
+	 */
+
 	/**
 	 * Parse an instruction into a type, opcode, and fields. If the type is
 	 * invalid, only the type field will be set.
@@ -33,11 +37,6 @@ class ID : public Stage
 	 */
 	void get_instr_fields(
 		signed int &s1, signed int &s2, signed int &s3, Mnemonic &m);
-
-	/* The following methods are made public so that they may be tested, and are
-	 * not to be called from outside classes during standard execution.
-	 */
-
 	/**
 	 * Facilitates register checkout and data hazard management.
 	 * It does this by checking that the register passed in is not currently
@@ -57,11 +56,15 @@ class ID : public Stage
 	void write_guard(signed int &r);
 
   private:
-	// TODO write me
 	/**
-	 * Helper for ``
-	 * Attempts to parse and dereference instruction arguments. If a desc
-
+	 * Decodes `curr_instr` and sets status to BLOCKED if a data hazard occurs.
+	 */
+	void advance_helper();
+	/**
+	 * Helper for `get_instr_fields`
+	 * Attempts to parse and dereference instruction arguments. Uses read and
+	 * write guards to prevent RAW conflicts.
+	 *
 	 * @param the resulting first field. To call this function properly, this
 	 * field must contain the section of the instruction to be parsed.
 	 * @param the resulting second field.

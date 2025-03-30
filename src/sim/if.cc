@@ -8,7 +8,7 @@ IF::IF(Stage *stage) : Stage(stage) { this->id = FETCH; }
 
 Response IF::advance(InstrDTO &next_instr, Response p)
 {
-	this->fetch_with_buffer();
+	this->advance_helper();
 	if (this->status == OK && p == OK) {
 		// mutual consent
 		++this->pc;
@@ -19,7 +19,7 @@ Response IF::advance(InstrDTO &next_instr, Response p)
 	return this->status;
 }
 
-void IF::fetch_with_buffer()
+void IF::advance_helper()
 {
 	Response r;
 	signed int bits;
