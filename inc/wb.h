@@ -1,8 +1,8 @@
 #ifndef WB_H
 #define WB_H
+#include "instrDTO.h"
 #include "response.h"
 #include "stage.h"
-#include "instrDTO.h"
 
 class WB : public Stage
 {
@@ -14,7 +14,7 @@ class WB : public Stage
 	 */
 	WB(Stage *next);
 
-	Response advance(InstrDTO &next_instr, Response p) override;
+	InstrDTO *advance(Response p) override;
 };
 
 #endif /* WB_H_INCLUDED */

@@ -14,7 +14,7 @@ class MM : public Stage
 	 */
 	MM(Stage *next);
 
-	Response advance(InstrDTO &next_instr, Response p) override;
+	InstrDTO *advance(Response p) override;
 };
 
 #endif /* MM_H_INCLUDED */

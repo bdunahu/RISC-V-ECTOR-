@@ -27,7 +27,7 @@ class Stage
 	 * @return a response, indicating whether this pipeline stage is stalling,
 	 * busy, or done.
 	 */
-	virtual Response advance(InstrDTO &next_instr, Response p) = 0;
+	virtual InstrDTO *advance(Response p) = 0;
 
   protected:
 	/**

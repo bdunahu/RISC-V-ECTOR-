@@ -15,7 +15,7 @@ class IF : public Stage
 	 */
 	IF(Stage *next);
 
-	Response advance(InstrDTO &next_instr, Response p) override;
+	InstrDTO *advance(Response p) override;
 
   private:
 	/**

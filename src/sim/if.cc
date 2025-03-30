@@ -6,17 +6,21 @@
 
 IF::IF(Stage *stage) : Stage(stage) { this->id = FETCH; }
 
-Response IF::advance(InstrDTO &next_instr, Response p)
+InstrDTO *IF::advance(Response p)
 {
+	InstrDTO *r = nullptr;
+
 	this->advance_helper();
 	if (this->status == OK && p == OK) {
 		// mutual consent
 		++this->pc;
 		this->curr_instr->set_time_of(this->id, this->clock_cycle);
-		next_instr = *this->curr_instr;
+		r = new InstrDTO(*this->curr_instr);
+		delete curr_instr;
 		curr_instr = nullptr;
 	}
-	return this->status;
+
+	return r;
 }
 
 void IF::advance_helper()

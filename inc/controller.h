@@ -36,7 +36,7 @@ class Controller : public Stage
 	 * @return the pc.
 	 */
 	int get_pc();
-	Response advance(InstrDTO &i, Response p) override;
+	InstrDTO *advance(Response p) override;
 };
 
 #endif /* CONTROLLER_H_INCLUDED */

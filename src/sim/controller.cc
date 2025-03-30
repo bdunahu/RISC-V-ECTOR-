@@ -16,10 +16,9 @@ Controller::Controller(Stage *stage, Storage *storage, bool is_pipelined)
 
 void Controller::run_for(int number)
 {
-	InstrDTO instr;
 	int i;
 	for (i = 0; i < number; ++i) {
-		this->advance(instr, OK);
+		this->advance(OK);
 	}
 }
 
@@ -29,11 +28,11 @@ std::array<int, GPR_NUM> Controller::get_gprs() { return this->gprs; }
 
 int Controller::get_pc() { return this->pc; }
 
-Response Controller::advance(InstrDTO &next_instr, Response p)
+InstrDTO *Controller::advance(Response p)
 {
-	Response r;
+	InstrDTO *r;
 
-	r = this->next->advance(next_instr, p);
+	r = this->next->advance(p);
 	++this->clock_cycle;
 	return r;
 }
