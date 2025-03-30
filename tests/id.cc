@@ -65,7 +65,6 @@ class IDFixture
 		t = (t << TYPE_SIZE) + type;
 		return t;
 	}
-	std::vector<signed int> p;
 	Cache *c;
 	ID *d;
 	Controller *ct;
@@ -167,4 +166,86 @@ TEST_CASE_METHOD(IDFixture, "Parse arbitrary j-type # two", "[id]")
 	CHECK(s3 == -1);
 }
 
-// TEST_CASE_METHOD(IDFixture, "No data hazards", "[id]") { signed int }
+TEST_CASE_METHOD(IDFixture, "read does not conflict with read", "[id]")
+{
+	signed int v;
+	Response r;
+
+	v = 0b1;
+	r = this->d->read_guard(v);
+	CHECK(v == 0b0);
+	REQUIRE(r == OK);
+
+	v = 0b1;
+	this->d->read_guard(v);
+	REQUIRE(v == 0b0);
+}
+
+TEST_CASE_METHOD(IDFixture, "write does not conflict with write", "[id]")
+{
+	signed int v;
+
+	v = 0b1;
+	this->d->write_guard(v);
+	REQUIRE(v == 0b0);
+
+	v = 0b1;
+	this->d->write_guard(v);
+	REQUIRE(v == 0b0);
+}
+
+TEST_CASE_METHOD(IDFixture, "write does not conflict with read", "[id]")
+{
+	signed int v;
+	Response r;
+
+	v = 0b1;
+	r = this->d->read_guard(v);
+	CHECK(v == 0b0);
+	REQUIRE(r == OK);
+
+	v = 0b1;
+	this->d->write_guard(v);
+	REQUIRE(v == 0b0);
+}
+
+TEST_CASE_METHOD(IDFixture, "read does conflict with write", "[id]")
+{
+	signed int v;
+	Response r;
+
+	v = 0b1;
+	this->d->write_guard(v);
+	REQUIRE(v == 0b0);
+
+	v = 0b1;
+	r = this->d->read_guard(v);
+	CHECK(v == 0b01);
+	REQUIRE(r == BLOCKED);
+}
+
+TEST_CASE_METHOD(IDFixture, "stores indefinite conflicts", "[id]")
+{
+	signed int v, ov;
+	Response r;
+
+	v = 0b0;
+	ov = v;
+	while (v < 0b110) {
+		this->d->write_guard(v);
+		REQUIRE(v == 0b0);
+		v = ++ov;
+	}
+	this->d->write_guard(v);
+	REQUIRE(v == 0b0);
+
+	v = 0b110;
+	r = this->d->read_guard(v);
+	CHECK(v == 0b110);
+	REQUIRE(r == BLOCKED);
+
+	v = 0b0;
+	r = this->d->read_guard(v);
+	CHECK(v == 0b0);
+	REQUIRE(r == BLOCKED);
+}

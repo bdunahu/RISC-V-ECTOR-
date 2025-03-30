@@ -8,6 +8,7 @@ Stage::Stage(Stage *next)
 	this->next = next;
 	this->curr_instr = nullptr;
 	this->status = OK;
+	this->checked_out = {};
 }
 
 Stage::~Stage() { delete this->next; };
