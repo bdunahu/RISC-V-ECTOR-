@@ -40,6 +40,16 @@ class Stage
 	 */
 	virtual InstrDTO *advance(Response p);
 
+	/* The following methods are made public so that they may be tested, and are
+	 * not to be called from outside classes during standard execution.
+	 */
+
+	/**
+	 * Gets the bit in the condition code register correspondng to `c`.
+	 * @param the condition code to retrieve,
+	 */
+	bool get_condition(CC c);
+
   protected:
 	/**
 	 * The function expected to do the majority of the work.
@@ -53,11 +63,6 @@ class Stage
 	 * @param the truthy value to set it to.
 	 */
 	void set_condition(CC c, bool v);
-	/**
-	 * Gets the bit in the condition code register correspondng to `c`.
-	 * @param the condition code to retrieve,
-	 */
-	bool get_condition(CC c);
 	/**
 	 * Helper for `check_out`.
 	 * Returns true if r are not checked out, false otherwise.

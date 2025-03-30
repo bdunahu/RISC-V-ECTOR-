@@ -45,7 +45,7 @@ InstrDTO *Stage::advance(Response p)
 void Stage::set_condition(CC c, bool v)
 {
 	if (v)
-		this->gprs[3] = this->gprs[3] & 1 << c;
+		this->gprs[3] = this->gprs[3] | 1 << c;
 	else
 		this->gprs[3] = this->gprs[3] & ~(1 << c);
 }

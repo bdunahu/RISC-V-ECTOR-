@@ -199,4 +199,20 @@ EX::EX(Stage *stage) : Stage(stage)
 	};
 }
 
-void EX::advance_helper() {}
+void EX::advance_helper() {
+	signed int s1, s2;
+	Mnemonic m;
+	
+	// it may be good to ensure we are not doing
+	// work that has already been done
+	if (this->curr_instr) {
+		m = this->curr_instr->get_mnemonic();
+		s1 = this->curr_instr->get_s1();
+		s2 = this->curr_instr->get_s2();
+
+		this->instr_map[m](s1, s2);
+
+		this->curr_instr->set_s1(s1);
+		this->status = OK;
+	}
+}

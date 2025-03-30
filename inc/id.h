@@ -21,22 +21,6 @@ class ID : public Stage
 	 */
 
 	/**
-	 * Parse an instruction into a type, opcode, and fields. If the type is
-	 * invalid, only the type field will be set.
-	 *
-	 * This method is marked public so it may be tested, and is not used outside
-	 * of this class during normal execution.
-	 *
-	 * @param the resulting first field, which varies per type. To call this
-	 * function properly, this field must contain the full instruction bytes on
-	 * function entry.
-	 * @param the resulting second field, which varies per type.
-	 * @param the resulting third field, which varies per type.
-	 * @param the resulting mnemonic.
-	 */
-	void get_instr_fields(
-		signed int &s1, signed int &s2, signed int &s3, Mnemonic &m);
-	/**
 	 * Facilitates register checkout and data hazard management.
 	 * It does this by checking that the register passed in is not currently
 	 * checked out. If true, then replaces r with the value of the register and
@@ -66,6 +50,22 @@ class ID : public Stage
 	 * @param the resulting second field.
 	 * @param the resulting third field.
 	 */
+	/**
+	 * Parse an instruction into a type, opcode, and fields. If the type is
+	 * invalid, only the type field will be set.
+	 *
+	 * This method is marked public so it may be tested, and is not used outside
+	 * of this class during normal execution.
+	 *
+	 * @param the resulting first field, which varies per type. To call this
+	 * function properly, this field must contain the full instruction bytes on
+	 * function entry.
+	 * @param the resulting second field, which varies per type.
+	 * @param the resulting third field, which varies per type.
+	 * @param the resulting mnemonic.
+	 */
+	void get_instr_fields(
+		signed int &s1, signed int &s2, signed int &s3, Mnemonic &m);
 	void decode_R_type(signed int &s1, signed int &s2, signed int &s3);
 	void decode_I_type(signed int &s1, signed int &s2, signed int &s3);
 	void decode_J_type(signed int &s1, signed int &s2);

@@ -5,10 +5,10 @@
 #include "instrDTO.h"
 #include <catch2/catch_test_macros.hpp>
 
-class IFPipeFixture
+class IFFixture
 {
   public:
-	IFPipeFixture()
+	IFFixture()
 	{
 		Dram *d;
 
@@ -21,7 +21,7 @@ class IFPipeFixture
 		this->f = new IF(nullptr);
 		this->ct = new Controller(this->f, this->c, true);
 	}
-	~IFPipeFixture()
+	~IFFixture()
 	{
 		delete this->ct;
 		delete this->c;
@@ -70,7 +70,7 @@ class IFPipeFixture
 	Controller *ct;
 };
 
-TEST_CASE_METHOD(IFPipeFixture, "fetch returns single instuction", "[if_pipe]")
+TEST_CASE_METHOD(IFFixture, "fetch returns single instuction", "[if_pipe]")
 {
 	InstrDTO *i;
 	int expected_cycles;
@@ -83,7 +83,7 @@ TEST_CASE_METHOD(IFPipeFixture, "fetch returns single instuction", "[if_pipe]")
 	delete i;
 }
 
-TEST_CASE_METHOD(IFPipeFixture, "fetch returns two instuctions", "[if_pipe]")
+TEST_CASE_METHOD(IFFixture, "fetch returns two instuctions", "[if_pipe]")
 {
 	InstrDTO *i;
 	int expected_cycles;
@@ -103,7 +103,7 @@ TEST_CASE_METHOD(IFPipeFixture, "fetch returns two instuctions", "[if_pipe]")
 	delete i;
 }
 
-TEST_CASE_METHOD(IFPipeFixture, "fetch waits with old instruction",
+TEST_CASE_METHOD(IFFixture, "fetch waits with old instruction",
 "[if_pipe]")
 {
 	InstrDTO *i;

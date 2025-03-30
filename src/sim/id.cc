@@ -8,25 +8,6 @@
 
 ID::ID(Stage *stage) : Stage(stage) { this->id = DCDE; }
 
-void ID::get_instr_fields(
-	signed int &s1, signed int &s2, signed int &s3, Mnemonic &m)
-{
-	unsigned int type;
-	this->split_instr(s1, type, m);
-
-	switch (type) {
-	case 0b00:
-		this->decode_R_type(s1, s2, s3);
-		break;
-	case 0b01:
-		this->decode_I_type(s1, s2, s3);
-		break;
-	case 0b10:
-		this->decode_J_type(s1, s2);
-		break;
-	}
-}
-
 void ID::split_instr(signed int &raw, unsigned int &type, Mnemonic &m)
 {
 	unsigned int opcode, opcode_size;
@@ -77,6 +58,27 @@ void ID::advance_helper()
 			curr_instr->set_s3(s3);
 			curr_instr->set_mnemonic(m);
 		}
+	}
+}
+
+void ID::get_instr_fields(
+	signed int &s1, signed int &s2, signed int &s3, Mnemonic &m)
+{
+	unsigned int type;
+	this->split_instr(s1, type, m);
+
+	switch (type) {
+	case 0b00:
+		this->decode_R_type(s1, s2, s3);
+		break;
+	case 0b01:
+		this->decode_I_type(s1, s2, s3);
+		break;
+	case 0b10:
+		this->decode_J_type(s1, s2);
+		break;
+	case 0b11:
+		this->status = OK;
 	}
 }
 
