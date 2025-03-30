@@ -28,7 +28,7 @@ void IF::advance_helper()
 		r = this->storage->read_word(this->id, this->pc, bits);
 		if (r == OK) {
 			this->status = r;
-			this->curr_instr = std::make_unique<InstrDTO>();
+			this->curr_instr = new InstrDTO();
 			this->curr_instr->set_instr_bits(bits);
 		} else
 			this->status = STALLED;

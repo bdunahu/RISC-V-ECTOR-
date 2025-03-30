@@ -14,7 +14,7 @@ class IDFixture
 	{
 		Dram *dr;
 
-		dr = new Dram(3);
+		this->dr = new Dram(3);
 		this->c = new Cache(dr, 1);
 		IF *f = new IF(nullptr);
 		this->d = new ID(f);
@@ -65,6 +65,8 @@ class IDFixture
 		t = (t << TYPE_SIZE) + type;
 		return t;
 	}
+	
+	Dram *dr;
 	Cache *c;
 	ID *d;
 	Controller *ct;

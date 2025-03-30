@@ -83,7 +83,7 @@ class Stage
 	/**
 	 * A pointer to the current instruction this stage is processing.
 	 */
-	std::unique_ptr<InstrDTO> curr_instr;
+	InstrDTO *curr_instr;
 	/**
 	 * The current status of this stage.
 	 */
