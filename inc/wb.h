@@ -13,8 +13,10 @@ class WB : public Stage
 	 * @return A newly allocated WB object.
 	 */
 	WB(Stage *next);
-
-	InstrDTO *advance(Response p) override;
+	using Stage::advance;
+	
+  private:
+	void advance_helper() override;
 };
 
 #endif /* WB_H_INCLUDED */

@@ -13,8 +13,10 @@ class MM : public Stage
 	 * @return A newly allocated MM object.
 	 */
 	MM(Stage *next);
+	using Stage::advance;
 
-	InstrDTO *advance(Response p) override;
+  private:
+	void advance_helper() override;
 };
 
 #endif /* MM_H_INCLUDED */

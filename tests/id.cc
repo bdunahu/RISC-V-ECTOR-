@@ -2,7 +2,7 @@
 #include "cache.h"
 #include "controller.h"
 #include "dram.h"
-#include "if.h"
+#include "dum.h"
 #include "instr.h"
 #include "instrDTO.h"
 #include <catch2/catch_test_macros.hpp>
@@ -14,8 +14,8 @@ class IDFixture
 	{
 		this->dr = new Dram(3);
 		this->c = new Cache(this->dr, 1);
-		IF *f = new IF(nullptr);
-		this->d = new ID(f);
+		this->dum = new DUM(nullptr);
+		this->d = new ID(dum);
 		this->ct = new Controller(this->d, this->c, true);
 	};
 	~IDFixture()
@@ -23,6 +23,12 @@ class IDFixture
 		delete this->ct;
 		delete this->c;
 	};
+	void prime_bits(signed int raw)
+	{
+		InstrDTO *i = new InstrDTO();
+		i->set_instr_bits(raw);
+		this->dum->set_curr_instr(i);
+	}
 	signed int encode_R_type(
 		signed int s3,
 		signed int s2,
@@ -63,10 +69,11 @@ class IDFixture
 		t = (t << TYPE_SIZE) + type;
 		return t;
 	}
-	
+
 	Dram *dr;
 	Cache *c;
 	ID *d;
+	DUM *dum;
 	Controller *ct;
 };
 
@@ -82,88 +89,126 @@ TEST_CASE_METHOD(IDFixture, "Parse invalid type", "[id]")
 
 TEST_CASE_METHOD(IDFixture, "Parse arbitrary r-type # one", "[id]")
 {
-	signed int s1 = -1, s2 = -1, s3 = -1;
-	Mnemonic m;
+	signed int t;
+	InstrDTO *i;
 
-	s1 = this->encode_R_type(0b0, 0b1, 0b10, 0b11, 0b0);
-	this->d->get_instr_fields(s1, s2, s3, m);
+	t = this->encode_R_type(0b0, 0b1, 0b10, 0b11, 0b0);
+	this->prime_bits(t);
 
-	CHECK(s1 == 0x00000000); // registers are empty
-	CHECK(s2 == 0x00000000);
-	CHECK(s3 == 0x00000000);
-	CHECK(m == MUL);
+	i = this->ct->advance(OK);
+	REQUIRE(i == nullptr);
+	i = this->ct->advance(OK);
+	REQUIRE(i != nullptr);
+
+	CHECK(i->get_s1() == 0x00000000); // registers are empty
+	CHECK(i->get_s2() == 0x00000000);
+	CHECK(i->get_s3() == 0x00000000);
+	CHECK(i->get_mnemonic() == MUL);
+
+	delete i;
 }
 
 TEST_CASE_METHOD(IDFixture, "Parse arbitrary r-type # two", "[id]")
 {
-	signed int s1 = -1, s2 = -1, s3 = -1;
-	Mnemonic m;
+	signed int t;
+	InstrDTO *i;
 
-	s1 = this->encode_R_type(0b10000, 0b01000, 0b00100, 0b10, 0b0);
-	this->d->get_instr_fields(s1, s2, s3, m);
+	t = this->encode_R_type(0b10000, 0b01000, 0b00100, 0b10, 0b0);
+	this->prime_bits(t);
 
-	CHECK(s1 == 0x00000000); // registers are empty
-	CHECK(s2 == 0b00000000);
-	CHECK(s3 == 0b00000000);
-	CHECK(m == SUB);
+	i = this->ct->advance(OK);
+	REQUIRE(i == nullptr);
+	i = this->ct->advance(OK);
+	REQUIRE(i != nullptr);
+
+	CHECK(i->get_s1() == 0x00000000); // registers are empty
+	CHECK(i->get_s2() == 0x00000000);
+	CHECK(i->get_s3() == 0x00000000);
+	CHECK(i->get_mnemonic() == SUB);
+
+	delete i;
 }
 
 TEST_CASE_METHOD(IDFixture, "Parse arbitrary i-type # one", "[id]")
 {
-	signed int s1 = -1, s2 = -1, s3 = -1;
-	Mnemonic m;
+	signed int t;
+	InstrDTO *i;
 
-	s1 = this->encode_I_type(0xF, 0b1, 0b10, 0b0111, 0b1);
-	this->d->get_instr_fields(s1, s2, s3, m);
+	t = this->encode_I_type(0xF, 0b1, 0b10, 0b0111, 0b1);
+	this->prime_bits(t);
 
-	CHECK(s1 == 0x00000000); // registers are empty
-	CHECK(s2 == 0x00000000);
-	CHECK(s3 == 0xF);
-	CHECK(m == SFTLI);
+	i = this->ct->advance(OK);
+	REQUIRE(i == nullptr);
+	i = this->ct->advance(OK);
+	REQUIRE(i != nullptr);
+
+	CHECK(i->get_s1() == 0x00000000); // registers are empty
+	CHECK(i->get_s2() == 0x00000000);
+	CHECK(i->get_s3() == 0xF);
+	CHECK(i->get_mnemonic() == SFTLI);
+
+	delete i;
 }
 
 TEST_CASE_METHOD(IDFixture, "Parse arbitrary i-type # two", "[id]")
 {
-	signed int s1 = -1, s2 = -1, s3 = -1;
-	Mnemonic m;
+	signed int t;
+	InstrDTO *i;
 
-	s1 = this->encode_I_type(0xCC, 0b010, 0b101, 0b1011, 0b1);
-	this->d->get_instr_fields(s1, s2, s3, m);
+	t = this->encode_I_type(0xCC, 0b010, 0b101, 0b1011, 0b1);
+	this->prime_bits(t);
 
-	CHECK(s1 == 0x00000000); // registers are empty
-	CHECK(s2 == 0x00000000);
-	CHECK(s3 == 0xCC);
-	CHECK(m == STORE);
+	i = this->ct->advance(OK);
+	REQUIRE(i == nullptr);
+	i = this->ct->advance(OK);
+	REQUIRE(i != nullptr);
+	
+	CHECK(i->get_s1() == 0x00000000); // registers are empty
+	CHECK(i->get_s2() == 0x00000000);
+	CHECK(i->get_s3() == 0xCC);
+	CHECK(i->get_mnemonic() == STORE);
+
+	delete i;
 }
 
 TEST_CASE_METHOD(IDFixture, "Parse arbitrary j-type # one", "[id]")
 {
-	signed int s1 = -1, s2 = -1, s3 = -1;
-	Mnemonic m;
+	signed int t;
+	InstrDTO *i;
 
-	s1 = this->encode_J_type(0x3456, 0b10101, 0b0111, 0b10);
-	this->d->get_instr_fields(s1, s2, s3, m);
+	t = this->encode_J_type(0x3456, 0b10101, 0b0111, 0b10);
+	this->prime_bits(t);
 
-	CHECK(s1 == 0x00000000); // registers are empty
-	CHECK(s2 == 0x3456);
-	CHECK(m == BOF);
-	// behavior does nothing
-	CHECK(s3 == -1);
+	i = this->ct->advance(OK);
+	REQUIRE(i == nullptr);
+	i = this->ct->advance(OK);
+	REQUIRE(i != nullptr);
+
+	CHECK(i->get_s1() == 0x00000000); // registers are empty
+	CHECK(i->get_s2() == 0x3456);
+	CHECK(i->get_mnemonic() == BOF);
+
+	delete i;
 }
 
 TEST_CASE_METHOD(IDFixture, "Parse arbitrary j-type # two", "[id]")
 {
-	signed int s1 = -1, s2 = -1, s3 = -1;
-	Mnemonic m;
+	signed int t;
+	InstrDTO *i;
 
-	s1 = this->encode_J_type(0xBBCCF, 0b10101, 0b0011, 0b10);
-	this->d->get_instr_fields(s1, s2, s3, m);
+	t = this->encode_J_type(0xBBCCF, 0b10101, 0b0011, 0b10);
+	this->prime_bits(t);
 
-	CHECK(s1 == 0x00000000); // registers are empty
-	CHECK(s2 == 0xBBCCF);
-	CHECK(m == JAL);
-	// behavior does nothing
-	CHECK(s3 == -1);
+	i = this->ct->advance(OK);
+	REQUIRE(i == nullptr);
+	i = this->ct->advance(OK);
+	REQUIRE(i != nullptr);
+
+	CHECK(i->get_s1() == 0x00000000); // registers are empty
+	CHECK(i->get_s2() == 0xBBCCF);
+	CHECK(i->get_mnemonic() == JAL);
+
+	delete i;
 }
 
 TEST_CASE_METHOD(IDFixture, "read does not conflict with read", "[id]")
@@ -221,7 +266,7 @@ TEST_CASE_METHOD(IDFixture, "read does conflict with write", "[id]")
 	v = 0b1;
 	r = this->d->read_guard(v);
 	CHECK(v == 0b01);
-	REQUIRE(r == BLOCKED);
+	REQUIRE(r == STALLED);
 }
 
 TEST_CASE_METHOD(IDFixture, "stores indefinite conflicts", "[id]")
@@ -242,10 +287,10 @@ TEST_CASE_METHOD(IDFixture, "stores indefinite conflicts", "[id]")
 	v = 0b110;
 	r = this->d->read_guard(v);
 	CHECK(v == 0b110);
-	REQUIRE(r == BLOCKED);
+	REQUIRE(r == STALLED);
 
 	v = 0b0;
 	r = this->d->read_guard(v);
 	CHECK(v == 0b0);
-	REQUIRE(r == BLOCKED);
+	REQUIRE(r == STALLED);
 }

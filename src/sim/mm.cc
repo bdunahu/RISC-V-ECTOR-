@@ -6,7 +6,4 @@
 
 MM::MM(Stage *stage) : Stage(stage) { this->id = MEM; } 
 
-InstrDTO *MM::advance(Response p)
-{
-	return nullptr;
-}
+void MM::advance_helper() {}

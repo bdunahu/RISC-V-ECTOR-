@@ -8,26 +8,6 @@
 
 ID::ID(Stage *stage) : Stage(stage) { this->id = DCDE; }
 
-InstrDTO *ID::advance(Response p)
-{
-	InstrDTO *r = nullptr;
-	Response n;
-
-	this->advance_helper();
-	if (this->status == OK && p == OK) {
-		// mutual consent
-		this->curr_instr->set_time_of(this->id, this->clock_cycle);
-		r = new InstrDTO(*this->curr_instr);
-		delete curr_instr;
-		curr_instr = nullptr;
-	}
-
-	n = (p != OK || this->status != OK) ? BLOCKED : OK;
-	// the power of consent
-	this->curr_instr = this->next->advance(n);
-	return r;
-}
-
 void ID::get_instr_fields(
 	signed int &s1, signed int &s2, signed int &s3, Mnemonic &m)
 {
@@ -67,7 +47,7 @@ Response ID::read_guard(signed int &v)
 {
 	Response r;
 	if (this->is_checked_out(v))
-		r = BLOCKED;
+		r = STALLED;
 	else {
 		r = OK;
 		v = this->dereference_register(v);
@@ -116,8 +96,9 @@ void ID::decode_R_type(signed int &s1, signed int &s2, signed int &s3)
 	r2 = this->read_guard(s2);
 	this->write_guard(s3);
 
-	this->status = (r1 == BLOCKED || r2 == BLOCKED) ? BLOCKED : OK;
+	this->status = (r1 == OK && r2 == OK) ? OK : STALLED;
 }
+
 void ID::decode_I_type(signed int &s1, signed int &s2, signed int &s3)
 {
 	unsigned int s0b, s1b, s2b;

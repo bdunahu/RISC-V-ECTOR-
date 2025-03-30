@@ -49,7 +49,6 @@ namespace instr
 {
 // clang-format off
 	extern const std::unordered_map<unsigned int, Mnemonic> mnemonic_map;
-	extern const std::unordered_map<Mnemonic, std::function<void(signed int &s1, signed int &s2, signed int &s3)>> instr_map;
 // clang-format on
 } // namespace instr
 

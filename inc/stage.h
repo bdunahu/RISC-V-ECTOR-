@@ -9,6 +9,13 @@
 #include <deque>
 #include <memory>
 
+enum CC {
+	GT,
+	EQ,
+	UF,
+	OF,
+};
+
 class Stage
 {
   public:
@@ -21,15 +28,36 @@ class Stage
 	virtual ~Stage();
 	/**
 	 * Advances this stage by a single clock cycle.
+	 * A boilerplate version is provided in stage.cc.
+	 *
 	 * @param a DTO object containing the next instruction to be processed.
 	 * @param a response, indicating whether or not the parent pipe stage is
 	 * ready to accept a new instruction object next cycle.
 	 * @return a response, indicating whether this pipeline stage is stalling,
 	 * busy, or done.
+	 *
+	 * Must set the status to STALLED when an operation completes.
 	 */
-	virtual InstrDTO *advance(Response p) = 0;
+	virtual InstrDTO *advance(Response p);
 
   protected:
+	/**
+	 * The function expected to do the majority of the work.
+	 *
+	 * Must set the status to OK when an operation is ready.
+	 */
+	virtual void advance_helper() = 0;
+	/**
+	 * Sets the bit in the condition code register corresponding to `c`.
+	 * @param the condition code to set.
+	 * @param the truthy value to set it to.
+	 */
+	void set_condition(CC c, bool v);
+	/**
+	 * Gets the bit in the condition code register correspondng to `c`.
+	 * @param the condition code to retrieve,
+	 */
+	bool get_condition(CC c);
 	/**
 	 * Helper for `check_out`.
 	 * Returns true if r are not checked out, false otherwise.

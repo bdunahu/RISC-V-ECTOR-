@@ -18,6 +18,7 @@ InstrDTO *IF::advance(Response p)
 		r = new InstrDTO(*this->curr_instr);
 		delete curr_instr;
 		curr_instr = nullptr;
+		this->status = STALLED;
 	}
 
 	return r;
@@ -34,7 +35,6 @@ void IF::advance_helper()
 			this->status = r;
 			this->curr_instr = new InstrDTO();
 			this->curr_instr->set_instr_bits(bits);
-		} else
-			this->status = STALLED;
+		}
 	}
 }

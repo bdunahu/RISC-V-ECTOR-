@@ -7,7 +7,7 @@ Stage::Stage(Stage *next)
 {
 	this->next = next;
 	this->curr_instr = nullptr;
-	this->status = OK;
+	this->status = STALLED;
 	this->checked_out = {};
 }
 
@@ -20,6 +20,39 @@ unsigned int Stage::pc;
 Storage *Stage::storage;
 bool Stage::is_pipelined;
 int Stage::clock_cycle;
+
+InstrDTO *Stage::advance(Response p)
+{
+	InstrDTO *r = nullptr;
+	Response n;
+
+	this->advance_helper();
+	if (this->status == OK && p == OK) {
+		// mutual consent
+		this->curr_instr->set_time_of(this->id, this->clock_cycle);
+		r = new InstrDTO(*this->curr_instr);
+		delete curr_instr;
+		curr_instr = nullptr;
+		this->status = STALLED;
+	}
+
+	n = (p != OK || this->status != OK) ? STALLED : OK;
+	// the power of consent
+	this->curr_instr = this->next->advance(n);
+	return r;
+}
+
+void Stage::set_condition(CC c, bool v)
+{
+	if (v)
+		this->gprs[3] = this->gprs[3] & 1 << c;
+	else
+		this->gprs[3] = this->gprs[3] & ~(1 << c);
+}
+
+bool Stage::get_condition(CC c) {
+	return (this->gprs[3] >> c) & 1;
+}
 
 signed int Stage::dereference_register(signed int v)
 {
