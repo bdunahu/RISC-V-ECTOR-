@@ -25,7 +25,7 @@ class EX : public Stage
 	 */
 	std::unordered_map<
 		Mnemonic,
-		std::function<void(signed int &s1, signed int s2)>>
+		std::function<void(signed int &s1, signed int s2, signed int s3)>>
 		instr_map;
 };
 

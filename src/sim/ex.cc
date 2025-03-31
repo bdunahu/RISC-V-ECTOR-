@@ -8,7 +8,7 @@
 
 // clang-format off
 #define INIT_INSTRUCTION(mnemonic, body)					\
-	{mnemonic, [this](signed int &s1, signed int s2) { \
+	{mnemonic, [this](signed int &s1, signed int s2, signed int s3) { \
 		body; \
 	}}
 // clang-format on
@@ -23,6 +23,7 @@ EX::EX(Stage *stage) : Stage(stage)
 			ADD,
 			{
 				s1 = s1 + s2;
+				(void)s3;
 				(void)this;
 			}),
 
@@ -30,6 +31,7 @@ EX::EX(Stage *stage) : Stage(stage)
 			SUB,
 			{
 				s1 = s1 - s2;
+				(void)s3;
 				(void)this;
 			}),
 
@@ -37,6 +39,7 @@ EX::EX(Stage *stage) : Stage(stage)
 			MUL,
 			{
 				s1 = s1 * s2;
+				(void)s3;
 				(void)this;
 			}),
 
@@ -44,6 +47,7 @@ EX::EX(Stage *stage) : Stage(stage)
 			QUOT,
 			{
 				s1 = s1 / s2;
+				(void)s3;
 				(void)this;
 			}),
 
@@ -51,6 +55,7 @@ EX::EX(Stage *stage) : Stage(stage)
 			REM,
 			{
 				s1 = s1 % s2;
+				(void)s3;
 				(void)this;
 			}),
 
@@ -58,6 +63,7 @@ EX::EX(Stage *stage) : Stage(stage)
 			SFTR,
 			{
 				s1 = s1 >> s2;
+				(void)s3;
 				(void)this;
 			}),
 
@@ -65,6 +71,7 @@ EX::EX(Stage *stage) : Stage(stage)
 			SFTL,
 			{
 				s1 = s1 << s2;
+				(void)s3;
 				(void)this;
 			}),
 
@@ -72,6 +79,7 @@ EX::EX(Stage *stage) : Stage(stage)
 			AND,
 			{
 				s1 = s1 & s2;
+				(void)s3;
 				(void)this;
 			}),
 
@@ -79,6 +87,7 @@ EX::EX(Stage *stage) : Stage(stage)
 			OR,
 			{
 				s1 = s1 | s2;
+				(void)s3;
 				(void)this;
 			}),
 
@@ -86,6 +95,7 @@ EX::EX(Stage *stage) : Stage(stage)
 			NOT,
 			{
 				s1 = ~s1;
+				(void)s3;
 				(void)s2;
 				(void)this;
 			}),
@@ -94,12 +104,14 @@ EX::EX(Stage *stage) : Stage(stage)
 			XOR,
 			{
 				s1 = s1 ^ s2;
+				(void)s3;
 				(void)this;
 			}),
 
 		INIT_INSTRUCTION(
 			ADDV,
 			{
+				(void)s3;
 				(void)s2;
 				(void)s1;
 				(void)this;
@@ -108,6 +120,7 @@ EX::EX(Stage *stage) : Stage(stage)
 		INIT_INSTRUCTION(
 			SUBV,
 			{
+				(void)s3;
 				(void)s2;
 				(void)s1;
 				(void)this;
@@ -116,6 +129,7 @@ EX::EX(Stage *stage) : Stage(stage)
 		INIT_INSTRUCTION(
 			MULV,
 			{
+				(void)s3;
 				(void)s2;
 				(void)s1;
 				(void)this;
@@ -124,6 +138,7 @@ EX::EX(Stage *stage) : Stage(stage)
 		INIT_INSTRUCTION(
 			DIVV,
 			{
+				(void)s3;
 				(void)s2;
 				(void)s1;
 				(void)this;
@@ -136,11 +151,13 @@ EX::EX(Stage *stage) : Stage(stage)
 						  : this->set_condition(GT, false);
 				(s1 == s2) ? this->set_condition(EQ, true)
 						   : this->set_condition(EQ, false);
+				(void)s3;
 			}),
 
 		INIT_INSTRUCTION(
 			CEV,
 			{
+				(void)s3;
 				(void)s2;
 				(void)s1;
 				(void)this;
@@ -150,13 +167,15 @@ EX::EX(Stage *stage) : Stage(stage)
 		INIT_INSTRUCTION(
 			LOAD,
 			{
-				s1 = s1 + s2;
+				s1 = s1 + s3;
+				(void)s2;
 				(void)this;
 			}),
 
 		INIT_INSTRUCTION(
 			LOADV,
 			{
+				(void)s3;
 				(void)s2;
 				(void)s1;
 				(void)this;
@@ -165,62 +184,71 @@ EX::EX(Stage *stage) : Stage(stage)
 		INIT_INSTRUCTION(
 			ADDI,
 			{
-				s1 = s1 + s2;
+				s1 = s1 + s3;
+				(void)s2;
 				(void)this;
 			}),
 
 		INIT_INSTRUCTION(
 			SUBI,
 			{
-				s1 = s1 - s2;
+				s1 = s1 - s3;
+				(void)s2;
 				(void)this;
 			}),
 
 		INIT_INSTRUCTION(
 			SFTRI,
 			{
-				s1 = s1 >> s2;
+				s1 = s1 >> s3;
+				(void)s2;
 				(void)this;
 			}),
 
 		INIT_INSTRUCTION(
 			SFTLI,
 			{
-				s1 = s1 << s2;
+				s1 = s1 << s3;
+				(void)s2;
 				(void)this;
 			}),
 
 		INIT_INSTRUCTION(
 			ANDI,
 			{
-				s1 = s1 & s2;
+				s1 = s1 & s3;
+				(void)s2;
 				(void)this;
 			}),
 
 		INIT_INSTRUCTION(
 			ORI,
 			{
-				s1 = s1 | s2;
+				s1 = s1 | s3;
+				(void)s2;
 				(void)this;
 			}),
 
 		INIT_INSTRUCTION(
 			XORI,
 			{
-				s1 = s1 ^ s2;
+				s1 = s1 ^ s3;
+				(void)s2;
 				(void)this;
 			}),
 
 		INIT_INSTRUCTION(
 			STORE,
 			{
-				s1 = s1 + s2;
+				s1 = s1 + s3;
+				(void)s2;
 				(void)this;
 			}),
 
 		INIT_INSTRUCTION(
 			STOREV,
 			{
+				(void)s3;
 				(void)s2;
 				(void)s1;
 				(void)this;
@@ -231,6 +259,7 @@ EX::EX(Stage *stage) : Stage(stage)
 			JMP,
 			{
 				s1 = s1 + s2;
+				(void)s3;
 				(void)this;
 			}),
 
@@ -238,6 +267,7 @@ EX::EX(Stage *stage) : Stage(stage)
 			JRL,
 			{
 				s1 = this->pc + s2;
+				(void)s3;
 				(void)this;
 			}),
 
@@ -245,20 +275,42 @@ EX::EX(Stage *stage) : Stage(stage)
 			JAL,
 			{
 				s1 = s1 + s2;
+				(void)s3;
 				(void)this;
 			}),
 
-		INIT_INSTRUCTION(BEQ, { s1 = this->pc + s2; }),
+		INIT_INSTRUCTION(
+			BEQ,
+			{
+				s1 = this->pc + s2;
+				(void)s3;
+			}),
 
-		INIT_INSTRUCTION(BGT, { s1 = this->pc + s2; }),
+		INIT_INSTRUCTION(
+			BGT,
+			{
+				s1 = this->pc + s2;
+				(void)s3;
+			}),
 
-		INIT_INSTRUCTION(BUF, { s1 = this->pc + s2; }),
+		INIT_INSTRUCTION(
+			BUF,
+			{
+				s1 = this->pc + s2;
+				(void)s3;
+			}),
 
-		INIT_INSTRUCTION(BOF, { s1 = this->pc + s2; }),
+		INIT_INSTRUCTION(
+			BOF,
+			{
+				s1 = this->pc + s2;
+				(void)s3;
+			}),
 
 		INIT_INSTRUCTION(
 			PUSH,
 			{
+				(void)s3;
 				(void)s2;
 				(void)s1;
 				(void)this;
@@ -267,6 +319,7 @@ EX::EX(Stage *stage) : Stage(stage)
 		INIT_INSTRUCTION(
 			POP,
 			{
+				(void)s3;
 				(void)s2;
 				(void)s1;
 				(void)this;
@@ -276,6 +329,7 @@ EX::EX(Stage *stage) : Stage(stage)
 		INIT_INSTRUCTION(
 			NOP,
 			{
+				(void)s3;
 				(void)s2;
 				(void)s1;
 				(void)this;
@@ -285,7 +339,7 @@ EX::EX(Stage *stage) : Stage(stage)
 
 void EX::advance_helper()
 {
-	signed int s1, s2;
+	signed int s1, s2, s3;
 	Mnemonic m;
 
 	// it may be good to ensure we are not doing
@@ -294,8 +348,9 @@ void EX::advance_helper()
 		m = this->curr_instr->get_mnemonic();
 		s1 = this->curr_instr->get_s1();
 		s2 = this->curr_instr->get_s2();
+		s3 = this->curr_instr->get_s3();
 
-		this->instr_map[m](s1, s2);
+		this->instr_map[m](s1, s2, s3);
 
 		this->curr_instr->set_s1(s1);
 		this->status = OK;

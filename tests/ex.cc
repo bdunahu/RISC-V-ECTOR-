@@ -23,11 +23,13 @@ class EXFixture
 		delete this->ct;
 		delete this->c;
 	};
-	InstrDTO *execute_instr(signed int s1, signed int s2, Mnemonic m)
+	InstrDTO *
+	execute_instr(signed int s1, signed int s2, signed int s3, Mnemonic m)
 	{
 		InstrDTO *i = new InstrDTO();
 		i->set_s1(s1);
 		i->set_s2(s2);
+		i->set_s3(s3);
 		i->set_mnemonic(m);
 		this->dum->set_curr_instr(i);
 
@@ -47,13 +49,13 @@ class EXFixture
 
 TEST_CASE_METHOD(EXFixture, "ADD within bounds", "[ex]")
 {
-	signed int s1 = 0, s2 = 0;
+	signed int s1, s2, s3;
 	Mnemonic m;
 	InstrDTO *i;
 
 	m = ADD;
-	s1 = 42000, s2 = -41958;
-	i = execute_instr(s1, s2, m);
+	s1 = 42000, s2 = -41958, s3 = 0;
+	i = execute_instr(s1, s2, s3, m);
 
 	CHECK(i->get_s1() == 42);
 	CHECK(!ct->get_condition(OF));
@@ -72,13 +74,13 @@ TEST_CASE_METHOD(EXFixture, "ADD within bounds", "[ex]")
 
 TEST_CASE_METHOD(EXFixture, "SUB within bounds", "[ex]")
 {
-	signed int s1 = 0, s2 = 0;
+	signed int s1, s2, s3;
 	Mnemonic m;
 	InstrDTO *i;
 
 	m = SUB;
-	s1 = 200, s2 = 131;
-	i = execute_instr(s1, s2, m);
+	s1 = 200, s2 = 131, s3 = 0;
+	i = execute_instr(s1, s2, s3, m);
 
 	CHECK(i->get_s1() == 69);
 	CHECK(!ct->get_condition(OF));
@@ -97,13 +99,13 @@ TEST_CASE_METHOD(EXFixture, "SUB within bounds", "[ex]")
 
 TEST_CASE_METHOD(EXFixture, "MUL within bounds", "[ex]")
 {
-	signed int s1 = 0, s2 = 0;
+	signed int s1, s2, s3;
 	Mnemonic m;
 	InstrDTO *i;
 
 	m = MUL;
-	s1 = 200, s2 = 200;
-	i = execute_instr(s1, s2, m);
+	s1 = 200, s2 = 200, s3 = 0;
+	i = execute_instr(s1, s2, s3, m);
 
 	CHECK(i->get_s1() == 40000);
 	CHECK(!ct->get_condition(OF));
@@ -122,13 +124,13 @@ TEST_CASE_METHOD(EXFixture, "MUL within bounds", "[ex]")
 
 TEST_CASE_METHOD(EXFixture, "QUOT within bounds", "[ex]")
 {
-	signed int s1 = 0, s2 = 0;
+	signed int s1, s2, s3;
 	Mnemonic m;
 	InstrDTO *i;
 
 	m = QUOT;
-	s1 = 2043, s2 = 40;
-	i = execute_instr(s1, s2, m);
+	s1 = 2043, s2 = 40, s3 = 0;
+	i = execute_instr(s1, s2, s3, m);
 
 	CHECK(i->get_s1() == 51);
 	CHECK(!ct->get_condition(OF));
@@ -151,13 +153,13 @@ TEST_CASE_METHOD(EXFixture, "QUOT within bounds", "[ex]")
 
 TEST_CASE_METHOD(EXFixture, "REM within bounds", "[ex]")
 {
-	signed int s1 = 0, s2 = 0;
+	signed int s1, s2, s3;
 	Mnemonic m;
 	InstrDTO *i;
 
 	m = REM;
-	s1 = 2043, s2 = 40;
-	i = execute_instr(s1, s2, m);
+	s1 = 2043, s2 = 40, s3 = 0;
+	i = execute_instr(s1, s2, s3, m);
 
 	CHECK(i->get_s1() == 3);
 	CHECK(!ct->get_condition(OF));
@@ -180,13 +182,13 @@ TEST_CASE_METHOD(EXFixture, "REM within bounds", "[ex]")
 
 TEST_CASE_METHOD(EXFixture, "SFTR within bounds", "[ex]")
 {
-	signed int s1 = 0, s2 = 0;
+	signed int s1, s2, s3;
 	Mnemonic m;
 	InstrDTO *i;
 
 	m = SFTR;
-	s1 = 1300, s2 = 6;
-	i = execute_instr(s1, s2, m);
+	s1 = 1300, s2 = 6, s3 = 0;
+	i = execute_instr(s1, s2, s3, m);
 
 	CHECK(i->get_s1() == 20);
 	CHECK(!ct->get_condition(OF));
@@ -205,13 +207,13 @@ TEST_CASE_METHOD(EXFixture, "SFTR within bounds", "[ex]")
 
 TEST_CASE_METHOD(EXFixture, "SFTL within bounds", "[ex]")
 {
-	signed int s1 = 0, s2 = 0;
+	signed int s1, s2, s3;
 	Mnemonic m;
 	InstrDTO *i;
 
 	m = SFTL;
-	s1 = 13, s2 = 6;
-	i = execute_instr(s1, s2, m);
+	s1 = 13, s2 = 6, s3 = 0;
+	i = execute_instr(s1, s2, s3, m);
 
 	CHECK(i->get_s1() == 832);
 	CHECK(!ct->get_condition(OF));
@@ -230,13 +232,13 @@ TEST_CASE_METHOD(EXFixture, "SFTL within bounds", "[ex]")
 
 TEST_CASE_METHOD(EXFixture, "AND", "[ex]")
 {
-	signed int s1 = 0, s2 = 0;
+	signed int s1, s2, s3;
 	Mnemonic m;
 	InstrDTO *i;
 
 	m = AND;
-	s1 = 1234, s2 = 5678;
-	i = execute_instr(s1, s2, m);
+	s1 = 1234, s2 = 5678, s3 = 0;
+	i = execute_instr(s1, s2, s3, m);
 
 	CHECK(i->get_s1() == 1026);
 	CHECK(!ct->get_condition(OF));
@@ -247,13 +249,13 @@ TEST_CASE_METHOD(EXFixture, "AND", "[ex]")
 
 TEST_CASE_METHOD(EXFixture, "OR", "[ex]")
 {
-	signed int s1 = 0, s2 = 0;
+	signed int s1, s2, s3;
 	Mnemonic m;
 	InstrDTO *i;
 
 	m = OR;
-	s1 = 1234, s2 = 5678;
-	i = execute_instr(s1, s2, m);
+	s1 = 1234, s2 = 5678, s3 = 0;
+	i = execute_instr(s1, s2, s3, m);
 
 	CHECK(i->get_s1() == 5886);
 	CHECK(!ct->get_condition(OF));
@@ -264,13 +266,13 @@ TEST_CASE_METHOD(EXFixture, "OR", "[ex]")
 
 TEST_CASE_METHOD(EXFixture, "NOT", "[ex]")
 {
-	signed int s1 = 0, s2 = 0;
+	signed int s1, s2, s3;
 	Mnemonic m;
 	InstrDTO *i;
 
 	m = NOT;
-	s1 = 1234, s2 = -1;
-	i = execute_instr(s1, s2, m);
+	s1 = 1234, s2 = -1, s3 = 0;
+	i = execute_instr(s1, s2, s3, m);
 
 	CHECK(i->get_s1() == -1235);
 	CHECK(!ct->get_condition(OF));
@@ -281,13 +283,13 @@ TEST_CASE_METHOD(EXFixture, "NOT", "[ex]")
 
 TEST_CASE_METHOD(EXFixture, "XOR", "[ex]")
 {
-	signed int s1 = 0, s2 = 0;
+	signed int s1, s2, s3;
 	Mnemonic m;
 	InstrDTO *i;
 
 	m = XOR;
-	s1 = 1234, s2 = 5678;
-	i = execute_instr(s1, s2, m);
+	s1 = 1234, s2 = 5678, s3 = 0;
+	i = execute_instr(s1, s2, s3, m);
 
 	CHECK(i->get_s1() == 4860);
 	CHECK(!ct->get_condition(OF));
@@ -346,13 +348,13 @@ TEST_CASE_METHOD(EXFixture, "XOR", "[ex]")
 
 TEST_CASE_METHOD(EXFixture, "CMP less", "[ex]")
 {
-	signed int s1 = 0, s2 = 0;
+	signed int s1, s2, s3;
 	Mnemonic m;
 	InstrDTO *i;
 
 	m = CMP;
-	s1 = -1, s2 = 0;
-	i = execute_instr(s1, s2, m);
+	s1 = -1, s2 = 0, s3 = 0;
+	i = execute_instr(s1, s2, s3, m);
 
 	// should not be changed
 	CHECK(i->get_s1() == -1);
@@ -367,13 +369,13 @@ TEST_CASE_METHOD(EXFixture, "CMP less", "[ex]")
 
 TEST_CASE_METHOD(EXFixture, "CMP equal", "[ex]")
 {
-	signed int s1 = 0, s2 = 0;
+	signed int s1, s2, s3;
 	Mnemonic m;
 	InstrDTO *i;
 
 	m = CMP;
-	s1 = 20, s2 = 20;
-	i = execute_instr(s1, s2, m);
+	s1 = 20, s2 = 20, s3 = 0;
+	i = execute_instr(s1, s2, s3, m);
 
 	// should not be changed
 	CHECK(i->get_s1() == 20);
@@ -388,13 +390,13 @@ TEST_CASE_METHOD(EXFixture, "CMP equal", "[ex]")
 
 TEST_CASE_METHOD(EXFixture, "CMP greater", "[ex]")
 {
-	signed int s1 = 0, s2 = 0;
+	signed int s1, s2, s3;
 	Mnemonic m;
 	InstrDTO *i;
 
 	m = CMP;
-	s1 = 21, s2 = 20;
-	i = execute_instr(s1, s2, m);
+	s1 = 21, s2 = 20, s3 = 0;
+	i = execute_instr(s1, s2, s3, m);
 
 	// should not be changed
 	CHECK(i->get_s1() == 21);
@@ -421,13 +423,14 @@ TEST_CASE_METHOD(EXFixture, "CMP greater", "[ex]")
 
 TEST_CASE_METHOD(EXFixture, "LOAD", "[ex]")
 {
-	signed int s1 = 0, s2 = 0;
+	signed int s1, s2, s3;
 	Mnemonic m;
 	InstrDTO *i;
 
 	m = LOAD;
-	s1 = 42000, s2 = -41958;
-	i = execute_instr(s1, s2, m);
+	s1 = 42000, s2 = 0;
+	s3 = -41958;
+	i = execute_instr(s1, s2, s3, m);
 
 	CHECK(i->get_s1() == 42);
 	CHECK(!ct->get_condition(OF));
@@ -442,13 +445,14 @@ TEST_CASE_METHOD(EXFixture, "LOAD", "[ex]")
 
 TEST_CASE_METHOD(EXFixture, "ADDI within bounds", "[ex]")
 {
-	signed int s1 = 0, s2 = 0;
+	signed int s1, s2, s3;
 	Mnemonic m;
 	InstrDTO *i;
 
 	m = ADDI;
-	s1 = 42000, s2 = -41958;
-	i = execute_instr(s1, s2, m);
+	s1 = 42000, s2 = 0;
+	s3 = -41958;
+	i = execute_instr(s1, s2, s3, m);
 
 	CHECK(i->get_s1() == 42);
 	CHECK(!ct->get_condition(OF));
@@ -467,13 +471,14 @@ TEST_CASE_METHOD(EXFixture, "ADDI within bounds", "[ex]")
 
 TEST_CASE_METHOD(EXFixture, "SUBI within bounds", "[ex]")
 {
-	signed int s1 = 0, s2 = 0;
+	signed int s1, s2, s3;
 	Mnemonic m;
 	InstrDTO *i;
 
 	m = SUBI;
-	s1 = 200, s2 = 131;
-	i = execute_instr(s1, s2, m);
+	s1 = 200, s2 = 0;
+	s3 = 131;
+	i = execute_instr(s1, s2, s3, m);
 
 	CHECK(i->get_s1() == 69);
 	CHECK(!ct->get_condition(OF));
@@ -492,13 +497,13 @@ TEST_CASE_METHOD(EXFixture, "SUBI within bounds", "[ex]")
 
 TEST_CASE_METHOD(EXFixture, "SFTRI within bounds", "[ex]")
 {
-	signed int s1 = 0, s2 = 0;
+	signed int s1, s2, s3;
 	Mnemonic m;
 	InstrDTO *i;
 
 	m = SFTRI;
-	s1 = 1300, s2 = 6;
-	i = execute_instr(s1, s2, m);
+	s1 = 1300, s2 = 0, s3 = 6;
+	i = execute_instr(s1, s2, s3, m);
 
 	CHECK(i->get_s1() == 20);
 	CHECK(!ct->get_condition(OF));
@@ -517,13 +522,13 @@ TEST_CASE_METHOD(EXFixture, "SFTRI within bounds", "[ex]")
 
 TEST_CASE_METHOD(EXFixture, "SFTLI within bounds", "[ex]")
 {
-	signed int s1 = 0, s2 = 0;
+	signed int s1, s2, s3;
 	Mnemonic m;
 	InstrDTO *i;
 
 	m = SFTLI;
-	s1 = 13, s2 = 6;
-	i = execute_instr(s1, s2, m);
+	s1 = 13, s2 = 0, s3 = 6;
+	i = execute_instr(s1, s2, s3, m);
 
 	CHECK(i->get_s1() == 832);
 	CHECK(!ct->get_condition(OF));
@@ -542,13 +547,13 @@ TEST_CASE_METHOD(EXFixture, "SFTLI within bounds", "[ex]")
 
 TEST_CASE_METHOD(EXFixture, "ANDI", "[ex]")
 {
-	signed int s1 = 0, s2 = 0;
+	signed int s1, s2, s3;
 	Mnemonic m;
 	InstrDTO *i;
 
 	m = ANDI;
-	s1 = 1234, s2 = 5678;
-	i = execute_instr(s1, s2, m);
+	s1 = 1234, s2 = 0, s3 = 5678;
+	i = execute_instr(s1, s2, s3, m);
 
 	CHECK(i->get_s1() == 1026);
 	CHECK(!ct->get_condition(OF));
@@ -559,13 +564,13 @@ TEST_CASE_METHOD(EXFixture, "ANDI", "[ex]")
 
 TEST_CASE_METHOD(EXFixture, "ORI", "[ex]")
 {
-	signed int s1 = 0, s2 = 0;
+	signed int s1, s2, s3;
 	Mnemonic m;
 	InstrDTO *i;
 
 	m = ORI;
-	s1 = 1234, s2 = 5678;
-	i = execute_instr(s1, s2, m);
+	s1 = 1234, s2 = 0, s3 = 5678;
+	i = execute_instr(s1, s2, s3, m);
 
 	CHECK(i->get_s1() == 5886);
 	CHECK(!ct->get_condition(OF));
@@ -576,13 +581,13 @@ TEST_CASE_METHOD(EXFixture, "ORI", "[ex]")
 
 TEST_CASE_METHOD(EXFixture, "XORI", "[ex]")
 {
-	signed int s1 = 0, s2 = 0;
+	signed int s1, s2, s3;
 	Mnemonic m;
 	InstrDTO *i;
 
 	m = XORI;
-	s1 = 1234, s2 = 5678;
-	i = execute_instr(s1, s2, m);
+	s1 = 1234, s2 = 0, s3 = 5678;
+	i = execute_instr(s1, s2, s3, m);
 
 	CHECK(i->get_s1() == 4860);
 	CHECK(!ct->get_condition(OF));
@@ -593,13 +598,13 @@ TEST_CASE_METHOD(EXFixture, "XORI", "[ex]")
 
 TEST_CASE_METHOD(EXFixture, "STORE", "[ex]")
 {
-	signed int s1 = 0, s2 = 0;
+	signed int s1, s2, s3;
 	Mnemonic m;
 	InstrDTO *i;
 
 	m = LOAD;
-	s1 = 42000, s2 = -41958;
-	i = execute_instr(s1, s2, m);
+	s1 = 42000, s2 = 0, s3 = -41958;
+	i = execute_instr(s1, s2, s3, m);
 
 	CHECK(i->get_s1() == 42);
 	CHECK(!ct->get_condition(OF));
@@ -614,13 +619,13 @@ TEST_CASE_METHOD(EXFixture, "STORE", "[ex]")
 
 TEST_CASE_METHOD(EXFixture, "JMP", "[ex]")
 {
-	signed int s1 = 0, s2 = 0;
+	signed int s1, s2, s3;
 	Mnemonic m;
 	InstrDTO *i;
 
 	m = JMP;
-	s1 = 42000, s2 = -41958;
-	i = execute_instr(s1, s2, m);
+	s1 = 42000, s2 = -41958, s3 = 0;
+	i = execute_instr(s1, s2, s3, m);
 
 	CHECK(i->get_s1() == 42);
 	CHECK(!ct->get_condition(OF));
@@ -631,14 +636,14 @@ TEST_CASE_METHOD(EXFixture, "JMP", "[ex]")
 
 TEST_CASE_METHOD(EXFixture, "JRL", "[ex]")
 {
-	signed int s1 = 0, s2 = 0;
+	signed int s1, s2, s3;
 	Mnemonic m;
 	InstrDTO *i;
 
 	m = JRL;
-	s1 = 100, s2 = -42027;
+	s1 = 100, s2 = -42027, s3;
 	this->ct->set_pc(42096);
-	i = execute_instr(s1, s2, m);
+	i = execute_instr(s1, s2, s3, m);
 
 	CHECK(i->get_s1() == 69);
 	CHECK(!ct->get_condition(OF));
@@ -649,13 +654,13 @@ TEST_CASE_METHOD(EXFixture, "JRL", "[ex]")
 
 TEST_CASE_METHOD(EXFixture, "JAL", "[ex]")
 {
-	signed int s1 = 0, s2 = 0;
+	signed int s1, s2, s3;
 	Mnemonic m;
 	InstrDTO *i;
 
 	m = JAL;
-	s1 = 42000, s2 = -41958;
-	i = execute_instr(s1, s2, m);
+	s1 = 42000, s2 = -41958, s3 = 0;
+	i = execute_instr(s1, s2, s3, m);
 
 	CHECK(i->get_s1() == 42);
 	CHECK(!ct->get_condition(OF));
@@ -666,14 +671,14 @@ TEST_CASE_METHOD(EXFixture, "JAL", "[ex]")
 
 TEST_CASE_METHOD(EXFixture, "BEQ", "[ex]")
 {
-	signed int s1 = 0, s2 = 0;
+	signed int s1, s2, s3;
 	Mnemonic m;
 	InstrDTO *i;
 
 	m = BEQ;
-	s1 = 100, s2 = -42027;
+	s1 = 100, s2 = -42027, s3 = 0;
 	this->ct->set_pc(42096);
-	i = execute_instr(s1, s2, m);
+	i = execute_instr(s1, s2, s3, m);
 
 	CHECK(i->get_s1() == 69);
 	CHECK(!ct->get_condition(OF));
@@ -684,14 +689,14 @@ TEST_CASE_METHOD(EXFixture, "BEQ", "[ex]")
 
 TEST_CASE_METHOD(EXFixture, "BGT", "[ex]")
 {
-	signed int s1 = 0, s2 = 0;
+	signed int s1, s2, s3;
 	Mnemonic m;
 	InstrDTO *i;
 
 	m = BGT;
-	s1 = 100, s2 = -42027;
+	s1 = 100, s2 = -42027, s3 = 0;
 	this->ct->set_pc(42096);
-	i = execute_instr(s1, s2, m);
+	i = execute_instr(s1, s2, s3, m);
 
 	CHECK(i->get_s1() == 69);
 	CHECK(!ct->get_condition(OF));
@@ -702,14 +707,14 @@ TEST_CASE_METHOD(EXFixture, "BGT", "[ex]")
 
 TEST_CASE_METHOD(EXFixture, "BUF", "[ex]")
 {
-	signed int s1 = 0, s2 = 0;
+	signed int s1, s2, s3;
 	Mnemonic m;
 	InstrDTO *i;
 
 	m = BUF;
-	s1 = 100, s2 = -42027;
+	s1 = 100, s2 = -42027, s3 = 0;
 	this->ct->set_pc(42096);
-	i = execute_instr(s1, s2, m);
+	i = execute_instr(s1, s2, s3, m);
 
 	CHECK(i->get_s1() == 69);
 	CHECK(!ct->get_condition(OF));
@@ -720,14 +725,14 @@ TEST_CASE_METHOD(EXFixture, "BUF", "[ex]")
 
 TEST_CASE_METHOD(EXFixture, "BOF", "[ex]")
 {
-	signed int s1 = 0, s2 = 0;
+	signed int s1, s2, s3;
 	Mnemonic m;
 	InstrDTO *i;
 
 	m = BOF;
-	s1 = 100, s2 = -42027;
+	s1 = 100, s2 = -42027, s3 = 0;
 	this->ct->set_pc(42096);
-	i = execute_instr(s1, s2, m);
+	i = execute_instr(s1, s2, s3, m);
 
 	CHECK(i->get_s1() == 69);
 	CHECK(!ct->get_condition(OF));
