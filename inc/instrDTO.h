@@ -43,6 +43,10 @@ class InstrDTO
 	 * @return the mnemonic of the instruction
 	 */
 	Mnemonic get_mnemonic();
+	/**
+	 * @return the type of the instruction
+	 */
+	Type get_type();
 
 	/**
 	 * @param set hist key
@@ -68,6 +72,11 @@ class InstrDTO
 	 * @param the mnemonic of the instruction
 	 */
 	void set_mnemonic(Mnemonic);
+	
+	/**
+	 * @param the type of the instruction
+	 */
+	void set_type(Type);
 
   private:
 	/**
@@ -91,6 +100,11 @@ class InstrDTO
 	 * The mnemonic of the operation.
 	 */
 	Mnemonic mnemonic;
+
+	/**
+	 * Type of the instruction
+	 */
+	Type type;
 };
 
 #endif /* INSTRDTO_H_INCLUDED */

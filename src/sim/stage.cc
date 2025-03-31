@@ -35,7 +35,7 @@ InstrDTO *Stage::advance(Response p)
 	Response n;
 
 	this->advance_helper();
-	if (this->curr_instr != nullptr && p == OK) {
+	if (this->status == OK && this->curr_instr != nullptr && p == OK) {
 		// mutual consent
 		this->curr_instr->set_time_of(this->id, this->clock_cycle);
 		r = new InstrDTO(*this->curr_instr);
@@ -77,4 +77,12 @@ bool Stage::is_checked_out(signed int r)
 {
 	return std::find(this->checked_out.begin(), this->checked_out.end(), r) !=
 		   this->checked_out.end();
+}
+
+void Stage::squash(){
+	this->curr_instr = nullptr;
+	this->status = OK;
+	if(this->next){
+		this->next->squash();
+	}
 }
