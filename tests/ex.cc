@@ -611,3 +611,135 @@ TEST_CASE_METHOD(EXFixture, "STORE", "[ex]")
 // TEST_CASE_METHOD(EXFixture, "STOREV", "[ex]")
 // {
 // }
+
+TEST_CASE_METHOD(EXFixture, "JMP", "[ex]")
+{
+	signed int s1 = 0, s2 = 0;
+	Mnemonic m;
+	InstrDTO *i;
+
+	m = JMP;
+	s1 = 42000, s2 = -41958;
+	i = execute_instr(s1, s2, m);
+
+	CHECK(i->get_s1() == 42);
+	CHECK(!ct->get_condition(OF));
+	CHECK(!ct->get_condition(UF));
+
+	delete i;
+}
+
+TEST_CASE_METHOD(EXFixture, "JRL", "[ex]")
+{
+	signed int s1 = 0, s2 = 0;
+	Mnemonic m;
+	InstrDTO *i;
+
+	m = JRL;
+	s1 = 100, s2 = -42027;
+	this->ct->set_pc(42096);
+	i = execute_instr(s1, s2, m);
+
+	CHECK(i->get_s1() == 69);
+	CHECK(!ct->get_condition(OF));
+	CHECK(!ct->get_condition(UF));
+
+	delete i;
+}
+
+TEST_CASE_METHOD(EXFixture, "JAL", "[ex]")
+{
+	signed int s1 = 0, s2 = 0;
+	Mnemonic m;
+	InstrDTO *i;
+
+	m = JAL;
+	s1 = 42000, s2 = -41958;
+	i = execute_instr(s1, s2, m);
+
+	CHECK(i->get_s1() == 42);
+	CHECK(!ct->get_condition(OF));
+	CHECK(!ct->get_condition(UF));
+
+	delete i;
+}
+
+TEST_CASE_METHOD(EXFixture, "BEQ", "[ex]")
+{
+	signed int s1 = 0, s2 = 0;
+	Mnemonic m;
+	InstrDTO *i;
+
+	m = BEQ;
+	s1 = 100, s2 = -42027;
+	this->ct->set_pc(42096);
+	i = execute_instr(s1, s2, m);
+
+	CHECK(i->get_s1() == 69);
+	CHECK(!ct->get_condition(OF));
+	CHECK(!ct->get_condition(UF));
+
+	delete i;
+}
+
+TEST_CASE_METHOD(EXFixture, "BGT", "[ex]")
+{
+	signed int s1 = 0, s2 = 0;
+	Mnemonic m;
+	InstrDTO *i;
+
+	m = BGT;
+	s1 = 100, s2 = -42027;
+	this->ct->set_pc(42096);
+	i = execute_instr(s1, s2, m);
+
+	CHECK(i->get_s1() == 69);
+	CHECK(!ct->get_condition(OF));
+	CHECK(!ct->get_condition(UF));
+
+	delete i;
+}
+
+TEST_CASE_METHOD(EXFixture, "BUF", "[ex]")
+{
+	signed int s1 = 0, s2 = 0;
+	Mnemonic m;
+	InstrDTO *i;
+
+	m = BUF;
+	s1 = 100, s2 = -42027;
+	this->ct->set_pc(42096);
+	i = execute_instr(s1, s2, m);
+
+	CHECK(i->get_s1() == 69);
+	CHECK(!ct->get_condition(OF));
+	CHECK(!ct->get_condition(UF));
+
+	delete i;
+}
+
+TEST_CASE_METHOD(EXFixture, "BOF", "[ex]")
+{
+	signed int s1 = 0, s2 = 0;
+	Mnemonic m;
+	InstrDTO *i;
+
+	m = BOF;
+	s1 = 100, s2 = -42027;
+	this->ct->set_pc(42096);
+	i = execute_instr(s1, s2, m);
+
+	CHECK(i->get_s1() == 69);
+	CHECK(!ct->get_condition(OF));
+	CHECK(!ct->get_condition(UF));
+
+	delete i;
+}
+
+// TEST_CASE_METHOD(EXFixture, "PUSH", "[ex]")
+// {
+// }
+
+// TEST_CASE_METHOD(EXFixture, "POP", "[ex]")
+// {
+// }

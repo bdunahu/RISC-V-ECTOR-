@@ -21,6 +21,14 @@ Storage *Stage::storage;
 bool Stage::is_pipelined;
 int Stage::clock_cycle;
 
+bool Stage::get_condition(CC c) {
+	return (this->gprs[3] >> c) & 1;
+}
+
+void Stage::set_pc(unsigned int pc) {
+	this->pc = pc;
+}
+
 InstrDTO *Stage::advance(Response p)
 {
 	InstrDTO *r = nullptr;
@@ -48,10 +56,6 @@ void Stage::set_condition(CC c, bool v)
 		this->gprs[3] = this->gprs[3] | 1 << c;
 	else
 		this->gprs[3] = this->gprs[3] & ~(1 << c);
-}
-
-bool Stage::get_condition(CC c) {
-	return (this->gprs[3] >> c) & 1;
 }
 
 signed int Stage::dereference_register(signed int v)

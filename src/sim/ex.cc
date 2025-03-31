@@ -227,23 +227,50 @@ EX::EX(Stage *stage) : Stage(stage)
 			}),
 
 		/* J type instructions */
-		INIT_INSTRUCTION(JMP, {}),
+		INIT_INSTRUCTION(
+			JMP,
+			{
+				s1 = s1 + s2;
+				(void)this;
+			}),
 
-		INIT_INSTRUCTION(JRL, {}),
+		INIT_INSTRUCTION(
+			JRL,
+			{
+				s1 = this->pc + s2;
+				(void)this;
+			}),
 
-		INIT_INSTRUCTION(JAL, {}),
+		INIT_INSTRUCTION(
+			JAL,
+			{
+				s1 = s1 + s2;
+				(void)this;
+			}),
 
-		INIT_INSTRUCTION(BEQ, {}),
+		INIT_INSTRUCTION(BEQ, { s1 = this->pc + s2; }),
 
-		INIT_INSTRUCTION(BGT, {}),
+		INIT_INSTRUCTION(BGT, { s1 = this->pc + s2; }),
 
-		INIT_INSTRUCTION(BUF, {}),
+		INIT_INSTRUCTION(BUF, { s1 = this->pc + s2; }),
 
-		INIT_INSTRUCTION(BOF, {}),
+		INIT_INSTRUCTION(BOF, { s1 = this->pc + s2; }),
 
-		INIT_INSTRUCTION(PUSH, {}),
+		INIT_INSTRUCTION(
+			PUSH,
+			{
+				(void)s2;
+				(void)s1;
+				(void)this;
+			}),
 
-		INIT_INSTRUCTION(POP, {}),
+		INIT_INSTRUCTION(
+			POP,
+			{
+				(void)s2;
+				(void)s1;
+				(void)this;
+			}),
 
 		/* NOP */
 		INIT_INSTRUCTION(

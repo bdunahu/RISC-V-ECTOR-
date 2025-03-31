@@ -50,6 +50,11 @@ class Stage
 	 */
 	bool get_condition(CC c);
 
+	/**
+	 * Sets the value of the PC register.
+	 */
+	void set_pc(unsigned int pc);
+
   protected:
 	/**
 	 * The function expected to do the majority of the work.
