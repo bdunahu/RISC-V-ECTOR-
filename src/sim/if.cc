@@ -11,7 +11,7 @@ InstrDTO *IF::advance(Response p)
 	InstrDTO *r = nullptr;
 
 	this->advance_helper();
-	if (this->status == OK && p == OK) {
+	if (this->curr_instr != nullptr && p == OK) {
 		// mutual consent
 		++this->pc;
 		this->curr_instr->set_time_of(this->id, this->clock_cycle);

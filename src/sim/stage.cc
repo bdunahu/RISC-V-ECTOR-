@@ -7,7 +7,7 @@ Stage::Stage(Stage *next)
 {
 	this->next = next;
 	this->curr_instr = nullptr;
-	this->status = STALLED;
+	this->status = OK;
 	this->checked_out = {};
 }
 
@@ -35,7 +35,7 @@ InstrDTO *Stage::advance(Response p)
 	Response n;
 
 	this->advance_helper();
-	if (this->status == OK && p == OK) {
+	if (this->curr_instr != nullptr && p == OK) {
 		// mutual consent
 		this->curr_instr->set_time_of(this->id, this->clock_cycle);
 		r = new InstrDTO(*this->curr_instr);
