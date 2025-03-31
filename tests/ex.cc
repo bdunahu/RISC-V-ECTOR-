@@ -476,8 +476,7 @@ TEST_CASE_METHOD(EXFixture, "SUBI within bounds", "[ex]")
 	InstrDTO *i;
 
 	m = SUBI;
-	s1 = 200, s2 = 0;
-	s3 = 131;
+	s1 = 200, s2 = 0, s3 = 131;
 	i = execute_instr(s1, s2, s3, m);
 
 	CHECK(i->get_s1() == 69);
@@ -641,7 +640,7 @@ TEST_CASE_METHOD(EXFixture, "JRL", "[ex]")
 	InstrDTO *i;
 
 	m = JRL;
-	s1 = 100, s2 = -42027, s3;
+	s1 = 100, s2 = -42027, s3 = 0;
 	this->ct->set_pc(42096);
 	i = execute_instr(s1, s2, s3, m);
 
