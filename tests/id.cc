@@ -23,11 +23,18 @@ class IDFixture
 		delete this->ct;
 		delete this->c;
 	};
-	void prime_bits(signed int raw)
+	InstrDTO *decode_bits(signed int raw)
 	{
 		InstrDTO *i = new InstrDTO();
 		i->set_instr_bits(raw);
 		this->dum->set_curr_instr(i);
+
+		i = this->ct->advance(OK);
+		REQUIRE(i == nullptr);
+		i = this->ct->advance(OK);
+		REQUIRE(i != nullptr);
+
+		return i;
 	}
 	signed int encode_R_type(
 		signed int s3,
@@ -79,12 +86,15 @@ class IDFixture
 
 TEST_CASE_METHOD(IDFixture, "Parse invalid type", "[id]")
 {
-	signed int s1 = 0, s2 = 0, s3 = 0;
-	Mnemonic m;
+	signed int t;
+	InstrDTO *i;
 
-	s1 = 0xFFFFFFFF;
-	this->d->get_instr_fields(s1, s2, s3, m);
-	CHECK(m == NOP);
+	t = this->encode_R_type(0b0, 0b1, 0b10, 0b11, 0b11);
+	i = this->decode_bits(t);
+
+	CHECK(i->get_mnemonic() == NOP);
+
+	delete i;
 }
 
 TEST_CASE_METHOD(IDFixture, "Parse arbitrary r-type # one", "[id]")
@@ -93,12 +103,7 @@ TEST_CASE_METHOD(IDFixture, "Parse arbitrary r-type # one", "[id]")
 	InstrDTO *i;
 
 	t = this->encode_R_type(0b0, 0b1, 0b10, 0b11, 0b0);
-	this->prime_bits(t);
-
-	i = this->ct->advance(OK);
-	REQUIRE(i == nullptr);
-	i = this->ct->advance(OK);
-	REQUIRE(i != nullptr);
+	i = this->decode_bits(t);
 
 	CHECK(i->get_s1() == 0x00000000); // registers are empty
 	CHECK(i->get_s2() == 0x00000000);
@@ -114,12 +119,7 @@ TEST_CASE_METHOD(IDFixture, "Parse arbitrary r-type # two", "[id]")
 	InstrDTO *i;
 
 	t = this->encode_R_type(0b10000, 0b01000, 0b00100, 0b10, 0b0);
-	this->prime_bits(t);
-
-	i = this->ct->advance(OK);
-	REQUIRE(i == nullptr);
-	i = this->ct->advance(OK);
-	REQUIRE(i != nullptr);
+	i = this->decode_bits(t);
 
 	CHECK(i->get_s1() == 0x00000000); // registers are empty
 	CHECK(i->get_s2() == 0x00000000);
@@ -135,12 +135,7 @@ TEST_CASE_METHOD(IDFixture, "Parse arbitrary i-type # one", "[id]")
 	InstrDTO *i;
 
 	t = this->encode_I_type(0xF, 0b1, 0b10, 0b0111, 0b1);
-	this->prime_bits(t);
-
-	i = this->ct->advance(OK);
-	REQUIRE(i == nullptr);
-	i = this->ct->advance(OK);
-	REQUIRE(i != nullptr);
+	i = this->decode_bits(t);
 
 	CHECK(i->get_s1() == 0x00000000); // registers are empty
 	CHECK(i->get_s2() == 0x00000000);
@@ -156,12 +151,7 @@ TEST_CASE_METHOD(IDFixture, "Parse arbitrary i-type # two", "[id]")
 	InstrDTO *i;
 
 	t = this->encode_I_type(0xCC, 0b010, 0b101, 0b1011, 0b1);
-	this->prime_bits(t);
-
-	i = this->ct->advance(OK);
-	REQUIRE(i == nullptr);
-	i = this->ct->advance(OK);
-	REQUIRE(i != nullptr);
+	i = this->decode_bits(t);
 	
 	CHECK(i->get_s1() == 0x00000000); // registers are empty
 	CHECK(i->get_s2() == 0x00000000);
@@ -177,12 +167,7 @@ TEST_CASE_METHOD(IDFixture, "Parse arbitrary j-type # one", "[id]")
 	InstrDTO *i;
 
 	t = this->encode_J_type(0x3456, 0b10101, 0b0111, 0b10);
-	this->prime_bits(t);
-
-	i = this->ct->advance(OK);
-	REQUIRE(i == nullptr);
-	i = this->ct->advance(OK);
-	REQUIRE(i != nullptr);
+	i = this->decode_bits(t);
 
 	CHECK(i->get_s1() == 0x00000000); // registers are empty
 	CHECK(i->get_s2() == 0x3456);
@@ -197,12 +182,7 @@ TEST_CASE_METHOD(IDFixture, "Parse arbitrary j-type # two", "[id]")
 	InstrDTO *i;
 
 	t = this->encode_J_type(0xBBCCF, 0b10101, 0b0011, 0b10);
-	this->prime_bits(t);
-
-	i = this->ct->advance(OK);
-	REQUIRE(i == nullptr);
-	i = this->ct->advance(OK);
-	REQUIRE(i != nullptr);
+	i = this->decode_bits(t);
 
 	CHECK(i->get_s1() == 0x00000000); // registers are empty
 	CHECK(i->get_s2() == 0xBBCCF);
