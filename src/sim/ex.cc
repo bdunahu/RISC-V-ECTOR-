@@ -282,28 +282,28 @@ EX::EX(Stage *stage) : Stage(stage)
 		INIT_INSTRUCTION(
 			BEQ,
 			{
-				s1 = this->pc + s2;
+				(this->get_condition(EQ)) ? s1 = this->pc + s2 : s1 = this->pc;
 				(void)s3;
 			}),
 
 		INIT_INSTRUCTION(
 			BGT,
 			{
-				s1 = this->pc + s2;
+				(this->get_condition(GT)) ? s1 = this->pc + s2 : s1 = this->pc;
 				(void)s3;
 			}),
 
 		INIT_INSTRUCTION(
 			BUF,
 			{
-				s1 = this->pc + s2;
+				(this->get_condition(UF)) ? s1 = this->pc + s2 : s1 = this->pc;
 				(void)s3;
 			}),
 
 		INIT_INSTRUCTION(
 			BOF,
 			{
-				s1 = this->pc + s2;
+				(this->get_condition(OF)) ? s1 = this->pc + s2 : s1 = this->pc;
 				(void)s3;
 			}),
 

@@ -31,10 +31,11 @@ int Controller::get_pc() { return this->pc; }
 InstrDTO *Controller::advance(Response p)
 {
 	InstrDTO *r;
-
 	r = this->next->advance(p);
 	++this->clock_cycle;
 	return r;
 }
 
-void Controller::advance_helper() {}
+void Controller::advance_helper() {
+	// TODO: check halt condition and call UI to refresh
+}

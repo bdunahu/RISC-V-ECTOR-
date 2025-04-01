@@ -80,9 +80,9 @@ int main(int argc, char **argv)
 	} else {
 		global_log->log(INFO, "Starting QT...");
 		QApplication a(argc, argv);
-		Gui w;
-		w.show();
-		a.exec();
+    	GUI w;
+    	w.show();
+    	return a.exec();
 	}
 
 	global_log->log(INFO, "Cleaning up...");
