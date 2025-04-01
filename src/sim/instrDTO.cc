@@ -7,7 +7,7 @@ InstrDTO::InstrDTO()
 	this->s1 = 0;
 	this->s2 = 0;
 	this->s3 = 0;
-	this->mnemonic = NOP;
+	this->mnemonic = ADD;
 	this->type = INV;
 }
 

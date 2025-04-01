@@ -10,6 +10,7 @@ void MM::advance_helper()
 {
 	signed int data;
 
+	std::cout << "mem" << this->curr_instr->get_s2() << std::endl;
 	switch (this->curr_instr->get_mnemonic()) {
 	case LOAD:
 		this->status = this->storage->read_word(

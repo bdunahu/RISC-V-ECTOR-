@@ -4,6 +4,7 @@
 #include "instrDTO.h"
 #include "response.h"
 #include "stage.h"
+#include "utils.h"
 #include <unordered_map>
 
 // clang-format off
@@ -185,6 +186,7 @@ EX::EX(Stage *stage) : Stage(stage)
 			ADDI,
 			{
 				s1 = s1 + s3;
+				std::cout << "= " << s2 << std::endl;
 				(void)s2;
 				(void)this;
 			}),
@@ -282,28 +284,32 @@ EX::EX(Stage *stage) : Stage(stage)
 		INIT_INSTRUCTION(
 			BEQ,
 			{
-				(this->get_condition(EQ)) ? s1 = this->pc + s2 : s1 = this->pc;
+				(this->get_condition(EQ)) ? s1 = wrap_address(this->pc + s2)
+										  : s1 = -1;
 				(void)s3;
 			}),
 
 		INIT_INSTRUCTION(
 			BGT,
 			{
-				(this->get_condition(GT)) ? s1 = this->pc + s2 : s1 = this->pc;
+				(this->get_condition(GT)) ? s1 = wrap_address(this->pc + s2)
+										  : s1 = -1;
 				(void)s3;
 			}),
 
 		INIT_INSTRUCTION(
 			BUF,
 			{
-				(this->get_condition(UF)) ? s1 = this->pc + s2 : s1 = this->pc;
+				(this->get_condition(UF)) ? s1 = wrap_address(this->pc) + s2
+										  : s1 = -1;
 				(void)s3;
 			}),
 
 		INIT_INSTRUCTION(
 			BOF,
 			{
-				(this->get_condition(OF)) ? s1 = this->pc + s2 : s1 = this->pc;
+				(this->get_condition(OF)) ? s1 = wrap_address(this->pc + s2)
+										  : s1 = -1;
 				(void)s3;
 			}),
 

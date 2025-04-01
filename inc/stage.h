@@ -81,6 +81,12 @@ class Stage
 	 */
 	bool is_checked_out(signed int r);
 	/**
+	 * Stores `d` into the register indexed `v`.
+	 * @param the register number.
+	 * @param the value to store.
+	 */
+	void store_register(signed int v, signed int d);
+	/**
 	 * Returns the value of the register corresponding to `v`.
 	 * @param the register number.
 	 * @return the value in the associated register.

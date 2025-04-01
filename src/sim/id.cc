@@ -48,14 +48,18 @@ void ID::advance_helper()
 	Mnemonic m;
 	Type t;
 
-	s1 = curr_instr->get_instr_bits();
-	get_instr_fields(s1, s2, s3, m, t);
-	if (this->status == OK) {
-		curr_instr->set_s1(s1);
-		curr_instr->set_s2(s2);
-		curr_instr->set_s3(s3);
-		curr_instr->set_mnemonic(m);
-		curr_instr->set_type(t);
+	if (curr_instr->get_mnemonic() == NOP)
+		this->status = OK;
+	else {
+		s1 = curr_instr->get_instr_bits();
+		get_instr_fields(s1, s2, s3, m, t);
+		if (this->status == OK) {
+			curr_instr->set_s1(s1);
+			curr_instr->set_s2(s2);
+			curr_instr->set_s3(s3);
+			curr_instr->set_mnemonic(m);
+			curr_instr->set_type(t);
+		}
 	}
 }
 

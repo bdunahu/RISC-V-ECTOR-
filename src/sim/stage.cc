@@ -2,7 +2,6 @@
 #include "utils.h"
 #include <array>
 #include <deque>
-#include <iostream>
 
 Stage::Stage(Stage *next)
 {
@@ -28,10 +27,12 @@ void Stage::set_pc(unsigned int pc) { this->pc = pc; }
 InstrDTO *Stage::advance(Response p)
 {
 	InstrDTO *r = nullptr;
+	InstrDTO *s = nullptr;
 	Response n;
 
-	if (this->curr_instr && this->status != OK)
+	if (this->curr_instr && this->status != OK) {
 		this->advance_helper();
+	}
 	if (this->status == OK && p == WAIT && this->curr_instr) {
 		// mutual consent
 		this->curr_instr->set_time_of(this->id, this->clock_cycle);
@@ -42,8 +43,9 @@ InstrDTO *Stage::advance(Response p)
 	}
 
 	n = (p != WAIT || this->status != WAIT) ? STALLED : WAIT;
-	// the power of consent
-	this->curr_instr = this->next->advance(n);
+	s = this->next->advance(n);
+	if (s)
+		this->curr_instr = s;
 	return r;
 }
 
@@ -68,6 +70,21 @@ signed int Stage::dereference_register(signed int v)
 
 	r = (v >= GPR_NUM) ? this->vrs[v % GPR_NUM] : this->gprs[v];
 	return r;
+}
+
+void Stage::store_register(signed int v, signed int d)
+{
+	if (v < 0 || v >= GPR_NUM + V_NUM) {
+		throw std::out_of_range(string_format(
+			"instruction tried to access register %d, which does "
+			"not exist",
+			v));
+	}
+
+	if (v >= GPR_NUM)
+		this->vrs[v % GPR_NUM] = d;
+	else
+		this->gprs[v] = d;
 }
 
 bool Stage::is_checked_out(signed int r)
