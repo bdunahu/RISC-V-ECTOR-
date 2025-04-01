@@ -34,8 +34,9 @@ InstrDTO *Stage::advance(Response p)
 	InstrDTO *r = nullptr;
 	Response n;
 
-	this->advance_helper();
-	if (this->curr_instr != nullptr && p == OK) {
+	if (this->curr_instr && this->status != OK)
+		this->advance_helper();
+	if (this->curr_instr && p == OK) {
 		// mutual consent
 		this->curr_instr->set_time_of(this->id, this->clock_cycle);
 		r = new InstrDTO(*this->curr_instr);
