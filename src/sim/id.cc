@@ -46,38 +46,43 @@ void ID::advance_helper()
 {
 	signed int s1, s2, s3;
 	Mnemonic m;
+	Type t;
 
 	// it may be good to ensure we are not doing
 	// work that has already been done
-	if (this->curr_instr) {
+	if (this->curr_instr && this->curr_instr->get_mnemonic() == NONE) {
 		s1 = curr_instr->get_instr_bits();
-		get_instr_fields(s1, s2, s3, m);
+		get_instr_fields(s1, s2, s3, m ,t);
 		if (this->status == OK) {
 			curr_instr->set_s1(s1);
 			curr_instr->set_s2(s2);
 			curr_instr->set_s3(s3);
 			curr_instr->set_mnemonic(m);
+			curr_instr->set_type(t);
 		}
 	}
 }
 
-void ID::get_instr_fields(
-	signed int &s1, signed int &s2, signed int &s3, Mnemonic &m)
+void ID::get_instr_fields(signed int &s1, signed int &s2, signed int &s3, Mnemonic &m, Type &t)
 {
 	unsigned int type;
 	this->split_instr(s1, type, m);
 
 	switch (type) {
 	case 0b00:
+		t = R;
 		this->decode_R_type(s1, s2, s3);
 		break;
 	case 0b01:
+		t = I;
 		this->decode_I_type(s1, s2, s3);
 		break;
 	case 0b10:
+		t = J;
 		this->decode_J_type(s1, s2);
 		break;
 	case 0b11:
+		t = INV;
 		this->status = OK;
 	}
 }

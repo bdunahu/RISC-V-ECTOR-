@@ -30,11 +30,9 @@ class Stage
 	 * Advances this stage by a single clock cycle.
 	 * A boilerplate version is provided in stage.cc.
 	 *
-	 * @param a DTO object containing the next instruction to be processed.
 	 * @param a response, indicating whether or not the parent pipe stage is
 	 * ready to accept a new instruction object next cycle.
-	 * @return a response, indicating whether this pipeline stage is stalling,
-	 * busy, or done.
+	 * @return a DTO object containing the next instruction to be processed.
 	 *
 	 * Must set the status to STALLED when an operation completes.
 	 */
@@ -54,6 +52,11 @@ class Stage
 	 * Sets the value of the PC register.
 	 */
 	void set_pc(unsigned int pc);
+
+	/**
+	 * Squashes the pipeline.
+	 */
+	void squash();
 
   protected:
 	/**
