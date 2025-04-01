@@ -80,7 +80,7 @@ bool Stage::is_checked_out(signed int r)
 }
 
 void Stage::squash(){
-	this->curr_instr = nullptr;
+	this->curr_instr->set_mnemonic(NOP);
 	this->status = OK;
 	if(this->next){
 		this->next->squash();

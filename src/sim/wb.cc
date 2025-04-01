@@ -15,7 +15,9 @@ void WB::advance_helper() {
                 if(reg >= GPR_NUM){
                     // TODO: handle vector instructions
                 } else {
-                    this->gprs[reg] = this->curr_instr->get_s1();
+                    if(this->curr_instr->get_mnemonic() != STORE && this->curr_instr->get_mnemonic() != STOREV){
+                        this->gprs[reg] = this->curr_instr->get_s1();
+                    }
                 }
             }
         } else if (this->curr_instr->get_type() == J) {

@@ -50,7 +50,7 @@ void ID::advance_helper()
 
 	// it may be good to ensure we are not doing
 	// work that has already been done
-	if (this->curr_instr) {
+	if (this->curr_instr && this->curr_instr->get_mnemonic() == NONE) {
 		s1 = curr_instr->get_instr_bits();
 		get_instr_fields(s1, s2, s3, m ,t);
 		if (this->status == OK) {
