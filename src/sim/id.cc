@@ -48,22 +48,19 @@ void ID::advance_helper()
 	Mnemonic m;
 	Type t;
 
-	// it may be good to ensure we are not doing
-	// work that has already been done
-	if (this->curr_instr && this->curr_instr->get_mnemonic() == NONE) {
-		s1 = curr_instr->get_instr_bits();
-		get_instr_fields(s1, s2, s3, m ,t);
-		if (this->status == OK) {
-			curr_instr->set_s1(s1);
-			curr_instr->set_s2(s2);
-			curr_instr->set_s3(s3);
-			curr_instr->set_mnemonic(m);
-			curr_instr->set_type(t);
-		}
+	s1 = curr_instr->get_instr_bits();
+	get_instr_fields(s1, s2, s3, m, t);
+	if (this->status == OK) {
+		curr_instr->set_s1(s1);
+		curr_instr->set_s2(s2);
+		curr_instr->set_s3(s3);
+		curr_instr->set_mnemonic(m);
+		curr_instr->set_type(t);
 	}
 }
 
-void ID::get_instr_fields(signed int &s1, signed int &s2, signed int &s3, Mnemonic &m, Type &t)
+void ID::get_instr_fields(
+	signed int &s1, signed int &s2, signed int &s3, Mnemonic &m, Type &t)
 {
 	unsigned int type;
 	this->split_instr(s1, type, m);

@@ -33,9 +33,9 @@ class EXFixture
 		i->set_mnemonic(m);
 		this->dum->set_curr_instr(i);
 
-		i = this->ct->advance(OK);
+		i = this->ct->advance(WAIT);
 		REQUIRE(i == nullptr);
-		i = this->ct->advance(OK);
+		i = this->ct->advance(WAIT);
 		REQUIRE(i != nullptr);
 
 		return i;
@@ -668,7 +668,7 @@ TEST_CASE_METHOD(EXFixture, "JAL", "[ex]")
 	delete i;
 }
 
-TEST_CASE_METHOD(EXFixture, "BEQ", "[ex]")
+TEST_CASE_METHOD(EXFixture, "BEQ no cond", "[ex]")
 {
 	signed int s1, s2, s3;
 	Mnemonic m;
@@ -679,9 +679,40 @@ TEST_CASE_METHOD(EXFixture, "BEQ", "[ex]")
 	this->ct->set_pc(42096);
 	i = execute_instr(s1, s2, s3, m);
 
+	CHECK(i->get_s1() == 42096);
+
+	delete i;
+}
+
+TEST_CASE_METHOD(EXFixture, "BEQ", "[ex]")
+{
+	signed int s1, s2, s3;
+	Mnemonic m;
+	InstrDTO *i;
+
+	m = BEQ;
+	s1 = 100, s2 = -42027, s3 = 0;
+	this->ct->set_pc(42096);
+	this->ct->set_condition(EQ, true);
+	i = execute_instr(s1, s2, s3, m);
+
 	CHECK(i->get_s1() == 69);
-	CHECK(!ct->get_condition(OF));
-	CHECK(!ct->get_condition(UF));
+
+	delete i;
+}
+
+TEST_CASE_METHOD(EXFixture, "BGT no cond", "[ex]")
+{
+	signed int s1, s2, s3;
+	Mnemonic m;
+	InstrDTO *i;
+
+	m = BGT;
+	s1 = 100, s2 = -42027, s3 = 0;
+	this->ct->set_pc(42096);
+	i = execute_instr(s1, s2, s3, m);
+
+	CHECK(i->get_s1() == 42096);
 
 	delete i;
 }
@@ -695,11 +726,26 @@ TEST_CASE_METHOD(EXFixture, "BGT", "[ex]")
 	m = BGT;
 	s1 = 100, s2 = -42027, s3 = 0;
 	this->ct->set_pc(42096);
+	this->ct->set_condition(GT, true);
 	i = execute_instr(s1, s2, s3, m);
 
 	CHECK(i->get_s1() == 69);
-	CHECK(!ct->get_condition(OF));
-	CHECK(!ct->get_condition(UF));
+
+	delete i;
+}
+
+TEST_CASE_METHOD(EXFixture, "BUF no cond", "[ex]")
+{
+	signed int s1, s2, s3;
+	Mnemonic m;
+	InstrDTO *i;
+
+	m = BUF;
+	s1 = 100, s2 = -42027, s3 = 0;
+	this->ct->set_pc(42096);
+	i = execute_instr(s1, s2, s3, m);
+
+	CHECK(i->get_s1() == 42096);
 
 	delete i;
 }
@@ -713,11 +759,26 @@ TEST_CASE_METHOD(EXFixture, "BUF", "[ex]")
 	m = BUF;
 	s1 = 100, s2 = -42027, s3 = 0;
 	this->ct->set_pc(42096);
+	this->ct->set_condition(UF, true);
 	i = execute_instr(s1, s2, s3, m);
 
 	CHECK(i->get_s1() == 69);
-	CHECK(!ct->get_condition(OF));
-	CHECK(!ct->get_condition(UF));
+
+	delete i;
+}
+
+TEST_CASE_METHOD(EXFixture, "BOF no cond", "[ex]")
+{
+	signed int s1, s2, s3;
+	Mnemonic m;
+	InstrDTO *i;
+
+	m = BOF;
+	s1 = 100, s2 = -42027, s3 = 0;
+	this->ct->set_pc(42096);
+	i = execute_instr(s1, s2, s3, m);
+
+	CHECK(i->get_s1() == 42096);
 
 	delete i;
 }
@@ -731,11 +792,10 @@ TEST_CASE_METHOD(EXFixture, "BOF", "[ex]")
 	m = BOF;
 	s1 = 100, s2 = -42027, s3 = 0;
 	this->ct->set_pc(42096);
+	this->ct->set_condition(OF, true);
 	i = execute_instr(s1, s2, s3, m);
 
 	CHECK(i->get_s1() == 69);
-	CHECK(!ct->get_condition(OF));
-	CHECK(!ct->get_condition(UF));
 
 	delete i;
 }

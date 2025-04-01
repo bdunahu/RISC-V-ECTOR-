@@ -34,7 +34,7 @@ class Stage
 	 * ready to accept a new instruction object next cycle.
 	 * @return a DTO object containing the next instruction to be processed.
 	 *
-	 * Must set the status to STALLED when an operation completes.
+	 * Must set the status to WAIT when the current instruction is evicted..
 	 */
 	virtual InstrDTO *advance(Response p);
 
@@ -47,6 +47,12 @@ class Stage
 	 * @param the condition code to retrieve,
 	 */
 	bool get_condition(CC c);
+	/**
+	 * Sets the bit in the condition code register corresponding to `c`.
+	 * @param the condition code to set.
+	 * @param the truthy value to set it to.
+	 */
+	void set_condition(CC c, bool v);
 
 	/**
 	 * Sets the value of the PC register.
@@ -62,15 +68,11 @@ class Stage
 	/**
 	 * The function expected to do the majority of the work.
 	 *
-	 * Must set the status to OK when an operation is ready.
+	 * Must set the status to OK when an operation is done.
+	 * Must set the status to STALLED when an operation cannot be completed the
+	 * current cycle.
 	 */
 	virtual void advance_helper() = 0;
-	/**
-	 * Sets the bit in the condition code register corresponding to `c`.
-	 * @param the condition code to set.
-	 * @param the truthy value to set it to.
-	 */
-	void set_condition(CC c, bool v);
 	/**
 	 * Helper for `check_out`.
 	 * Returns true if r are not checked out, false otherwise.

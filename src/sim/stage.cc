@@ -2,13 +2,13 @@
 #include "utils.h"
 #include <array>
 #include <deque>
+#include <iostream>
 
 Stage::Stage(Stage *next)
 {
 	this->next = next;
 	this->curr_instr = nullptr;
-	this->status = OK;
-	this->checked_out = {};
+	this->status = WAIT;
 }
 
 Stage::~Stage() { delete this->next; };
@@ -21,13 +21,9 @@ Storage *Stage::storage;
 bool Stage::is_pipelined;
 int Stage::clock_cycle;
 
-bool Stage::get_condition(CC c) {
-	return (this->gprs[3] >> c) & 1;
-}
+bool Stage::get_condition(CC c) { return (this->gprs[3] >> c) & 1; }
 
-void Stage::set_pc(unsigned int pc) {
-	this->pc = pc;
-}
+void Stage::set_pc(unsigned int pc) { this->pc = pc; }
 
 InstrDTO *Stage::advance(Response p)
 {
@@ -36,16 +32,16 @@ InstrDTO *Stage::advance(Response p)
 
 	if (this->curr_instr && this->status != OK)
 		this->advance_helper();
-	if (this->status == OK && p == OK && this->curr_instr) {
+	if (this->status == OK && p == WAIT && this->curr_instr) {
 		// mutual consent
 		this->curr_instr->set_time_of(this->id, this->clock_cycle);
 		r = new InstrDTO(*this->curr_instr);
 		delete curr_instr;
 		curr_instr = nullptr;
-		this->status = STALLED;
+		this->status = WAIT;
 	}
 
-	n = (p != OK || this->status != OK) ? STALLED : OK;
+	n = (p != WAIT || this->status != WAIT) ? STALLED : WAIT;
 	// the power of consent
 	this->curr_instr = this->next->advance(n);
 	return r;
@@ -80,10 +76,11 @@ bool Stage::is_checked_out(signed int r)
 		   this->checked_out.end();
 }
 
-void Stage::squash(){
+void Stage::squash()
+{
 	this->curr_instr->set_mnemonic(NOP);
 	this->status = OK;
-	if(this->next){
+	if (this->next) {
 		this->next->squash();
 	}
 }

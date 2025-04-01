@@ -62,19 +62,19 @@ TEST_CASE_METHOD(ControllerPipeFixture, "Add until exec", "[tmp]")
 	this->d->load(p);
 
 	// dram
-	i = this->ct->advance(OK);
+	i = this->ct->advance(WAIT);
 	REQUIRE(i == nullptr);
 	// fetch
-	i = this->ct->advance(OK);
+	i = this->ct->advance(WAIT);
 	REQUIRE(i == nullptr);
 	// decode
-	i = this->ct->advance(OK);
+	i = this->ct->advance(WAIT);
 	REQUIRE(i == nullptr);
 	// exec
-	i = this->ct->advance(OK);
+	i = this->ct->advance(WAIT);
 	REQUIRE(i == nullptr);
 	// done
-	i = this->ct->advance(OK);
+	i = this->ct->advance(WAIT);
 	REQUIRE(i != nullptr);
 
 	CHECK(i->get_time_of(FETCH) == 3);
