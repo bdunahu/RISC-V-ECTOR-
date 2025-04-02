@@ -640,8 +640,7 @@ TEST_CASE_METHOD(EXFixture, "JRL", "[ex]")
 	InstrDTO *i;
 
 	m = JRL;
-	s1 = 100, s2 = -42027, s3 = 0;
-	this->ct->set_pc(42096);
+	s1 = 100, s2 = 69, s3 = 0;
 	i = execute_instr(s1, s2, s3, m);
 
 	CHECK(i->get_s1() == 69);
@@ -675,11 +674,10 @@ TEST_CASE_METHOD(EXFixture, "BEQ no cond", "[ex]")
 	InstrDTO *i;
 
 	m = BEQ;
-	s1 = 100, s2 = -42027, s3 = 0;
-	this->ct->set_pc(42096);
+	s1 = 100, s2 = 50, s3 = 0;
 	i = execute_instr(s1, s2, s3, m);
 
-	CHECK(i->get_s1() == 42096);
+	CHECK(i->get_s1() == -1);
 
 	delete i;
 }
@@ -691,12 +689,11 @@ TEST_CASE_METHOD(EXFixture, "BEQ", "[ex]")
 	InstrDTO *i;
 
 	m = BEQ;
-	s1 = 100, s2 = -42027, s3 = 0;
-	this->ct->set_pc(42096);
+	s1 = 100, s2 = 50, s3 = 0;
 	this->ct->set_condition(EQ, true);
 	i = execute_instr(s1, s2, s3, m);
 
-	CHECK(i->get_s1() == 69);
+	CHECK(i->get_s1() == 50);
 
 	delete i;
 }
@@ -708,11 +705,10 @@ TEST_CASE_METHOD(EXFixture, "BGT no cond", "[ex]")
 	InstrDTO *i;
 
 	m = BGT;
-	s1 = 100, s2 = -42027, s3 = 0;
-	this->ct->set_pc(42096);
+	s1 = 100, s2 = 50, s3 = 0;
 	i = execute_instr(s1, s2, s3, m);
 
-	CHECK(i->get_s1() == 42096);
+	CHECK(i->get_s1() == -1);
 
 	delete i;
 }
@@ -724,12 +720,11 @@ TEST_CASE_METHOD(EXFixture, "BGT", "[ex]")
 	InstrDTO *i;
 
 	m = BGT;
-	s1 = 100, s2 = -42027, s3 = 0;
-	this->ct->set_pc(42096);
+	s1 = 100, s2 = 50, s3 = 0;
 	this->ct->set_condition(GT, true);
 	i = execute_instr(s1, s2, s3, m);
 
-	CHECK(i->get_s1() == 69);
+	CHECK(i->get_s1() == 50);
 
 	delete i;
 }
@@ -742,10 +737,9 @@ TEST_CASE_METHOD(EXFixture, "BUF no cond", "[ex]")
 
 	m = BUF;
 	s1 = 100, s2 = -42027, s3 = 0;
-	this->ct->set_pc(42096);
 	i = execute_instr(s1, s2, s3, m);
 
-	CHECK(i->get_s1() == 42096);
+	CHECK(i->get_s1() == -1);
 
 	delete i;
 }
@@ -757,12 +751,11 @@ TEST_CASE_METHOD(EXFixture, "BUF", "[ex]")
 	InstrDTO *i;
 
 	m = BUF;
-	s1 = 100, s2 = -42027, s3 = 0;
-	this->ct->set_pc(42096);
+	s1 = 100, s2 = 50, s3 = 0;
 	this->ct->set_condition(UF, true);
 	i = execute_instr(s1, s2, s3, m);
 
-	CHECK(i->get_s1() == 69);
+	CHECK(i->get_s1() == 50);
 
 	delete i;
 }
@@ -775,10 +768,9 @@ TEST_CASE_METHOD(EXFixture, "BOF no cond", "[ex]")
 
 	m = BOF;
 	s1 = 100, s2 = -42027, s3 = 0;
-	this->ct->set_pc(42096);
 	i = execute_instr(s1, s2, s3, m);
 
-	CHECK(i->get_s1() == 42096);
+	CHECK(i->get_s1() == -1);
 
 	delete i;
 }
@@ -790,12 +782,11 @@ TEST_CASE_METHOD(EXFixture, "BOF", "[ex]")
 	InstrDTO *i;
 
 	m = BOF;
-	s1 = 100, s2 = -42027, s3 = 0;
-	this->ct->set_pc(42096);
+	s1 = 100, s2 = 50, s3 = 0;
 	this->ct->set_condition(OF, true);
 	i = execute_instr(s1, s2, s3, m);
 
-	CHECK(i->get_s1() == 69);
+	CHECK(i->get_s1() == 50);
 
 	delete i;
 }

@@ -163,7 +163,6 @@ EX::EX(Stage *stage) : Stage(stage)
 		INIT_INSTRUCTION(
 			CMP,
 			{
-				cout << "CMP: " << s1 << ":" << s2 << std::endl;
 				(s1 > s2) ? this->set_condition(GT, true)
 						  : this->set_condition(GT, false);
 				(s1 == s2) ? this->set_condition(EQ, true)
@@ -205,8 +204,6 @@ EX::EX(Stage *stage) : Stage(stage)
 		INIT_INSTRUCTION(
 			ADDI,
 			{
-				std::cout << this->id << ": " << s1 << "," << s2 << "," << s3
-						  << std::endl;
 				s1 = s1 + s3;
 				(void)pc;
 				(void)s2;

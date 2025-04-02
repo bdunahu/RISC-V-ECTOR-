@@ -9,6 +9,7 @@ InstrDTO::InstrDTO()
 	this->s3 = 0;
 	this->mnemonic = ADD;
 	this->type = INV;
+	this->pc = 0;
 }
 
 int InstrDTO::get_time_of(Accessor a) { return this->hist[a]; }

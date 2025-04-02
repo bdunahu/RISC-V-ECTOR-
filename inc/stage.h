@@ -55,11 +55,6 @@ class Stage
 	void set_condition(CC c, bool v);
 
 	/**
-	 * Sets the value of the PC register.
-	 */
-	void set_pc(unsigned int pc);
-
-	/**
 	 * Squashes the pipeline.
 	 */
 	void squash();

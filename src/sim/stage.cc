@@ -22,8 +22,6 @@ int Stage::clock_cycle;
 
 bool Stage::get_condition(CC c) { return (this->gprs[3] >> c) & 1; }
 
-void Stage::set_pc(unsigned int pc) { this->pc = pc; }
-
 InstrDTO *Stage::advance(Response p)
 {
 	InstrDTO *r = nullptr;
@@ -96,7 +94,6 @@ bool Stage::is_checked_out(signed int r)
 void Stage::squash()
 {
 	if (curr_instr) {
-		std::cout << "!!!" << std::endl;
 		this->curr_instr->set_mnemonic(NOP);
 		this->status = OK;
 	}

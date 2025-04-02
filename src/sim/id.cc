@@ -51,9 +51,6 @@ void ID::advance_helper()
 	if (curr_instr->get_mnemonic() == NOP)
 		this->status = OK;
 	else {
-		std::cout << this->id << ": " << this->curr_instr->get_s1() << ","
-				  << this->curr_instr->get_s2() << ","
-				  << this->curr_instr->get_s3() << std::endl;
 		s1 = curr_instr->get_instr_bits();
 		get_instr_fields(s1, s2, s3, m, t);
 		if (this->status == OK) {
@@ -63,9 +60,6 @@ void ID::advance_helper()
 			curr_instr->set_mnemonic(m);
 			curr_instr->set_type(t);
 		}
-		std::cout << this->id << ": " << this->curr_instr->get_s1() << ","
-				  << this->curr_instr->get_s2() << ","
-				  << this->curr_instr->get_s3() << std::endl;
 	}
 }
 
@@ -86,7 +80,7 @@ void ID::get_instr_fields(
 		break;
 	case 0b10:
 		t = J;
-		this->decode_J_type(s1, s2);
+		this->decode_J_type(s1, s2, s3);
 		break;
 	case 0b11:
 		t = INV;
@@ -126,7 +120,6 @@ void ID::decode_I_type(
 	s2 = GET_MID_BITS(s1, s0b, s1b);
 	s1 = GET_LS_BITS(s1, s0b);
 
-	std::cout << m << ":" << s2 << std::endl;
 	r1 = this->read_guard(s1);
 	if (m != STORE && m != STOREV) {
 		this->status = r1;
@@ -135,12 +128,13 @@ void ID::decode_I_type(
 		this->status = (this->read_guard(s2) == OK && r1 == OK) ? OK : STALLED;
 }
 
-void ID::decode_J_type(signed int &s1, signed int &s2)
+void ID::decode_J_type(signed int &s1, signed int &s2, signed int &s3)
 {
 	unsigned int s0b, s1b;
 
 	s0b = REG_SIZE;
 	s1b = WORD_SPEC;
+	s3 = 0;
 	s2 = GET_MID_BITS(s1, s0b, s1b);
 	s1 = GET_LS_BITS(s1, s0b);
 

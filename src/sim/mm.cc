@@ -15,7 +15,7 @@ void MM::advance_helper()
 		this->status = this->storage->read_word(
 			this->id, this->curr_instr->get_s1(), data);
 		if (this->status == OK) {
-			this->curr_instr->set_s2(data);
+			this->curr_instr->set_s1(data);
 		} else
 			this->status = STALLED;
 		break;

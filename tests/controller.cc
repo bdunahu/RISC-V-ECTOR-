@@ -187,7 +187,6 @@ TEST_CASE_METHOD(ControllerPipeFixture, "two num adder", "[full pipe]")
 	CHECK(i->get_instr_bits() == b3);
 
 	delete i;
-
 	i = this->ct->advance(WAIT);
 	REQUIRE(i == nullptr);
 	i = this->ct->advance(WAIT);
@@ -259,7 +258,6 @@ TEST_CASE_METHOD(ControllerPipeFixture, "two num adder", "[full pipe]")
 	CHECK(i->get_time_of(WRITE) == 22);
 	CHECK(i->get_s1() == 0xE);
 	CHECK(i->get_s2() == 0x7);
-	CHECK(i->get_s3() == 0x0); // doesn't exist
 	CHECK(this->ct->get_gprs().at(2) == 0x200);
 	CHECK(this->ct->get_gprs().at(6) == 0x1);
 	CHECK(i->get_pc() == 0x7);
@@ -332,11 +330,11 @@ TEST_CASE_METHOD(ControllerPipeFixture, "two num adder", "[full pipe]")
 	REQUIRE(i != nullptr);
 
 	CHECK(i->get_mnemonic() == NOP);
+
 	delete i;
-	
 	i = this->ct->advance(WAIT);
 	REQUIRE(i != nullptr); // it was already in cache
-	
+
 	CHECK(i->get_time_of(FETCH) == 29); // clear out pipe (4)
 	CHECK(i->get_time_of(DCDE) == 30);
 	CHECK(i->get_time_of(EXEC) == 31);
@@ -366,8 +364,8 @@ TEST_CASE_METHOD(ControllerPipeFixture, "two num adder", "[full pipe]")
 	CHECK(i->get_time_of(EXEC) == 34);
 	CHECK(i->get_time_of(MEM) == 35);
 	CHECK(i->get_time_of(WRITE) == 36);
-	CHECK(i->get_s1() == 0x0);
-	CHECK(i->get_s2() == 0x200);
+	CHECK(i->get_s1() == 0x1);
+	CHECK(i->get_s2() == 0x0);
 	CHECK(i->get_s3() == 0x0);
 	CHECK(this->ct->get_gprs().at(2) == 0x200);
 	CHECK(this->ct->get_gprs().at(6) == 0x1);
