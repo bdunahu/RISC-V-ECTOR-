@@ -9,13 +9,12 @@ DUM::DUM(Stage *stage) : Stage(stage) { this->id = IDLE; }
 
 InstrDTO *DUM::advance(Response p)
 {
-	InstrDTO *r = curr_instr;
+	InstrDTO *r = nullptr;
 
-	this->advance_helper();
-	if (this->status == OK && p == OK) {
+	if (this->curr_instr && p == WAIT) {
 		this->curr_instr->set_time_of(this->id, this->clock_cycle);
 		r = new InstrDTO(*this->curr_instr);
-		delete curr_instr;
+		delete this->curr_instr;
 		curr_instr = nullptr;
 	}
 
@@ -27,5 +26,4 @@ void DUM::advance_helper() {}
 void DUM::set_curr_instr(InstrDTO *d)
 {
 	this->curr_instr = d;
-	this->status = OK;
 }

@@ -66,8 +66,8 @@ class ID : public Stage
 	 */
 	void get_instr_fields(signed int &s1, signed int &s2, signed int &s3, Mnemonic &m, Type &t);
 	void decode_R_type(signed int &s1, signed int &s2, signed int &s3);
-	void decode_I_type(signed int &s1, signed int &s2, signed int &s3);
-	void decode_J_type(signed int &s1, signed int &s2);
+	void decode_I_type(signed int &s1, signed int &s2, signed int &s3, Mnemonic &m);
+	void decode_J_type(signed int &s1, signed int &s2, signed int &s3);
 	/**
 	 * Helper for `get_instr_fields`.
 	 * Given a raw instruction, returns the mnemonic and type.

@@ -34,7 +34,7 @@ class Stage
 	 * ready to accept a new instruction object next cycle.
 	 * @return a DTO object containing the next instruction to be processed.
 	 *
-	 * Must set the status to STALLED when an operation completes.
+	 * Must set the status to WAIT when the current instruction is evicted..
 	 */
 	virtual InstrDTO *advance(Response p);
 
@@ -47,30 +47,32 @@ class Stage
 	 * @param the condition code to retrieve,
 	 */
 	bool get_condition(CC c);
-
-	/**
-	 * Sets the value of the PC register.
-	 */
-	void set_pc(unsigned int pc);
-
-	/**
-	 * Squashes the pipeline.
-	 */
-	void squash();
-
-  protected:
-	/**
-	 * The function expected to do the majority of the work.
-	 *
-	 * Must set the status to OK when an operation is ready.
-	 */
-	virtual void advance_helper() = 0;
 	/**
 	 * Sets the bit in the condition code register corresponding to `c`.
 	 * @param the condition code to set.
 	 * @param the truthy value to set it to.
 	 */
 	void set_condition(CC c, bool v);
+
+	/**
+	 * Squashes the pipeline.
+	 */
+	void squash();
+
+	/**
+	 * The set of registers currently checked out.
+	 */
+	static std::deque<signed int> checked_out;
+
+  protected:
+	/**
+	 * The function expected to do the majority of the work.
+	 *
+	 * Must set the status to OK when an operation is done.
+	 * Must set the status to STALLED when an operation cannot be completed the
+	 * current cycle.
+	 */
+	virtual void advance_helper() = 0;
 	/**
 	 * Helper for `check_out`.
 	 * Returns true if r are not checked out, false otherwise.
@@ -78,6 +80,12 @@ class Stage
 	 * @return true if registers are not in checked_out, false otherwise.
 	 */
 	bool is_checked_out(signed int r);
+	/**
+	 * Stores `d` into the register indexed `v`.
+	 * @param the register number.
+	 * @param the value to store.
+	 */
+	void store_register(signed int v, signed int d);
 	/**
 	 * Returns the value of the register corresponding to `v`.
 	 * @param the register number.
@@ -112,11 +120,6 @@ class Stage
 	 * The current clock cycle.
 	 */
 	static int clock_cycle;
-	// TODO fix this comment after writeback stage
-	/**
-	 * The set of registers currently checked out.
-	 */
-	static std::deque<signed int> checked_out;
 	/**
 	 * A pointer to the next stage in the pipeline.
 	 */

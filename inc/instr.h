@@ -1,7 +1,6 @@
 #ifndef INSTR_H
 #define INSTR_H
 #include <functional>
-#include <iostream>
 #include <unordered_map>
 
 enum Mnemonic {
@@ -45,12 +44,7 @@ enum Mnemonic {
 	NOP,
 };
 
-enum Type {
-	R,
-	I,
-	J,
-	INV
-};
+enum Type { R, I, J, INV };
 
 namespace instr
 {

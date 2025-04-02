@@ -9,6 +9,7 @@ Controller::Controller(Stage *stage, Storage *storage, bool is_pipelined)
 	this->storage = storage;
 	this->is_pipelined = is_pipelined;
 	this->pc = 0x0;
+	this->checked_out = {};
 	this->gprs = {0};
 	// grant side-door access
 	this->id = SIDE;
@@ -18,7 +19,7 @@ void Controller::run_for(int number)
 {
 	int i;
 	for (i = 0; i < number; ++i) {
-		this->advance(OK);
+		this->advance(WAIT);
 	}
 }
 
@@ -37,9 +38,11 @@ InstrDTO *Controller::advance(Response p)
 	InstrDTO *r;
 	r = this->next->advance(p);
 	++this->clock_cycle;
+
 	return r;
 }
 
-void Controller::advance_helper() {
+void Controller::advance_helper()
+{
 	// TODO: check halt condition and call UI to refresh
 }

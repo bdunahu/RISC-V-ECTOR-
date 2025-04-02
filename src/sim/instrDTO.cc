@@ -7,8 +7,9 @@ InstrDTO::InstrDTO()
 	this->s1 = 0;
 	this->s2 = 0;
 	this->s3 = 0;
-	this->mnemonic = NONE;
+	this->mnemonic = ADD;
 	this->type = INV;
+	this->pc = 0;
 }
 
 int InstrDTO::get_time_of(Accessor a) { return this->hist[a]; }
@@ -25,6 +26,8 @@ Mnemonic InstrDTO::get_mnemonic() { return this->mnemonic; }
 
 Type InstrDTO::get_type() { return this->type; }
 
+unsigned int InstrDTO::get_pc() { return this->pc; }
+
 void InstrDTO::set_time_of(Accessor a, int i) { this->hist[a] = i; }
 
 void InstrDTO::set_instr_bits(signed int instr) { this->instr_bits = instr; }
@@ -38,3 +41,5 @@ void InstrDTO::set_s3(signed int s) { this->s3 = s; }
 void InstrDTO::set_mnemonic(Mnemonic m) { this->mnemonic = m; }
 
 void InstrDTO::set_type(Type t) { this->type = t; }
+
+void InstrDTO::set_pc(unsigned int pc) { this->pc = pc; }

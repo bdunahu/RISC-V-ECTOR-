@@ -63,7 +63,7 @@ void displayArrayHTML(QTextEdit *textEdit, const std::array<int, GPR_NUM> &data)
     QString tableText = "<table border='1' cellspacing='0' cellpadding='8' style='border-collapse: collapse; width: 100%; border: 2px solid black;'>";
 
     tableText += "<tr>";
-    int index = 1;
+    int index = 0;
     for (int value : data) {
         tableText += QString("<td align='center' style='border: 2px solid black; min-width: 60px; padding: 10px;'>"
                              "%1 <sup style='font-size: 10px; font-weight: bold; color: black;'>%2</sup>"
@@ -83,7 +83,7 @@ void displayTableHTML(QTextEdit *textEdit, const std::vector<std::array<signed i
     textEdit->setReadOnly(false);
     QString tableText = "<table border='1' cellspacing='0' cellpadding='8' style='border-collapse: collapse; width: 100%; border: 2px solid black;'>";
 
-    int index = 1;
+    int index = 0;
     for (const auto &row : data) {
         tableText += "<tr>";
         for (signed int value : row) {
@@ -118,7 +118,7 @@ void browseAndUploadFile(QTextEdit *textEdit) {
 
     QTextStream in(&file);
     QString content;
-    int lineNumber = 1;
+    int lineNumber = 0;
 
     while (!in.atEnd()) {
         QString line = in.readLine();

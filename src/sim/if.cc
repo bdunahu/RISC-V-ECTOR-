@@ -11,14 +11,13 @@ InstrDTO *IF::advance(Response p)
 	InstrDTO *r = nullptr;
 
 	this->advance_helper();
-	if (this->curr_instr != nullptr && p == OK) {
+	if (this->curr_instr != nullptr && p == WAIT) {
 		// mutual consent
 		++this->pc;
 		this->curr_instr->set_time_of(this->id, this->clock_cycle);
 		r = new InstrDTO(*this->curr_instr);
 		delete curr_instr;
 		curr_instr = nullptr;
-		this->status = STALLED;
 	}
 
 	return r;
@@ -32,9 +31,9 @@ void IF::advance_helper()
 	if (this->curr_instr == nullptr) {
 		r = this->storage->read_word(this->id, this->pc, bits);
 		if (r == OK) {
-			this->status = r;
 			this->curr_instr = new InstrDTO();
 			this->curr_instr->set_instr_bits(bits);
+			this->curr_instr->set_pc(this->pc);
 		}
 	}
 }

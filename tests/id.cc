@@ -29,9 +29,9 @@ class IDFixture
 		i->set_instr_bits(raw);
 		this->dum->set_curr_instr(i);
 
-		i = this->ct->advance(OK);
+		i = this->ct->advance(WAIT);
 		REQUIRE(i == nullptr);
-		i = this->ct->advance(OK);
+		i = this->ct->advance(WAIT);
 		REQUIRE(i != nullptr);
 
 		return i;

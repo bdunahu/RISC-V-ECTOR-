@@ -48,11 +48,11 @@ void ID::advance_helper()
 	Mnemonic m;
 	Type t;
 
-	// it may be good to ensure we are not doing
-	// work that has already been done
-	if (this->curr_instr && this->curr_instr->get_mnemonic() == NONE) {
+	if (curr_instr->get_mnemonic() == NOP)
+		this->status = OK;
+	else {
 		s1 = curr_instr->get_instr_bits();
-		get_instr_fields(s1, s2, s3, m ,t);
+		get_instr_fields(s1, s2, s3, m, t);
 		if (this->status == OK) {
 			curr_instr->set_s1(s1);
 			curr_instr->set_s2(s2);
@@ -63,7 +63,8 @@ void ID::advance_helper()
 	}
 }
 
-void ID::get_instr_fields(signed int &s1, signed int &s2, signed int &s3, Mnemonic &m, Type &t)
+void ID::get_instr_fields(
+	signed int &s1, signed int &s2, signed int &s3, Mnemonic &m, Type &t)
 {
 	unsigned int type;
 	this->split_instr(s1, type, m);
@@ -75,11 +76,11 @@ void ID::get_instr_fields(signed int &s1, signed int &s2, signed int &s3, Mnemon
 		break;
 	case 0b01:
 		t = I;
-		this->decode_I_type(s1, s2, s3);
+		this->decode_I_type(s1, s2, s3, m);
 		break;
 	case 0b10:
 		t = J;
-		this->decode_J_type(s1, s2);
+		this->decode_J_type(s1, s2, s3);
 		break;
 	case 0b11:
 		t = INV;
@@ -101,14 +102,17 @@ void ID::decode_R_type(signed int &s1, signed int &s2, signed int &s3)
 
 	r1 = this->read_guard(s1);
 	r2 = this->read_guard(s2);
-	this->write_guard(s3);
-
 	this->status = (r1 == OK && r2 == OK) ? OK : STALLED;
+
+	if (this->status == OK)
+		this->write_guard(s3);
 }
 
-void ID::decode_I_type(signed int &s1, signed int &s2, signed int &s3)
+void ID::decode_I_type(
+	signed int &s1, signed int &s2, signed int &s3, Mnemonic &m)
 {
 	unsigned int s0b, s1b, s2b;
+	Response r1;
 
 	s0b = REG_SIZE;
 	s1b = s0b + REG_SIZE;
@@ -117,16 +121,22 @@ void ID::decode_I_type(signed int &s1, signed int &s2, signed int &s3)
 	s2 = GET_MID_BITS(s1, s0b, s1b);
 	s1 = GET_LS_BITS(s1, s0b);
 
-	this->status = this->read_guard(s1);
-	this->write_guard(s2);
+	r1 = this->read_guard(s1);
+	if (m != STORE && m != STOREV) {
+		this->status = r1;
+		if (r1 == OK)
+			this->write_guard(s2);
+	} else
+		this->status = (this->read_guard(s2) == OK && r1 == OK) ? OK : STALLED;
 }
 
-void ID::decode_J_type(signed int &s1, signed int &s2)
+void ID::decode_J_type(signed int &s1, signed int &s2, signed int &s3)
 {
 	unsigned int s0b, s1b;
 
 	s0b = REG_SIZE;
 	s1b = WORD_SPEC;
+	s3 = 0;
 	s2 = GET_MID_BITS(s1, s0b, s1b);
 	s1 = GET_LS_BITS(s1, s0b);
 
