@@ -27,6 +27,10 @@ int Controller::get_clock_cycle() { return this->clock_cycle; }
 
 std::array<int, GPR_NUM> Controller::get_gprs() { return this->gprs; }
 
+void Controller::set_gprs(int index, int value) { this->gprs[index] = value; }
+
+void Controller::set_pipelined(bool value) { this->is_pipelined = value; }
+
 int Controller::get_pc() { return this->pc; }
 
 InstrDTO *Controller::advance(Response p)
