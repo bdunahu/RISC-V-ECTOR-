@@ -38,6 +38,10 @@ class Controller : public Stage
 	 */
 	int get_pc();
 
+	void set_gprs(int index, int value);
+
+	void set_pipelined(bool value);
+
   private:
 	void advance_helper() override;
 };
