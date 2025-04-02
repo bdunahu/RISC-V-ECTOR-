@@ -33,6 +33,7 @@ void IF::advance_helper()
 		if (r == OK) {
 			this->curr_instr = new InstrDTO();
 			this->curr_instr->set_instr_bits(bits);
+			this->curr_instr->set_pc(this->pc);
 		}
 	}
 }

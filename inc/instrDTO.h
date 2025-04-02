@@ -47,6 +47,10 @@ class InstrDTO
 	 * @return the type of the instruction
 	 */
 	Type get_type();
+	/**
+	 * @return the program counter at the time this instruction was fetched
+	 */
+	unsigned int get_pc();
 
 	/**
 	 * @param set hist key
@@ -72,11 +76,15 @@ class InstrDTO
 	 * @param the mnemonic of the instruction
 	 */
 	void set_mnemonic(Mnemonic);
-	
+
 	/**
 	 * @param the type of the instruction
 	 */
 	void set_type(Type);
+	/**
+	 * @param the program counter at the time this instruction was fetched
+	 */
+	void set_pc(unsigned int pc);
 
   private:
 	/**
@@ -100,11 +108,14 @@ class InstrDTO
 	 * The mnemonic of the operation.
 	 */
 	Mnemonic mnemonic;
-
 	/**
 	 * Type of the instruction
 	 */
 	Type type;
+	/**
+	 * The PC of the instruction
+	 */
+	unsigned int pc;
 };
 
 #endif /* INSTRDTO_H_INCLUDED */

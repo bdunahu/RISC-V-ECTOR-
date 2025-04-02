@@ -95,8 +95,11 @@ bool Stage::is_checked_out(signed int r)
 
 void Stage::squash()
 {
-	this->curr_instr->set_mnemonic(NOP);
-	this->status = OK;
+	if (curr_instr) {
+		std::cout << "!!!" << std::endl;
+		this->curr_instr->set_mnemonic(NOP);
+		this->status = OK;
+	}
 	if (this->next) {
 		this->next->squash();
 	}

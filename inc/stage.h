@@ -64,6 +64,11 @@ class Stage
 	 */
 	void squash();
 
+	/**
+	 * The set of registers currently checked out.
+	 */
+	static std::deque<signed int> checked_out;
+
   protected:
 	/**
 	 * The function expected to do the majority of the work.
@@ -120,11 +125,6 @@ class Stage
 	 * The current clock cycle.
 	 */
 	static int clock_cycle;
-	// TODO fix this comment after writeback stage
-	/**
-	 * The set of registers currently checked out.
-	 */
-	static std::deque<signed int> checked_out;
 	/**
 	 * A pointer to the next stage in the pipeline.
 	 */

@@ -34,6 +34,7 @@ InstrDTO *Controller::advance(Response p)
 	InstrDTO *r;
 	r = this->next->advance(p);
 	++this->clock_cycle;
+	
 	return r;
 }
 
