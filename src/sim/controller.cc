@@ -19,7 +19,7 @@ void Controller::run_for(int number)
 {
 	int i;
 	for (i = 0; i < number; ++i) {
-		this->advance(OK);
+		this->advance(WAIT);
 	}
 }
 
@@ -38,7 +38,7 @@ InstrDTO *Controller::advance(Response p)
 	InstrDTO *r;
 	r = this->next->advance(p);
 	++this->clock_cycle;
-	
+
 	return r;
 }
 

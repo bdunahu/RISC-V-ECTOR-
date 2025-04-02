@@ -102,9 +102,10 @@ void ID::decode_R_type(signed int &s1, signed int &s2, signed int &s3)
 
 	r1 = this->read_guard(s1);
 	r2 = this->read_guard(s2);
-	this->write_guard(s3);
-
 	this->status = (r1 == OK && r2 == OK) ? OK : STALLED;
+
+	if (this->status == OK)
+		this->write_guard(s3);
 }
 
 void ID::decode_I_type(
@@ -123,7 +124,8 @@ void ID::decode_I_type(
 	r1 = this->read_guard(s1);
 	if (m != STORE && m != STOREV) {
 		this->status = r1;
-		this->write_guard(s2);
+		if (r1 == OK)
+			this->write_guard(s2);
 	} else
 		this->status = (this->read_guard(s2) == OK && r1 == OK) ? OK : STALLED;
 }

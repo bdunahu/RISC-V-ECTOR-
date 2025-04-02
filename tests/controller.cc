@@ -350,6 +350,7 @@ TEST_CASE_METHOD(ControllerPipeFixture, "two num adder", "[full pipe]")
 	CHECK(this->ct->get_pc() == 0xB);
 	CHECK(i->get_mnemonic() == ADD);
 	CHECK(i->get_instr_bits() == b8);
+	CHECK(this->ct->checked_out.front() == 0x7);
 
 	delete i;
 	i = this->ct->advance(WAIT); // RAW
@@ -373,6 +374,76 @@ TEST_CASE_METHOD(ControllerPipeFixture, "two num adder", "[full pipe]")
 	CHECK(this->ct->get_gprs().at(9) == 0x200);
 	CHECK(i->get_mnemonic() == LOAD);
 	CHECK(i->get_instr_bits() == b9);
+	CHECK(this->ct->checked_out.front() == 0x8);
+
+	delete i;
+	i = this->ct->advance(WAIT);
+	REQUIRE(i != nullptr);
+
+	CHECK(i->get_time_of(FETCH) == 33);
+	CHECK(i->get_time_of(DCDE) == 34);
+	CHECK(i->get_time_of(EXEC) == 35);
+	CHECK(i->get_time_of(MEM) == 36);
+	CHECK(i->get_time_of(WRITE) == 37);
+	CHECK(i->get_s1() == 0x2);
+	CHECK(i->get_s2() == 0x0);
+	CHECK(i->get_s3() == 0x1);
+	CHECK(this->ct->get_gprs().at(2) == 0x200);
+	CHECK(this->ct->get_gprs().at(6) == 0x1);
+	CHECK(this->ct->get_gprs().at(7) == 0x1);
+	CHECK(this->ct->get_gprs().at(8) == 0x2);
+	CHECK(this->ct->get_gprs().at(9) == 0x200);
+	CHECK(i->get_mnemonic() == LOAD);
+	CHECK(i->get_instr_bits() == b10);
+	CHECK(this->ct->checked_out.front() == 0x7);
+
+	delete i;
+	i = this->ct->advance(WAIT);
+	REQUIRE(i == nullptr);
+	i = this->ct->advance(WAIT);
+	REQUIRE(i == nullptr);
+	i = this->ct->advance(WAIT);
+	REQUIRE(i != nullptr);
+
+	CHECK(i->get_time_of(FETCH) == 34);
+	CHECK(i->get_time_of(DCDE) == 37);
+	CHECK(i->get_time_of(EXEC) == 38);
+	CHECK(i->get_time_of(MEM) == 39);
+	CHECK(i->get_time_of(WRITE) == 40);
+	CHECK(i->get_s1() == 0x3);
+	CHECK(i->get_s2() == 0x2);
+	CHECK(i->get_s3() == 0x1);
+	CHECK(this->ct->get_gprs().at(2) == 0x200);
+	CHECK(this->ct->get_gprs().at(6) == 0x1);
+	CHECK(this->ct->get_gprs().at(7) == 0x3);
+	CHECK(this->ct->get_gprs().at(8) == 0x2);
+	CHECK(this->ct->get_gprs().at(9) == 0x200);
+	CHECK(i->get_mnemonic() == ADD);
+	CHECK(i->get_instr_bits() == b11);
+
+	delete i;
+	i = this->ct->advance(WAIT);
+	REQUIRE(i == nullptr);
+	i = this->ct->advance(WAIT);
+	REQUIRE(i == nullptr);
+	i = this->ct->advance(WAIT);
+	REQUIRE(i != nullptr);
+
+	CHECK(i->get_time_of(FETCH) == 37);
+	CHECK(i->get_time_of(DCDE) == 40);
+	CHECK(i->get_time_of(EXEC) == 41);
+	CHECK(i->get_time_of(MEM) == 42);
+	CHECK(i->get_time_of(WRITE) == 43);
+	CHECK(i->get_s1() == 0x200);
+	CHECK(i->get_s2() == 0x3);
+	CHECK(i->get_s3() == 0x0);
+	CHECK(this->ct->get_gprs().at(2) == 0x200);
+	CHECK(this->ct->get_gprs().at(6) == 0x1);
+	CHECK(this->ct->get_gprs().at(7) == 0x3);
+	CHECK(this->ct->get_gprs().at(8) == 0x2);
+	CHECK(this->ct->get_gprs().at(9) == 0x200);
+	CHECK(i->get_mnemonic() == STORE);
+	CHECK(i->get_instr_bits() == b12);
 
 	delete i;
 }

@@ -28,6 +28,12 @@ InstrDTO *Stage::advance(Response p)
 	InstrDTO *s = nullptr;
 	Response n;
 
+	// std::cout << "advance: " << this->id << ": " << this->curr_instr << "?: " << p << ": " << this->checked_out.size() << ": ";
+	// if (curr_instr)
+	// 	std::cout << curr_instr->get_mnemonic();
+	// for (long unsigned int i = 0; i < this->checked_out.size(); ++i)
+	// 	std::cout << this->checked_out[i] << " ";
+	// std::cout << std::endl;	
 	if (this->curr_instr && this->status != OK) {
 		this->advance_helper();
 	}
