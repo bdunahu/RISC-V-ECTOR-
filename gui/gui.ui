@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>RISC V[ECTOR]</string>
   </property>
-  <widget class="QWidget" name="centralwidget">
+    <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_14">
     <item>
      <layout class="QGridLayout" name="gridLayout">
@@ -46,7 +46,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QTextEdit" name="textEdit"/>
+         <widget class="QTextEdit" name="instruction_table"/>
         </item>
        </layout>
       </item>
@@ -74,7 +74,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QTextEdit" name="textEdit_2"/>
+           <widget class="QTextEdit" name="register_table"/>
           </item>
          </layout>
         </item>
@@ -109,7 +109,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QTextEdit" name="textEdit_4"/>
+             <widget class="QTextEdit" name="cache_table"/>
             </item>
            </layout>
           </item>
@@ -142,7 +142,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QTextEdit" name="textEdit_3"/>
+             <widget class="QTextEdit" name="dram_table"/>
             </item>
            </layout>
           </item>
@@ -197,7 +197,7 @@
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_6">
             <item>
-             <widget class="QPushButton" name="pushButton_5">
+             <widget class="QPushButton" name="upload_intructions_btn">
               <property name="text">
                <string>Upload Instruction File</string>
               </property>
@@ -206,7 +206,7 @@
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_3">
               <item>
-               <widget class="QPushButton" name="pushButton_6">
+               <widget class="QPushButton" name="upload_program_state_btn">
                 <property name="text">
                  <string>Upload Program State File</string>
                 </property>
@@ -251,21 +251,21 @@
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_2">
               <item>
-               <widget class="QPushButton" name="pushButton_4">
+               <widget class="QPushButton" name="refresh_dram_btn">
                 <property name="text">
                  <string>Refresh DRAM</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pushButton_2">
+               <widget class="QPushButton" name="refresh_cache_btn">
                 <property name="text">
                  <string>Refresh Cache</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pushButton">
+               <widget class="QPushButton" name="refresh_registers_btn">
                 <property name="text">
                  <string>Refresh Registers</string>
                 </property>
@@ -276,14 +276,14 @@
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout">
               <item>
-               <widget class="QCheckBox" name="checkBox">
+               <widget class="QCheckBox" name="enable_pipeline_checkbox">
                 <property name="text">
                  <string>Enable Pipeline</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QCheckBox" name="checkBox_2">
+               <widget class="QCheckBox" name="enabl_cache_checkbox">
                 <property name="text">
                  <string>Enable Cache</string>
                 </property>
@@ -328,14 +328,14 @@
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_4">
               <item>
-               <widget class="QLineEdit" name="lineEdit">
+               <widget class="QLineEdit" name="number_steps_inp">
                 <property name="placeholderText">
                  <string># Steps</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pushButton_7">
+               <widget class="QPushButton" name="run_steps_btn">
                 <property name="text">
                  <string>Run Steps</string>
                 </property>
@@ -344,7 +344,7 @@
              </layout>
             </item>
             <item>
-             <widget class="QPushButton" name="pushButton_8">
+             <widget class="QPushButton" name="step_btn">
               <property name="text">
                <string>Step</string>
               </property>
@@ -383,14 +383,14 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="label_6">
+           <widget class="QLabel" name="cycles_label">
             <property name="text">
              <string>Clock Cycles</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButton_3">
+           <widget class="QPushButton" name="save_program_state_btn">
             <property name="text">
              <string>Save Current Program State</string>
             </property>
