@@ -66,9 +66,10 @@ class Cache : public Storage
 	 * present. If it is not, temporarily sets the is_blocked attribute of this
 	 * cache level to true, and the victim line is chosen/written back.
 	 * @param the address that must be present in cache.
+	 * @param 0 if the address is currently in cache, 1 if it is being fetched.
 	 */
-	void
-	handle_miss(int address);
+	int
+	is_address_missing(int address);
 	/**
 	 * An array of metadata about elements in `data`.
 	 * If the first value of an element is negative, the corresponding

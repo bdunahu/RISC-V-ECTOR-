@@ -4,7 +4,6 @@ AlwaysBreakAfterReturnType: All
 AlwaysBreakAfterDefinitionReturnType: All
 AlignAfterOpenBracket: AlwaysBreak
 AllowAllParametersOfDeclarationOnNextLine: true
-AlignConsecutiveAssignments: Consecutive
 BinPackParameters: false
 BreakBeforeBraces: Linux
 PointerAlignment: Right

@@ -69,11 +69,6 @@ class Storage
 	 * The number of cycles until the current request is completed.
 	 */
 	int wait_time;
-	/**
-	 * A flag indicating whether this level of storage is currently waiting for
-	 * a lower level.
-	 */
-	int is_waiting;
 };
 
 #endif /* STORAGE_H_INCLUDED */

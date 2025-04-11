@@ -11,7 +11,6 @@ Cache::Cache(Storage *lower, int delay)
 	this->data = new std::vector<std::array<signed int, LINE_SIZE>>;
 	this->data->resize(L1_CACHE_LINES);
 	this->delay = delay;
-	this->is_waiting = false;
 	this->lower = lower;
 	this->meta.fill({-1, -1});
 	this->requester = VOID;
@@ -78,44 +77,38 @@ Cache::process(
 int
 Cache::is_access_cleared(Component component, int address)
 {
-	int r;
-	r = 0;
 	/* Do this first--then process the first cycle immediately. */
 	if (this->requester == VOID)
 		this->requester = component;
 	if (this->requester == component) {
-		handle_miss(address);
-		if (this->is_waiting)
-			r = 0;
+		if (is_address_missing(address))
+			return 0;
 		else if (this->wait_time == 0) {
 			this->requester = VOID;
 			this->wait_time = delay;
-			r = 1;
+			return 1;
 		} else {
 			--this->wait_time;
 		}
 	}
-	return r;
+	return 0;
 }
 
-void
-Cache::handle_miss(int expected)
+int
+Cache::is_address_missing(int expected)
 {
 	int r, q, tag, index, offset;
 	std::array<signed int, LINE_SIZE> *actual;
 	std::array<int, 2> *meta;
 
 	get_cache_fields(expected, &tag, &index, &offset);
-	r = 1;
+	r = 0;
 	meta = &this->meta.at(index);
 	actual = &this->data->at(index);
 
 	if (meta->at(0) != tag) {
-		r = 0;
-		// address not in cache
+		r = 1;
 		if (meta->at(1) >= 0) {
-			// occupant is dirty
-			// writing line to DRam in case of dirty cache eviction
 			q = this->lower->write_line(
 				CACHE, *actual,
 				((index << LINE_SPEC) + (meta->at(0) << (L1_CACHE_LINE_SPEC + LINE_SPEC))));
@@ -130,7 +123,7 @@ Cache::handle_miss(int expected)
 		}
 	}
 
-	this->is_waiting = r ? false : true;
+	return r;
 }
 
 std::array<std::array<int, 2>, L1_CACHE_LINES>
