@@ -3,16 +3,17 @@
 #include <iostream>
 
 enum Component {
-	IDLE,
+	CONT,
 	WRITE,
 	MEM,
 	EXEC,
 	DCDE,
 	FETCH,
-	L1CACHE,
-	SIDE,
+	CACHE,
+	VOID,
 };
 
-std::ostream &operator<<(std::ostream &os, Component c);
+std::ostream &
+operator<<(std::ostream &os, Component c);
 
 #endif /* COMPONENT_H_INCLUDED */

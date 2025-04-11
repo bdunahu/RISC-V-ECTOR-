@@ -4,7 +4,7 @@
 std::ostream &operator<<(std::ostream &os, Component c)
 {
 	const std::string nameC[] = {
-		"IDLE", "WRITE", "MEM", "EXEC", "DCDE", "FETCH", "L1CACHE", "SIDE",
+		"CONT", "WRITE", "MEM", "EXEC", "DCDE", "FETCH", "CACHE", "VOID",
 	};
 	return os << nameC[c];
 }

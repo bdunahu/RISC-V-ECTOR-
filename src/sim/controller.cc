@@ -11,8 +11,7 @@ Controller::Controller(Stage *stage, Storage *storage, bool is_pipelined)
 	this->pc = 0x0;
 	this->checked_out = {};
 	this->gprs = {0};
-	// grant side-door access
-	this->id = SIDE;
+	this->id = CONT;
 }
 
 void Controller::run_for(int number)

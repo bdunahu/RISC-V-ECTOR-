@@ -12,11 +12,11 @@ Dram::Dram(int delay)
 {
 	this->data = new std::vector<std::array<signed int, LINE_SIZE>>;
 	this->data->resize(MEM_LINES);
-	this->delay		 = delay;
+	this->delay = delay;
 	this->is_waiting = false;
-	this->lower		 = nullptr;
-	this->requester	 = IDLE;
-	this->wait_time	 = this->delay;
+	this->lower = nullptr;
+	this->requester = VOID;
+	this->wait_time = this->delay;
 }
 
 Dram::~Dram() { delete this->data; }
@@ -84,19 +84,15 @@ int
 Dram::is_access_cleared(Component component)
 {
 	/* Do this first--then process the first cycle immediately. */
-	if (component == SIDE)
-		return 1;
-	else {
-		if (this->requester == IDLE)
-			this->requester = component;
-		if (this->requester == component) {
-			if (this->wait_time == 0) {
-				this->requester = IDLE;
-				this->wait_time = delay;
-				return 1;
-			} else {
-				--this->wait_time;
-			}
+	if (this->requester == VOID)
+		this->requester = component;
+	if (this->requester == component) {
+		if (this->wait_time == 0) {
+			this->requester = VOID;
+			this->wait_time = delay;
+			return 1;
+		} else {
+			--this->wait_time;
 		}
 	}
 	return 0;

@@ -309,18 +309,3 @@ TEST_CASE_METHOD(
 		a = 0;
 	}
 }
-
-TEST_CASE_METHOD(DramFixture, "Sidedoor bypasses delay", "[dram]")
-{
-	int r;
-	signed int w;
-	CHECK(expected == actual);
-
-	w = 0x11223344;
-	r = this->d->write_word(SIDE, w, 0x0);
-	CHECK(r);
-
-	expected.at(0) = w;
-	actual		   = d->view(0, 1)[0];
-	REQUIRE(expected == actual);
-}

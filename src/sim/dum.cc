@@ -5,7 +5,7 @@
 #include "stage.h"
 #include "utils.h"
 
-DUM::DUM(Stage *stage) : Stage(stage) { this->id = IDLE; }
+DUM::DUM(Stage *stage) : Stage(stage) { this->id = VOID; }
 
 InstrDTO *
 DUM::advance(Response p)
