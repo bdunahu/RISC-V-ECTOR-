@@ -11,11 +11,18 @@ class CacheFixture
 		this->c_delay = 2;
 		this->d = new Dram(this->m_delay);
 		this->c = new Cache(this->d, this->c_delay);
+		this->mem = new int;
+		this->fetch = new int;
 		this->expected = {0, 0, 0, 0};
 		this->actual = this->c->view(0, 1)[0];
 	}
 
-	~CacheFixture() { delete this->c; }
+	~CacheFixture()
+	{
+		delete this->c;
+		delete this->mem;
+		delete this->fetch;
+	}
 
 	/**
 	 * An operation that is done a lot.
@@ -38,6 +45,8 @@ class CacheFixture
 	int c_delay;
 	Cache *c;
 	Dram *d;
+	int *mem;
+	int *fetch;
 	std::array<signed int, LINE_SIZE> expected;
 	std::array<signed int, LINE_SIZE> actual;
 };
@@ -51,15 +60,13 @@ TEST_CASE_METHOD(CacheFixture, "store 0th element in DELAY cycles", "[dram]")
 	w = 0x11223344;
 	// delay + 1 due to internal logic, when mem
 	// finishes handle_miss still returns 'blocked'
-	this->wait_for_storage(this->m_delay + 1, 0, [this, w]() {
-		return this->c->write_word(MEM, w, 0b0);
-	});
+	this->wait_for_storage(
+		this->m_delay + 1, 0, [this, w]() { return this->c->write_word(this->mem, w, 0b0); });
 
-	this->wait_for_storage(this->c_delay, 0, [this, w]() {
-		return this->c->write_word(MEM, w, 0b0);
-	});
+	this->wait_for_storage(
+		this->c_delay, 0, [this, w]() { return this->c->write_word(this->mem, w, 0b0); });
 
-	r = c->write_word(MEM, w, 0b0);
+	r = c->write_word(this->mem, w, 0b0);
 	CHECK(r);
 
 	actual = this->d->view(0, 1)[0];
@@ -71,10 +78,7 @@ TEST_CASE_METHOD(CacheFixture, "store 0th element in DELAY cycles", "[dram]")
 	REQUIRE(expected == actual);
 }
 
-TEST_CASE_METHOD(
-	CacheFixture,
-	"store 0th, 1st element in DELAY cycles, with conflict",
-	"[cache]")
+TEST_CASE_METHOD(CacheFixture, "store 0th, 1st element in DELAY cycles, with conflict", "[cache]")
 {
 	signed int w;
 	int r, i;
@@ -84,9 +88,9 @@ TEST_CASE_METHOD(
 	// delay + 1 due to internal logic, when mem
 	// finishes handle_miss still returns 'blocked'
 	for (i = 0; i < this->m_delay + 1; ++i) {
-		r = c->write_word(MEM, w, 0b0);
+		r = c->write_word(this->mem, w, 0b0);
 		CHECK(!r);
-		r = c->write_word(FETCH, w, 0b1);
+		r = c->write_word(this->fetch, w, 0b1);
 		CHECK(!r);
 
 		// check for early modifications
@@ -95,9 +99,9 @@ TEST_CASE_METHOD(
 	}
 
 	for (i = 0; i < this->c_delay; ++i) {
-		r = c->write_word(MEM, w, 0b0);
+		r = c->write_word(this->mem, w, 0b0);
 		CHECK(!r);
-		r = c->write_word(FETCH, w, 0b1);
+		r = c->write_word(this->fetch, w, 0b1);
 		CHECK(!r);
 
 		// check for early modifications
@@ -105,7 +109,7 @@ TEST_CASE_METHOD(
 		REQUIRE(this->expected == this->actual);
 	}
 
-	r = c->write_word(MEM, w, 0b0);
+	r = c->write_word(this->mem, w, 0b0);
 	CHECK(r);
 
 	actual = d->view(0, 1)[0];
@@ -117,11 +121,10 @@ TEST_CASE_METHOD(
 	REQUIRE(expected == actual);
 
 	// this should have been loaded already!
-	this->wait_for_storage(this->c_delay, 0, [this, w]() {
-		return this->c->write_word(FETCH, w, 0b1);
-	});
+	this->wait_for_storage(
+		this->c_delay, 0, [this, w]() { return this->c->write_word(this->fetch, w, 0b1); });
 
-	r = c->write_word(FETCH, w, 0b1);
+	r = c->write_word(this->fetch, w, 0b1);
 	CHECK(r);
 
 	expected.at(1) = w;
@@ -130,9 +133,7 @@ TEST_CASE_METHOD(
 }
 
 TEST_CASE_METHOD(
-	CacheFixture,
-	"store 0th, 1st element different tags, in DELAY cycles, no conflict",
-	"[cache]")
+	CacheFixture, "store 0th, 1st element different tags, in DELAY cycles, no conflict", "[cache]")
 {
 	int r;
 	signed int w;
@@ -141,15 +142,13 @@ TEST_CASE_METHOD(
 	w = 0x11223344;
 	// delay + 1 due to internal logic, when mem
 	// finishes handle_miss still returns 'blocked'
-	this->wait_for_storage(this->m_delay + 1, 0, [this, w]() {
-		return this->c->write_word(MEM, w, 0b0);
-	});
+	this->wait_for_storage(
+		this->m_delay + 1, 0, [this, w]() { return this->c->write_word(this->mem, w, 0b0); });
 
-	this->wait_for_storage(this->c_delay, 0, [this, w]() {
-		return this->c->write_word(MEM, w, 0b0);
-	});
+	this->wait_for_storage(
+		this->c_delay, 0, [this, w]() { return this->c->write_word(this->mem, w, 0b0); });
 
-	r = c->write_word(MEM, w, 0b0);
+	r = c->write_word(this->mem, w, 0b0);
 	CHECK(r);
 
 	expected.at(0) = w;
@@ -158,27 +157,25 @@ TEST_CASE_METHOD(
 
 	// write back to memory
 	this->wait_for_storage(this->m_delay + 1, 0, [this, w]() {
-		return this->c->write_word(FETCH, w, 0b10000001);
+		return this->c->write_word(this->fetch, w, 0b10000001);
 	});
 
 	// fetch new address (don't run the completion cycle yet)
-	this->wait_for_storage(this->m_delay, 0, [this, w]() {
-		return this->c->write_word(FETCH, w, 0b10000001);
-	});
+	this->wait_for_storage(
+		this->m_delay, 0, [this, w]() { return this->c->write_word(this->fetch, w, 0b10000001); });
 
 	// after the fetch, this cache line should be empty
-	this->c->write_word(FETCH, w, 0b10000001);
+	this->c->write_word(this->fetch, w, 0b10000001);
 	CHECK(r);
 
 	expected.at(0) = 0;
 	actual = c->view(0, 1)[0];
 	CHECK(expected == actual);
 
-	this->wait_for_storage(this->c_delay, 0, [this, w]() {
-		return this->c->write_word(FETCH, w, 0b10000001);
-	});
+	this->wait_for_storage(
+		this->c_delay, 0, [this, w]() { return this->c->write_word(this->fetch, w, 0b10000001); });
 
-	r = c->write_word(FETCH, w, 0b10000001);
+	r = c->write_word(this->fetch, w, 0b10000001);
 	CHECK(r);
 
 	expected.at(0) = 0;

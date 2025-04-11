@@ -30,7 +30,7 @@ IF::advance_helper()
 	signed int bits;
 
 	if (this->curr_instr == nullptr) {
-		r = this->storage->read_word(this->id, this->pc, bits);
+		r = this->storage->read_word(this, this->pc, bits);
 		if (r) {
 			this->curr_instr = new InstrDTO();
 			this->curr_instr->set_instr_bits(bits);

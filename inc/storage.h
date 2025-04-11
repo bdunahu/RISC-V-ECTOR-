@@ -1,6 +1,5 @@
 #ifndef STORAGE_H
 #define STORAGE_H
-#include "component.h"
 #include "definitions.h"
 #include <algorithm>
 #include <array>
@@ -20,9 +19,9 @@ class Storage
 	 * @return 1 if the request was completed, 0 otherwise.
 	 */
 	virtual int
-	write_word(Component component, signed int data, int address) = 0;
+	write_word(void *id, signed int data, int address) = 0;
 	virtual int
-	write_line(Component component, std::array<signed int, LINE_SIZE> data_line, int address) = 0;
+	write_line(void *id, std::array<signed int, LINE_SIZE> data_line, int address) = 0;
 
 	/**
 	 * Get the data line at `address`.
@@ -32,9 +31,9 @@ class Storage
 	 * @return 1 if the request was completed, 0 otherwise
 	 */
 	virtual int
-	read_line(Component c, int address, std::array<signed int, LINE_SIZE> &data) = 0;
+	read_line(void *id, int address, std::array<signed int, LINE_SIZE> &data) = 0;
 	virtual int
-	read_word(Component c, int address, signed int &data) = 0;
+	read_word(void *id, int address, signed int &data) = 0;
 
 	/**
 	 * Sidedoor view of `lines` of memory starting at `base`.
@@ -57,9 +56,9 @@ class Storage
 	 */
 	Storage *lower;
 	/**
-	 * The component currently being serviced.
+	 * The id currently being serviced.
 	 */
-	Component requester;
+	void *current_request;
 	/**
 	 * The number of clock cycles this level of storage takes to complete
 	 * requests.

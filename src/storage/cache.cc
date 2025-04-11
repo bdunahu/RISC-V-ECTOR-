@@ -1,5 +1,4 @@
 #include "cache.h"
-#include "component.h"
 #include "definitions.h"
 #include "utils.h"
 #include <bits/stdc++.h>
@@ -13,7 +12,7 @@ Cache::Cache(Storage *lower, int delay)
 	this->delay = delay;
 	this->lower = lower;
 	this->meta.fill({-1, -1});
-	this->requester = VOID;
+	this->current_request = nullptr;
 	this->wait_time = this->delay;
 }
 
@@ -24,18 +23,18 @@ Cache::~Cache()
 }
 
 int
-Cache::write_word(Component component, signed int data, int address)
+Cache::write_word(void *id, signed int data, int address)
 {
-	return process(component, address, [&](int index, int offset) {
+	return process(id, address, [&](int index, int offset) {
 		this->data->at(index).at(offset) = data;
 		this->meta[index].at(1) = 1;
 	});
 }
 
 int
-Cache::write_line(Component component, std::array<signed int, LINE_SIZE> data_line, int address)
+Cache::write_line(void *id, std::array<signed int, LINE_SIZE> data_line, int address)
 {
-	return process(component, address, [&](int index, int offset) {
+	return process(id, address, [&](int index, int offset) {
 		(void)offset;
 		this->data->at(index) = data_line;
 		this->meta[index].at(1) = 1;
@@ -44,28 +43,26 @@ Cache::write_line(Component component, std::array<signed int, LINE_SIZE> data_li
 
 // TODO: tests for multi level cache
 int
-Cache::read_line(Component component, int address, std::array<signed int, LINE_SIZE> &data_line)
+Cache::read_line(void *id, int address, std::array<signed int, LINE_SIZE> &data_line)
 {
-	return process(component, address, [&](int index, int offset) {
+	return process(id, address, [&](int index, int offset) {
 		(void)offset;
 		data_line = this->data->at(index);
 	});
 }
 
 int
-Cache::read_word(Component component, int address, signed int &data)
+Cache::read_word(void *id, int address, signed int &data)
 {
-	return process(component, address, [&](int index, int offset) {
-		data = this->data->at(index).at(offset);
-	});
+	return process(
+		id, address, [&](int index, int offset) { data = this->data->at(index).at(offset); });
 }
 
 int
-Cache::process(
-	Component component, int address, std::function<void(int index, int offset)> request_handler)
+Cache::process(void *id, int address, std::function<void(int index, int offset)> request_handler)
 {
 	int r;
-	r = this->is_access_cleared(component, address);
+	r = this->is_access_cleared(id, address);
 	if (r) {
 		int tag, index, offset;
 		get_cache_fields(address, &tag, &index, &offset);
@@ -75,16 +72,18 @@ Cache::process(
 }
 
 int
-Cache::is_access_cleared(Component component, int address)
+Cache::is_access_cleared(void *id, int address)
 {
 	/* Do this first--then process the first cycle immediately. */
-	if (this->requester == VOID)
-		this->requester = component;
-	if (this->requester == component) {
+	if (id == nullptr)
+		throw std::invalid_argument("Accessor cannot be nullptr.");
+	if (this->current_request == nullptr)
+		this->current_request = id;
+	if (this->current_request == id) {
 		if (is_address_missing(address))
 			return 0;
 		else if (this->wait_time == 0) {
-			this->requester = VOID;
+			this->current_request = nullptr;
 			this->wait_time = delay;
 			return 1;
 		} else {
@@ -110,13 +109,13 @@ Cache::is_address_missing(int expected)
 		r = 1;
 		if (meta->at(1) >= 0) {
 			q = this->lower->write_line(
-				CACHE, *actual,
+				this, *actual,
 				((index << LINE_SPEC) + (meta->at(0) << (L1_CACHE_LINE_SPEC + LINE_SPEC))));
 			if (q) {
 				meta->at(1) = -1;
 			}
 		} else {
-			q = this->lower->read_line(CACHE, expected, *actual);
+			q = this->lower->read_line(this, expected, *actual);
 			if (q) {
 				meta->at(0) = tag;
 			}

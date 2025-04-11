@@ -13,7 +13,7 @@ MM::advance_helper()
 
 	switch (this->curr_instr->get_mnemonic()) {
 	case LOAD:
-		r			 = this->storage->read_word(this->id, this->curr_instr->get_s1(), data);
+		r = this->storage->read_word(this, this->curr_instr->get_s1(), data);
 		this->status = r ? OK : STALLED;
 		if (this->status == OK) {
 			this->curr_instr->set_s1(data);
@@ -22,8 +22,7 @@ MM::advance_helper()
 
 	case STORE:
 		// TODO signed issues, we aren't wrapping addresses
-		r = this->storage->write_word(
-			this->id, this->curr_instr->get_s2(), this->curr_instr->get_s1());
+		r = this->storage->write_word(this, this->curr_instr->get_s2(), this->curr_instr->get_s1());
 		this->status = r ? OK : STALLED;
 		if (this->status != OK) {
 			this->status = STALLED;

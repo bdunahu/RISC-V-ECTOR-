@@ -1,7 +1,6 @@
 #ifndef CACHE_H
 #define CACHE_H
 #include "definitions.h"
-#include "component.h"
 #include "storage.h"
 #include <array>
 #include <functional>
@@ -23,13 +22,13 @@ class Cache : public Storage
 	~Cache();
 
 	int
-	write_word(Component, signed int, int) override;
+	write_word(void *, signed int, int) override;
 	int
-	write_line(Component, std::array<signed int, LINE_SIZE>, int) override;
+	write_line(void *, std::array<signed int, LINE_SIZE>, int) override;
 	int
-	read_line(Component, int, std::array<signed int, LINE_SIZE> &) override;
+	read_line(void *, int, std::array<signed int, LINE_SIZE> &) override;
 	int
-	read_word(Component, int, signed int &) override;
+	read_word(void *, int, signed int &) override;
 
 	/**
 	 * Getter for the meta attribute.
@@ -42,29 +41,27 @@ class Cache : public Storage
   private:
 	/**
 	 * Helper for all access methods.
-	 * Calls `request_handler` when `component` is allowed to complete its
+	 * Calls `request_handler` when `id` is allowed to complete its
 	 * request cycle.
 	 * @param the source making the request
 	 * @param the address to write to
 	 * @param the function to call when an access should be completed
 	 */
 	int
-	process(
-		Component component, int address, std::function<void(int index, int offset)> request_handler);
+	process(void *id, int address, std::function<void(int index, int offset)> request_handler);
 	/**
-	 * Returns OK if `component` is allowed to complete its request this cycle.
-	 * Handles cache misses, wait times, and setting the current component this
+	 * Returns OK if `id` is allowed to complete its request this cycle.
+	 * Handles cache misses, wait times, and setting the current id this
 	 * storage is serving.
-	 * @param the component asking for a resource
+	 * @param the id asking for a resource
 	 * @return 1 if the access can be carried out this function call, 0 otherwise.
 	 */
 	int
-	is_access_cleared(Component component, int address);
+	is_access_cleared(void *id, int address);
 	/**
-	 * Helper for access_cleared.
+	 * Helper for is_access_cleared.
 	 * Fetches `address` from a lower level of storage if it is not already
-	 * present. If it is not, temporarily sets the is_blocked attribute of this
-	 * cache level to true, and the victim line is chosen/written back.
+	 * present. The victim line is chosen/written back.
 	 * @param the address that must be present in cache.
 	 * @param 0 if the address is currently in cache, 1 if it is being fetched.
 	 */

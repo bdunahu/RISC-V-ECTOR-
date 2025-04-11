@@ -1,5 +1,4 @@
 #include "dram.h"
-#include "component.h"
 #include "definitions.h"
 #include <algorithm>
 #include <bits/stdc++.h>
@@ -14,43 +13,41 @@ Dram::Dram(int delay)
 	this->data->resize(MEM_LINES);
 	this->delay = delay;
 	this->lower = nullptr;
-	this->requester = VOID;
+	this->current_request = nullptr;
 	this->wait_time = this->delay;
 }
 
 Dram::~Dram() { delete this->data; }
 
 int
-Dram::write_line(Component component, std::array<signed int, LINE_SIZE> data_line, int address)
+Dram::write_line(void *id, std::array<signed int, LINE_SIZE> data_line, int address)
 {
-	return process(component, address, [&](int line, int word) {
+	return process(id, address, [&](int line, int word) {
 		(void)word;
 		this->data->at(line) = data_line;
 	});
 }
 
 int
-Dram::write_word(Component component, signed int data, int address)
+Dram::write_word(void *id, signed int data, int address)
 {
-	return process(
-		component, address, [&](int line, int word) { this->data->at(line).at(word) = data; });
+	return process(id, address, [&](int line, int word) { this->data->at(line).at(word) = data; });
 }
 
 // TODO requires testing
 int
-Dram::read_line(Component component, int address, std::array<signed int, LINE_SIZE> &data_line)
+Dram::read_line(void *id, int address, std::array<signed int, LINE_SIZE> &data_line)
 {
-	return process(component, address, [&](int line, int word) {
+	return process(id, address, [&](int line, int word) {
 		(void)word;
 		data_line = this->data->at(line);
 	});
 }
 
 int
-Dram::read_word(Component component, int address, signed int &data)
+Dram::read_word(void *id, int address, signed int &data)
 {
-	return process(
-		component, address, [&](int line, int word) { data = this->data->at(line).at(word); });
+	return process(id, address, [&](int line, int word) { data = this->data->at(line).at(word); });
 }
 
 // TODO load a file instead and test this method
@@ -66,11 +63,10 @@ Dram::load(std::vector<signed int> program)
 }
 
 int
-Dram::process(
-	Component component, int address, std::function<void(int line, int word)> request_handler)
+Dram::process(void *id, int address, std::function<void(int line, int word)> request_handler)
 {
 	int r;
-	r = this->is_access_cleared(component);
+	r = this->is_access_cleared(id);
 	if (r) {
 		int line, word;
 		get_memory_index(address, line, word);
@@ -80,14 +76,16 @@ Dram::process(
 }
 
 int
-Dram::is_access_cleared(Component component)
+Dram::is_access_cleared(void *id)
 {
 	/* Do this first--then process the first cycle immediately. */
-	if (this->requester == VOID)
-		this->requester = component;
-	if (this->requester == component) {
+	if (id == nullptr)
+		throw std::invalid_argument("Accessor cannot be nullptr.");
+	if (this->current_request == nullptr)
+		this->current_request = id;
+	if (this->current_request == id) {
 		if (this->wait_time == 0) {
-			this->requester = VOID;
+			this->current_request = nullptr;
 			this->wait_time = delay;
 			return 1;
 		} else {
