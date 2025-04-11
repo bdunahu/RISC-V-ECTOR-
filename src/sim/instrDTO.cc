@@ -1,5 +1,5 @@
 #include "instrDTO.h"
-#include "accessor.h"
+#include "component.h"
 
 InstrDTO::InstrDTO()
 {
@@ -12,7 +12,7 @@ InstrDTO::InstrDTO()
 	this->pc = 0;
 }
 
-int InstrDTO::get_time_of(Accessor a) { return this->hist[a]; }
+int InstrDTO::get_time_of(Component c) { return this->hist[c]; }
 
 signed int InstrDTO::get_instr_bits() { return this->instr_bits; }
 
@@ -28,7 +28,7 @@ Type InstrDTO::get_type() { return this->type; }
 
 unsigned int InstrDTO::get_pc() { return this->pc; }
 
-void InstrDTO::set_time_of(Accessor a, int i) { this->hist[a] = i; }
+void InstrDTO::set_time_of(Component c, int i) { this->hist[c] = i; }
 
 void InstrDTO::set_instr_bits(signed int instr) { this->instr_bits = instr; }
 

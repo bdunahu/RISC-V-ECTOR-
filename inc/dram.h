@@ -1,5 +1,6 @@
 #ifndef DRAM_H
 #define DRAM_H
+#include "component.h"
 #include "definitions.h"
 #include "storage.h"
 #include <functional>
@@ -17,15 +18,13 @@ class Dram : public Storage
 	~Dram();
 
 	int
-	write_word(Accessor accessor, signed int data, int address) override;
+	write_word(Component, signed int, int) override;
 	int
-	write_line(
-		Accessor accessor, std::array<signed int, LINE_SIZE> data_line, int address) override;
+	write_line(Component, std::array<signed int, LINE_SIZE>, int) override;
 	int
-	read_word(Accessor accessor, int address, signed int &data) override;
+	read_word(Component, int, signed int &) override;
 	int
-	read_line(
-		Accessor accessor, int address, std::array<signed int, LINE_SIZE> &data_line) override;
+	read_line(Component, int, std::array<signed int, LINE_SIZE> &) override;
 
 	/**
 	 * TODO This will accept a file at a later date.
@@ -36,7 +35,7 @@ class Dram : public Storage
   private:
 	/**
 	 * Helper for all access methods.
-	 * Calls `request_handler` when `accessor` is allowed to complete its
+	 * Calls `request_handler` when `component` is allowed to complete its
 	 * request cycle.
 	 * @param the source making the request
 	 * @param the address to write to
@@ -45,16 +44,16 @@ class Dram : public Storage
 	 */
 	int
 	process(
-		Accessor accessor, int address, std::function<void(int line, int word)> request_handler);
+		Component component, int address, std::function<void(int line, int word)> request_handler);
 	/**
-	 * Returns OK if `accessor` is allowed to complete its request this cycle.
-	 * Handles wait times, side door, and setting the current accessor this
+	 * Returns OK if `component` is allowed to complete its request this cycle.
+	 * Handles wait times, side door, and setting the current component this
 	 * storage is serving.
-	 * @param the accessor asking for a resource
+	 * @param the component asking for a resource
 	 * @return 1 if the access can be completed this function call, 0 otherwise
 	 */
 	int
-	is_access_cleared(Accessor accessor);
+	is_access_cleared(Component component);
 };
 
 #endif /* DRAM_H_INCLUDED */

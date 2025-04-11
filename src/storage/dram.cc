@@ -1,4 +1,5 @@
 #include "dram.h"
+#include "component.h"
 #include "definitions.h"
 #include <algorithm>
 #include <bits/stdc++.h>
@@ -21,36 +22,36 @@ Dram::Dram(int delay)
 Dram::~Dram() { delete this->data; }
 
 int
-Dram::write_line(Accessor accessor, std::array<signed int, LINE_SIZE> data_line, int address)
+Dram::write_line(Component component, std::array<signed int, LINE_SIZE> data_line, int address)
 {
-	return process(accessor, address, [&](int line, int word) {
+	return process(component, address, [&](int line, int word) {
 		(void)word;
 		this->data->at(line) = data_line;
 	});
 }
 
 int
-Dram::write_word(Accessor accessor, signed int data, int address)
+Dram::write_word(Component component, signed int data, int address)
 {
 	return process(
-		accessor, address, [&](int line, int word) { this->data->at(line).at(word) = data; });
+		component, address, [&](int line, int word) { this->data->at(line).at(word) = data; });
 }
 
 // TODO requires testing
 int
-Dram::read_line(Accessor accessor, int address, std::array<signed int, LINE_SIZE> &data_line)
+Dram::read_line(Component component, int address, std::array<signed int, LINE_SIZE> &data_line)
 {
-	return process(accessor, address, [&](int line, int word) {
+	return process(component, address, [&](int line, int word) {
 		(void)word;
 		data_line = this->data->at(line);
 	});
 }
 
 int
-Dram::read_word(Accessor accessor, int address, signed int &data)
+Dram::read_word(Component component, int address, signed int &data)
 {
 	return process(
-		accessor, address, [&](int line, int word) { data = this->data->at(line).at(word); });
+		component, address, [&](int line, int word) { data = this->data->at(line).at(word); });
 }
 
 // TODO load a file instead and test this method
@@ -67,10 +68,10 @@ Dram::load(std::vector<signed int> program)
 
 int
 Dram::process(
-	Accessor accessor, int address, std::function<void(int line, int word)> request_handler)
+	Component component, int address, std::function<void(int line, int word)> request_handler)
 {
 	int r;
-	r = this->is_access_cleared(accessor);
+	r = this->is_access_cleared(component);
 	if (r) {
 		int line, word;
 		get_memory_index(address, line, word);
@@ -80,15 +81,15 @@ Dram::process(
 }
 
 int
-Dram::is_access_cleared(Accessor accessor)
+Dram::is_access_cleared(Component component)
 {
 	/* Do this first--then process the first cycle immediately. */
-	if (accessor == SIDE)
+	if (component == SIDE)
 		return 1;
 	else {
 		if (this->requester == IDLE)
-			this->requester = accessor;
-		if (this->requester == accessor) {
+			this->requester = component;
+		if (this->requester == component) {
 			if (this->wait_time == 0) {
 				this->requester = IDLE;
 				this->wait_time = delay;

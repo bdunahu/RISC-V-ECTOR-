@@ -1,4 +1,5 @@
 #include "cache.h"
+#include "component.h"
 #include "definitions.h"
 #include "utils.h"
 #include <bits/stdc++.h>
@@ -24,18 +25,18 @@ Cache::~Cache()
 }
 
 int
-Cache::write_word(Accessor accessor, signed int data, int address)
+Cache::write_word(Component component, signed int data, int address)
 {
-	return process(accessor, address, [&](int index, int offset) {
+	return process(component, address, [&](int index, int offset) {
 		this->data->at(index).at(offset) = data;
 		this->meta[index].at(1)			 = 1;
 	});
 }
 
 int
-Cache::write_line(Accessor accessor, std::array<signed int, LINE_SIZE> data_line, int address)
+Cache::write_line(Component component, std::array<signed int, LINE_SIZE> data_line, int address)
 {
-	return process(accessor, address, [&](int index, int offset) {
+	return process(component, address, [&](int index, int offset) {
 		(void)offset;
 		this->data->at(index)	= data_line;
 		this->meta[index].at(1) = 1;
@@ -44,27 +45,28 @@ Cache::write_line(Accessor accessor, std::array<signed int, LINE_SIZE> data_line
 
 // TODO: tests for multi level cache
 int
-Cache::read_line(Accessor accessor, int address, std::array<signed int, LINE_SIZE> &data_line)
+Cache::read_line(Component component, int address, std::array<signed int, LINE_SIZE> &data_line)
 {
-	return process(accessor, address, [&](int index, int offset) {
+	return process(component, address, [&](int index, int offset) {
 		(void)offset;
 		data_line = this->data->at(index);
 	});
 }
 
 int
-Cache::read_word(Accessor accessor, int address, signed int &data)
+Cache::read_word(Component component, int address, signed int &data)
 {
-	return process(
-		accessor, address, [&](int index, int offset) { data = this->data->at(index).at(offset); });
+	return process(component, address, [&](int index, int offset) {
+		data = this->data->at(index).at(offset);
+	});
 }
 
 int
 Cache::process(
-	Accessor accessor, int address, std::function<void(int index, int offset)> request_handler)
+	Component component, int address, std::function<void(int index, int offset)> request_handler)
 {
 	int r;
-	r = this->is_access_cleared(accessor, address);
+	r = this->is_access_cleared(component, address);
 	if (r) {
 		int tag, index, offset;
 		get_cache_fields(address, &tag, &index, &offset);
@@ -74,21 +76,21 @@ Cache::process(
 }
 
 int
-Cache::is_access_cleared(Accessor accessor, int address)
+Cache::is_access_cleared(Component component, int address)
 {
 	int r;
 	r = 0;
 	/* Do this first--then process the first cycle immediately. */
 	if (this->requester == IDLE)
-		this->requester = accessor;
-	if (this->requester == accessor) {
+		this->requester = component;
+	if (this->requester == component) {
 		handle_miss(address);
 		if (this->is_waiting)
 			r = 0;
 		else if (this->wait_time == 0) {
 			this->requester = IDLE;
 			this->wait_time = delay;
-			r = 1;
+			r				= 1;
 		} else {
 			--this->wait_time;
 		}

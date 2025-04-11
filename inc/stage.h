@@ -1,6 +1,6 @@
 #ifndef STAGE_H
 #define STAGE_H
-#include "accessor.h"
+#include "component.h"
 #include "definitions.h"
 #include "instrDTO.h"
 #include "response.h"
@@ -95,7 +95,7 @@ class Stage
 	/**
 	 * The name of the pipeline stage.
 	 */
-	Accessor id;
+	Component id;
 	/**
 	 * The shared pool of general-purpose integer registers.
 	 */

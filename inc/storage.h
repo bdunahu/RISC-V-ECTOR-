@@ -1,6 +1,6 @@
 #ifndef STORAGE_H
 #define STORAGE_H
-#include "accessor.h"
+#include "component.h"
 #include "definitions.h"
 #include <algorithm>
 #include <array>
@@ -19,9 +19,10 @@ class Storage
 	 * @param the address to write to.
 	 * @return 1 if the request was completed, 0 otherwise.
 	 */
-	virtual int write_word(Accessor accessor, signed int data, int address) = 0;
-	virtual int write_line(Accessor accessor, std::array<signed int, LINE_SIZE> data_line, int address) = 0;
-
+	virtual int
+	write_word(Component component, signed int data, int address) = 0;
+	virtual int
+	write_line(Component component, std::array<signed int, LINE_SIZE> data_line, int address) = 0;
 
 	/**
 	 * Get the data line at `address`.
@@ -30,11 +31,10 @@ class Storage
 	 * @param the data being returned
 	 * @return 1 if the request was completed, 0 otherwise
 	 */
-	virtual int read_line(
-		Accessor accessor,
-		int address,
-		std::array<signed int, LINE_SIZE> &data) = 0;
-	virtual int read_word(Accessor accessor, int address, signed int &data) = 0;
+	virtual int
+	read_line(Component c, int address, std::array<signed int, LINE_SIZE> &data) = 0;
+	virtual int
+	read_word(Component c, int address, signed int &data) = 0;
 
 	/**
 	 * Sidedoor view of `lines` of memory starting at `base`.
@@ -57,9 +57,9 @@ class Storage
 	 */
 	Storage *lower;
 	/**
-	 * The accessor currently being serviced.
+	 * The component currently being serviced.
 	 */
-	Accessor requester;
+	Component requester;
 	/**
 	 * The number of clock cycles this level of storage takes to complete
 	 * requests.

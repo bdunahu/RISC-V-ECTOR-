@@ -1,5 +1,5 @@
 #include "dum.h"
-#include "accessor.h"
+#include "component.h"
 #include "instrDTO.h"
 #include "response.h"
 #include "stage.h"
@@ -7,7 +7,8 @@
 
 DUM::DUM(Stage *stage) : Stage(stage) { this->id = IDLE; }
 
-InstrDTO *DUM::advance(Response p)
+InstrDTO *
+DUM::advance(Response p)
 {
 	InstrDTO *r = nullptr;
 
@@ -21,9 +22,13 @@ InstrDTO *DUM::advance(Response p)
 	return r;
 }
 
-void DUM::advance_helper() {}
+void
+DUM::advance_helper()
+{
+}
 
-void DUM::set_curr_instr(InstrDTO *d)
+void
+DUM::set_curr_instr(InstrDTO *d)
 {
 	this->curr_instr = d;
 }

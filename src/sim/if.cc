@@ -1,12 +1,12 @@
 #include "if.h"
-#include "accessor.h"
 #include "instrDTO.h"
 #include "response.h"
 #include "stage.h"
 
 IF::IF(Stage *stage) : Stage(stage) { this->id = FETCH; }
 
-InstrDTO *IF::advance(Response p)
+InstrDTO *
+IF::advance(Response p)
 {
 	InstrDTO *r = nullptr;
 
@@ -23,7 +23,8 @@ InstrDTO *IF::advance(Response p)
 	return r;
 }
 
-void IF::advance_helper()
+void
+IF::advance_helper()
 {
 	int r;
 	signed int bits;

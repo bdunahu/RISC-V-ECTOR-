@@ -1,6 +1,5 @@
 #ifndef IF_H
 #define IF_H
-#include "accessor.h"
 #include "instrDTO.h"
 #include "response.h"
 #include "stage.h"

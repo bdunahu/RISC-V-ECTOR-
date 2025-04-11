@@ -1,6 +1,7 @@
 #ifndef CLI_H
 #define CLI_H
 #include "cache.h"
+#include "component.h"
 #include <functional>
 #include <string>
 #include <unordered_map>
@@ -25,16 +26,16 @@ class Cli
 	 * @param memory_address address of the memory where data needs to be loaded
 	 * from
 	 */
-	void load(Accessor accessor, int memory_address);
+	void load(Component component, int memory_address);
 
 	/**
 	 * Stores data into memory at the specified address.
-	 * @param accessor the pipline stage that is making this request
-	 * @param data data value to be written to the memory
+	 * @param the pipline stage that is making this request
+	 * @param the data value to be written to the memory
 	 * @param address address of the memory where data needs to be stored
 	 * @return the response from the storage device
 	 */
-	void store(Accessor accessor, int data, int address);
+	void store(Component component, int data, int address);
 
 	/**
 	 * Resets the memory configuration and cycles to their initial state.
@@ -74,11 +75,11 @@ class Cli
 	/**
 	 * Attempts to match string to either fetch or mem, or throws
 	 * std::invalid_argument otherwise.
-	 * @param the string to be converted accessor
-	 * @return the corresponding accessor
+	 * @param the string to be converted component
+	 * @return the corresponding component
 	 * @throws invalid_argument if the string is not fetch or mem
 	 */
-	Accessor match_accessor_or_die(std::string s);
+	Component match_component_or_die(std::string s);
 	/** Map of commands and their corresponding functions.
 	 * This map is used to store the commands and their corresponding functions.
 	 */

@@ -1,6 +1,7 @@
 #ifndef CACHE_H
 #define CACHE_H
 #include "definitions.h"
+#include "component.h"
 #include "storage.h"
 #include <array>
 #include <functional>
@@ -22,15 +23,13 @@ class Cache : public Storage
 	~Cache();
 
 	int
-	write_word(Accessor accessor, signed int data, int address) override;
+	write_word(Component, signed int, int) override;
 	int
-	write_line(
-		Accessor accessor, std::array<signed int, LINE_SIZE> data_line, int address) override;
+	write_line(Component, std::array<signed int, LINE_SIZE>, int) override;
 	int
-	read_line(
-		Accessor accessor, int address, std::array<signed int, LINE_SIZE> &data_line) override;
+	read_line(Component, int, std::array<signed int, LINE_SIZE> &) override;
 	int
-	read_word(Accessor accessor, int address, signed int &data) override;
+	read_word(Component, int, signed int &) override;
 
 	/**
 	 * Getter for the meta attribute.
@@ -43,7 +42,7 @@ class Cache : public Storage
   private:
 	/**
 	 * Helper for all access methods.
-	 * Calls `request_handler` when `accessor` is allowed to complete its
+	 * Calls `request_handler` when `component` is allowed to complete its
 	 * request cycle.
 	 * @param the source making the request
 	 * @param the address to write to
@@ -51,16 +50,16 @@ class Cache : public Storage
 	 */
 	int
 	process(
-		Accessor accessor, int address, std::function<void(int index, int offset)> request_handler);
+		Component component, int address, std::function<void(int index, int offset)> request_handler);
 	/**
-	 * Returns OK if `accessor` is allowed to complete its request this cycle.
-	 * Handles cache misses, wait times, and setting the current accessor this
+	 * Returns OK if `component` is allowed to complete its request this cycle.
+	 * Handles cache misses, wait times, and setting the current component this
 	 * storage is serving.
-	 * @param the accessor asking for a resource
+	 * @param the component asking for a resource
 	 * @return 1 if the access can be carried out this function call, 0 otherwise.
 	 */
 	int
-	is_access_cleared(Accessor accessor, int address);
+	is_access_cleared(Component component, int address);
 	/**
 	 * Helper for access_cleared.
 	 * Fetches `address` from a lower level of storage if it is not already
@@ -78,6 +77,5 @@ class Cache : public Storage
 	 */
 	std::array<std::array<int, 2>, L1_CACHE_LINES> meta;
 };
-
 
 #endif /* CACHE_H_INCLUDED */
