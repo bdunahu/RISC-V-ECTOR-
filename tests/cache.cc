@@ -60,11 +60,9 @@ TEST_CASE_METHOD(CacheFixture, "store 0th element in DELAY cycles", "[dram]")
 	w = 0x11223344;
 	// delay + 1 due to internal logic, when mem
 	// finishes handle_miss still returns 'blocked'
-	this->wait_for_storage(
-		this->m_delay + 1, 0, [this, w]() { return this->c->write_word(this->mem, w, 0b0); });
-
-	this->wait_for_storage(
-		this->c_delay, 0, [this, w]() { return this->c->write_word(this->mem, w, 0b0); });
+	this->wait_for_storage(this->m_delay + this->c_delay + 1, 0, [this, w]() {
+		return this->c->write_word(this->mem, w, 0b0);
+	});
 
 	r = c->write_word(this->mem, w, 0b0);
 	CHECK(r);
@@ -87,18 +85,7 @@ TEST_CASE_METHOD(CacheFixture, "store 0th, 1st element in DELAY cycles, with con
 	w = 0x11223344;
 	// delay + 1 due to internal logic, when mem
 	// finishes handle_miss still returns 'blocked'
-	for (i = 0; i < this->m_delay + 1; ++i) {
-		r = c->write_word(this->mem, w, 0b0);
-		CHECK(!r);
-		r = c->write_word(this->fetch, w, 0b1);
-		CHECK(!r);
-
-		// check for early modifications
-		actual = c->view(0, 1)[0];
-		REQUIRE(this->expected == this->actual);
-	}
-
-	for (i = 0; i < this->c_delay; ++i) {
+	for (i = 0; i < this->m_delay + this->c_delay + 1; ++i) {
 		r = c->write_word(this->mem, w, 0b0);
 		CHECK(!r);
 		r = c->write_word(this->fetch, w, 0b1);
@@ -142,11 +129,9 @@ TEST_CASE_METHOD(
 	w = 0x11223344;
 	// delay + 1 due to internal logic, when mem
 	// finishes handle_miss still returns 'blocked'
-	this->wait_for_storage(
-		this->m_delay + 1, 0, [this, w]() { return this->c->write_word(this->mem, w, 0b0); });
-
-	this->wait_for_storage(
-		this->c_delay, 0, [this, w]() { return this->c->write_word(this->mem, w, 0b0); });
+	this->wait_for_storage(this->m_delay + this->c_delay + 1, 0, [this, w]() {
+		return this->c->write_word(this->mem, w, 0b0);
+	});
 
 	r = c->write_word(this->mem, w, 0b0);
 	CHECK(r);
@@ -156,13 +141,10 @@ TEST_CASE_METHOD(
 	REQUIRE(expected == actual);
 
 	// write back to memory
-	this->wait_for_storage(this->m_delay + 1, 0, [this, w]() {
+	// fetch new address (don't run the completion cycle yet)
+	this->wait_for_storage(this->m_delay + this->m_delay + 1, 0, [this, w]() {
 		return this->c->write_word(this->fetch, w, 0b10000001);
 	});
-
-	// fetch new address (don't run the completion cycle yet)
-	this->wait_for_storage(
-		this->m_delay, 0, [this, w]() { return this->c->write_word(this->fetch, w, 0b10000001); });
 
 	// after the fetch, this cache line should be empty
 	this->c->write_word(this->fetch, w, 0b10000001);
