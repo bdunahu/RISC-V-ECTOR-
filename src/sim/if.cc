@@ -25,12 +25,12 @@ InstrDTO *IF::advance(Response p)
 
 void IF::advance_helper()
 {
-	Response r;
+	int r;
 	signed int bits;
 
 	if (this->curr_instr == nullptr) {
 		r = this->storage->read_word(this->id, this->pc, bits);
-		if (r == OK) {
+		if (r) {
 			this->curr_instr = new InstrDTO();
 			this->curr_instr->set_instr_bits(bits);
 			this->curr_instr->set_pc(this->pc);

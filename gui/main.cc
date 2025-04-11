@@ -75,8 +75,8 @@ int main(int argc, char **argv)
 	parseArguments(argc, argv, memory_only);
 
 	if (memory_only) {
-		Cli cli;
-		cli.run();
+		// Cli cli;
+		// cli.run();
 	} else {
 		global_log->log(INFO, "Starting QT...");
 		QApplication a(argc, argv);

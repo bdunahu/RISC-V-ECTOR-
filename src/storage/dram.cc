@@ -1,6 +1,5 @@
 #include "dram.h"
 #include "definitions.h"
-#include "response.h"
 #include <algorithm>
 #include <bits/stdc++.h>
 #include <bitset>
@@ -12,17 +11,17 @@ Dram::Dram(int delay)
 {
 	this->data = new std::vector<std::array<signed int, LINE_SIZE>>;
 	this->data->resize(MEM_LINES);
-	this->delay = delay;
+	this->delay		 = delay;
 	this->is_waiting = false;
-	this->lower = nullptr;
-	this->requester = IDLE;
-	this->wait_time = this->delay;
+	this->lower		 = nullptr;
+	this->requester	 = IDLE;
+	this->wait_time	 = this->delay;
 }
 
 Dram::~Dram() { delete this->data; }
 
-Response Dram::write_line(
-	Accessor accessor, std::array<signed int, LINE_SIZE> data_line, int address)
+int
+Dram::write_line(Accessor accessor, std::array<signed int, LINE_SIZE> data_line, int address)
 {
 	return process(accessor, address, [&](int line, int word) {
 		(void)word;
@@ -30,18 +29,16 @@ Response Dram::write_line(
 	});
 }
 
-Response Dram::write_word(Accessor accessor, signed int data, int address)
+int
+Dram::write_word(Accessor accessor, signed int data, int address)
 {
-	return process(accessor, address, [&](int line, int word) {
-		this->data->at(line).at(word) = data;
-	});
+	return process(
+		accessor, address, [&](int line, int word) { this->data->at(line).at(word) = data; });
 }
 
 // TODO requires testing
-Response Dram::read_line(
-	Accessor accessor,
-	int address,
-	std::array<signed int, LINE_SIZE> &data_line)
+int
+Dram::read_line(Accessor accessor, int address, std::array<signed int, LINE_SIZE> &data_line)
 {
 	return process(accessor, address, [&](int line, int word) {
 		(void)word;
@@ -49,15 +46,17 @@ Response Dram::read_line(
 	});
 }
 
-Response Dram::read_word(Accessor accessor, int address, signed int &data)
+int
+Dram::read_word(Accessor accessor, int address, signed int &data)
 {
-	return process(accessor, address, [&](int line, int word) {
-		data = this->data->at(line).at(word);
-	});
+	return process(
+		accessor, address, [&](int line, int word) { data = this->data->at(line).at(word); });
 }
 
 // TODO load a file instead and test this method
-void Dram::load(std::vector<signed int> program) {
+void
+Dram::load(std::vector<signed int> program)
+{
 	unsigned long i;
 	for (i = 0; i < program.size(); ++i) {
 		int line, word;
@@ -66,13 +65,13 @@ void Dram::load(std::vector<signed int> program) {
 	}
 }
 
-Response Dram::process(
-	Accessor accessor,
-	int address,
-	std::function<void(int line, int word)> request_handler)
+int
+Dram::process(
+	Accessor accessor, int address, std::function<void(int line, int word)> request_handler)
 {
-	Response r = this->is_access_cleared(accessor);
-	if (r == OK) {
+	int r;
+	r = this->is_access_cleared(accessor);
+	if (r) {
 		int line, word;
 		get_memory_index(address, line, word);
 		request_handler(line, word);
@@ -80,13 +79,12 @@ Response Dram::process(
 	return r;
 }
 
-Response Dram::is_access_cleared(Accessor accessor)
+int
+Dram::is_access_cleared(Accessor accessor)
 {
-	Response r;
-	r = WAIT;
 	/* Do this first--then process the first cycle immediately. */
 	if (accessor == SIDE)
-		r = OK;
+		return 1;
 	else {
 		if (this->requester == IDLE)
 			this->requester = accessor;
@@ -94,37 +92,11 @@ Response Dram::is_access_cleared(Accessor accessor)
 			if (this->wait_time == 0) {
 				this->requester = IDLE;
 				this->wait_time = delay;
-				r = OK;
+				return 1;
 			} else {
 				--this->wait_time;
 			}
 		}
 	}
-	return r;
-}
-
-std::ostream &operator<<(std::ostream &os, const Dram &d)
-{
-	const auto default_flags = std::cout.flags();
-	const auto default_fill = std::cout.fill();
-
-	std::vector<std::array<signed int, LINE_SIZE>> data = d.view(0, MEM_LINES);
-
-	os << " " << std::setfill(' ') << std::setw(MEM_LINE_SPEC + 2 + LINE_SPEC)
-	   << "ADDRESS"
-	   << " | " << std::setfill(' ') << std::setw((8 + 3) * 4 - 1) << "DATA"
-	   << std::endl;
-	for (int i = 0; i < MEM_LINES; ++i) {
-		os << " 0b" << std::setw(MEM_LINE_SPEC + LINE_SPEC) << left
-		   << std::bitset<MEM_LINE_SPEC>(i) << " | ";
-		for (int j = 0; j < LINE_SIZE; ++j) {
-			os << "0x" << std::setfill('0') << std::setw(8) << std::hex
-			   << data.at(i).at(j) << ' ';
-		}
-		os << std::endl;
-	}
-
-	std::cout.flags(default_flags);
-	std::cout.fill(default_fill);
-	return os;
+	return 0;
 }
