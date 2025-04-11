@@ -57,7 +57,4 @@ class Dram : public Storage
 	is_access_cleared(Accessor accessor);
 };
 
-std::ostream &
-operator<<(std::ostream &os, const Dram &d);
-
 #endif /* DRAM_H_INCLUDED */
