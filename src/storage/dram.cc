@@ -3,19 +3,10 @@
 #include <algorithm>
 #include <bits/stdc++.h>
 #include <bitset>
-#include <iostream>
 #include <iterator>
 #include <utils.h>
 
-Dram::Dram(int delay)
-{
-	this->data = new std::vector<std::array<signed int, LINE_SIZE>>;
-	this->data->resize(MEM_LINES);
-	this->delay = delay;
-	this->lower = nullptr;
-	this->current_request = nullptr;
-	this->wait_time = this->delay;
-}
+Dram::Dram(int delay) : Storage(delay) { this->data->resize(MEM_LINES); }
 
 Dram::~Dram() { delete this->data; }
 

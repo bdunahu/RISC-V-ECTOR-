@@ -9,6 +9,12 @@
 class Storage
 {
   public:
+	/**
+	 * Constructor.
+	 * @param The time an access to this storage device takes.
+	 * @return A newly allocated storage object.
+	 */
+	Storage(int delay);
 	virtual ~Storage() = default;
 
 	/**

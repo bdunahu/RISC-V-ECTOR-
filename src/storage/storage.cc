@@ -2,6 +2,14 @@
 #include "definitions.h"
 #include <algorithm>
 
+Storage::Storage(int delay) {
+	this->data = new std::vector<std::array<signed int, LINE_SIZE>>;
+	this->delay = delay;
+	this->lower = nullptr;
+	this->current_request = nullptr;
+	this->wait_time = this->delay;
+}
+
 std::vector<std::array<signed int, LINE_SIZE>>
 Storage::view(int base, int lines) const
 {

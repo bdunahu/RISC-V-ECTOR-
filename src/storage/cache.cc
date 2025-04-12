@@ -2,18 +2,13 @@
 #include "definitions.h"
 #include "utils.h"
 #include <bits/stdc++.h>
-#include <iostream>
 #include <iterator>
 
-Cache::Cache(Storage *lower, int delay)
+Cache::Cache(Storage *lower, int delay) : Storage(delay)
 {
-	this->data = new std::vector<std::array<signed int, LINE_SIZE>>;
 	this->data->resize(L1_CACHE_LINES);
-	this->delay = delay;
 	this->lower = lower;
 	this->meta.fill({-1, -1});
-	this->current_request = nullptr;
-	this->wait_time = this->delay;
 }
 
 Cache::~Cache()
