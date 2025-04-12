@@ -1,4 +1,4 @@
-#include "definitions.h"
+#include "pipe_spec.h"
 #include "gui.h"
 #include "logger.h"
 #include <QApplication>

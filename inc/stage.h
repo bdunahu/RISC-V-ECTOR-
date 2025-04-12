@@ -1,8 +1,8 @@
 #ifndef STAGE_H
 #define STAGE_H
 #include "accessor.h"
-#include "definitions.h"
 #include "instrDTO.h"
+#include "pipe_spec.h"
 #include "response.h"
 #include "storage.h"
 #include <array>

@@ -26,11 +26,6 @@ set(RAM ram)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# header files
-include_directories(
-	${PROJECT_SOURCE_DIR}/inc
-)
-
 # don't build RAM's tests
 set(RAM_TESTS OF CACHE BOOL "" FORCE)
 
@@ -47,6 +42,7 @@ qt_standard_project_setup()
 
 # binary executable
 add_library(${PROJECT_NAME}_lib ${SRCS})
+target_include_directories(${PROJECT_NAME}_lib PRIVATE ${PROJECT_SOURCE_DIR}/inc)
 target_link_libraries(${PROJECT_NAME}_lib ${RAM}_lib)
 
 find_package(Catch2 REQUIRED)
@@ -56,6 +52,7 @@ file(GLOB_RECURSE TESTS "tests/*.cc")
 
 # test executable
 add_executable(test_rv ${SRCS} ${TESTS})
+target_include_directories(test_rv PRIVATE ${PROJECT_SOURCE_DIR}/inc)
 target_link_libraries(test_rv PRIVATE Catch2::Catch2WithMain PRIVATE ${RAM}_lib)
 
 # test discovery

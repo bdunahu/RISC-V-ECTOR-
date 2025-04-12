@@ -1,6 +1,6 @@
 #include "ex.h"
 #include "accessor.h"
-#include "definitions.h"
+#include "pipe_spec.h"
 #include "instrDTO.h"
 #include "response.h"
 #include "stage.h"
