@@ -9,11 +9,12 @@ MM::MM(Stage *stage) : Stage(stage) { this->id = MEM; }
 void MM::advance_helper()
 {
 	signed int data;
+	int i;
 
 	switch (this->curr_instr->get_mnemonic()) {
 	case LOAD:
-		this->status = this->storage->read_word(
-			this->id, this->curr_instr->get_s1(), data);
+		i = this->storage->read_word(this, this->curr_instr->get_s1(), data);
+		this->status = i ? OK : STALLED;
 		if (this->status == OK) {
 			this->curr_instr->set_s1(data);
 		} else
@@ -22,8 +23,9 @@ void MM::advance_helper()
 
 	case STORE:
 		// TODO signed issues, we aren't wrapping addresses
-		this->status = this->storage->write_word(
-			this->id, this->curr_instr->get_s2(), this->curr_instr->get_s1());
+		i = this->storage->write_word(
+			this, this->curr_instr->get_s2(), this->curr_instr->get_s1());
+		this->status = i ? OK : STALLED;
 		if (this->status != OK) {
 			this->status = STALLED;
 		}

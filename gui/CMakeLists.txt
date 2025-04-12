@@ -1,5 +1,4 @@
 cmake_minimum_required(VERSION 3.5)
-set(CMAKE_CXX_COMPILER "g++")
 
 add_compile_options(-Wall -lstdc++)
 add_compile_options(-Wextra -Wpedantic)
@@ -22,9 +21,9 @@ file(GLOB SRCS
 qt_add_resources(GUI_RESOURCES "resources.qrc")
 
 add_executable(risc_vector ${SRCS} ${GUI_RESOURCES})
-target_link_libraries(${PROJECT_NAME} PRIVATE ${PROJECT_NAME}_lib Qt6::Widgets)
+target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/inc)
+target_link_libraries(${PROJECT_NAME} PRIVATE ${PROJECT_NAME}_lib ram_lib  Qt6::Widgets)
 
 set_target_properties(risc_vector PROPERTIES
 	RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}"
 )
-	
