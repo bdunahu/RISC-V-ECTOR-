@@ -19,6 +19,16 @@ GUI::GUI(QWidget *parent)
     // Display clock cycles and PC
     connect(worker, &Worker::clock_cycles, this, &GUI::onWorkerClockCycles);
 
+    connect(worker, &Worker::if_info, this, &GUI::onWorkerFetchInfo);
+
+    connect(worker, &Worker::id_info, this, &GUI::onWorkerDecodeInfo);
+
+    connect(worker, &Worker::ex_info, this, &GUI::onWorkerExecuteInfo);
+
+    connect(worker, &Worker::mm_info, this, &GUI::onWorkerMemoryInfo);
+
+    connect(worker, &Worker::wb_info, this, &GUI::onWorkerWriteBackInfo);
+
     // Display dram
     connect(worker, &Worker::dram_storage, this, &GUI::onWorkerShowDram);
 
@@ -103,7 +113,7 @@ void displayTableHTML(QTextEdit *textEdit, const std::vector<std::array<signed i
     textEdit->setReadOnly(true);
 }
 
-void browseAndUploadFile(QTextEdit *textEdit) {
+void browseAndUploadFile(QWidget* parent) {
     QString filePath = QFileDialog::getOpenFileName(nullptr, "Open File", QDir::homePath(), "Text Files (*.txt);;All Files (*.*)");
     
     if (filePath.isEmpty()) {
@@ -112,7 +122,8 @@ void browseAndUploadFile(QTextEdit *textEdit) {
 
     QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        textEdit->setPlainText("Error: Unable to open file!");
+       // textEdit->setPlainText("Error: Unable to open file!");
+       QMessageBox::critical(parent, "File Upload", "Unable to open file!");
         return;
     }
 
@@ -135,13 +146,96 @@ void browseAndUploadFile(QTextEdit *textEdit) {
 
     file.close();
 
-    textEdit->setReadOnly(false);  
-    textEdit->setHtml(content);
-    textEdit->setReadOnly(true);
+
+    QMessageBox::information(parent, "File Upload", "Instructions loaded successfully!");
+
+    // textEdit->setReadOnly(false);  
+    // textEdit->setHtml(content);
+    // textEdit->setReadOnly(true);
 }
 
 void GUI::onWorkerClockCycles(int cycles, int pc) {
+    QFont font = ui->cycles_label->font(); 
+    font.setBold(true);
+    font.setItalic(true);
+    font.setPointSize(14);           
+    ui->cycles_label->setFont(font);
     ui->cycles_label->setText("Clock Cycles: " + QString::number(cycles) + "\t\t" + "PC: " + QString::number(pc));
+}
+
+void GUI::onWorkerFetchInfo(const std::vector<int> info) {
+    //QString::asprintf("%04X", value)
+    if(!info.empty()) {
+        ui->fetch_pc->setText(QString::number(info[0]));
+        ui->fetch_instruction_bits->setText(QString::asprintf("%04X", info[1]));
+    } else {
+        ui->fetch_pc->clear();
+        ui->fetch_instruction_bits->clear();
+    }
+}
+
+void GUI::onWorkerDecodeInfo(const std::vector<int> info) {
+    if(!info.empty()) {
+        // ui->decode_mnemonic->setText(mnemonicToString((Mnemonic)info[0]));
+        ui->decode_pc->setText(QString::number(info[0]));
+        ui->decode_s1->setText(QString::asprintf("%04X", info[1]));
+        // ui->decode_s2->setText(QString::asprintf("%04X", info[3]));
+        // ui->decode_s3->setText(QString::asprintf("%04X", info[4]));
+    } else {
+        // ui->decode_mnemonic->clear();
+        ui->decode_pc->clear();
+        ui->decode_s1->clear();
+        // ui->decode_s2->clear();
+        // ui->decode_s3->clear();
+    }
+}
+
+void GUI::onWorkerExecuteInfo(const std::vector<int> info) {
+    if(!info.empty()) {
+        ui->execute_mnemonic->setText(mnemonicToString((Mnemonic)info[0]));
+        ui->execute_pc->setText(QString::number(info[1]));
+        ui->execute_s1->setText(QString::asprintf("%04X", info[2]));
+        ui->execute_s2->setText(QString::asprintf("%04X", info[3]));
+        ui->execute_s3->setText(QString::asprintf("%04X", info[4]));
+    } else {
+        ui->execute_mnemonic->clear();
+        ui->execute_pc->clear();
+        ui->execute_s1->clear();
+        ui->execute_s2->clear();
+        ui->execute_s3->clear();
+    }
+}
+
+void GUI::onWorkerMemoryInfo(const std::vector<int> info) {
+    if(!info.empty()) {
+        ui->memory_mnemonic->setText(mnemonicToString((Mnemonic)info[0]));
+        ui->memory_pc->setText(QString::number(info[1]));
+        ui->memory_s1->setText(QString::asprintf("%04X", info[2]));
+        ui->memory_s2->setText(QString::asprintf("%04X", info[3]));
+        ui->memory_s3->setText(QString::asprintf("%04X", info[4]));
+    } else {
+        ui->memory_mnemonic->clear();
+        ui->memory_pc->clear();
+        ui->memory_s1->clear();
+        ui->memory_s2->clear();
+        ui->memory_s3->clear();
+    }
+}
+
+void GUI::onWorkerWriteBackInfo(const std::vector<int> info) {
+    if(!info.empty()) {
+        ui->wb_mnemonic->setText(mnemonicToString((Mnemonic)info[0]));
+        ui->wb_pc->setText(QString::number(info[1]));
+        ui->wb_s1->setText(QString::asprintf("%04X", info[2]));
+        ui->wb_s2->setText(QString::asprintf("%04X", info[3]));
+        ui->wb_s3->setText(QString::asprintf("%04X", info[4]));
+    } else {
+        ui->wb_mnemonic->clear();
+        ui->wb_pc->clear();
+        ui->wb_s1->clear();
+        ui->wb_s2->clear();
+        ui->wb_s3->clear();
+    }
 }
 
 void GUI::onWorkerShowDram(const std::vector<std::array<signed int, LINE_SIZE>> data) {
@@ -163,7 +257,7 @@ void GUI::onWorkerFinished() {
 void GUI::on_upload_intructions_btn_clicked()
 {
     qDebug() << "Upload intructions button clicked.";
-    browseAndUploadFile(ui->instruction_table);
+    browseAndUploadFile(ui->register_table);
 
 }
 

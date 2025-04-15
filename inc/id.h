@@ -38,6 +38,8 @@ class ID : public Stage
 	 */
 	void write_guard(signed int &r);
 
+	std::vector<int> stage_info() override;
+
   private:
 	void advance_helper() override;
 	/**

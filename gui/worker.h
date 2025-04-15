@@ -44,6 +44,11 @@ signals:
     void dram_storage(const std::vector<std::array<signed int, LINE_SIZE>> data);
     void cache_storage(const std::vector<std::array<signed int, LINE_SIZE>> data);
     void register_storage(const std::array<int, GPR_NUM> data);
+    void if_info(const std::vector<int> info);
+    void id_info(const std::vector<int> info);
+    void ex_info(const std::vector<int> info);
+    void mm_info(const std::vector<int> info);
+    void wb_info(const std::vector<int> info);
     void finished();
 };
 

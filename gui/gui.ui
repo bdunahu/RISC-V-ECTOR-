@@ -13,49 +13,16 @@
   <property name="windowTitle">
    <string>RISC V[ECTOR]</string>
   </property>
-    <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout_14">
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
     <item>
-     <layout class="QGridLayout" name="gridLayout">
-      <item row="1" column="6" rowspan="2">
-       <widget class="Line" name="line_14">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1" rowspan="2">
-       <layout class="QVBoxLayout" name="verticalLayout">
+     <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0,0" columnstretch="0,3,0,1,0">
+      <item row="0" column="1">
+       <layout class="QVBoxLayout" name="verticalLayout_19">
         <item>
-         <widget class="QLabel" name="label">
-          <property name="font">
-           <font>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Instructions</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="Line" name="line">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QTextEdit" name="instruction_table"/>
-        </item>
-       </layout>
-      </item>
-      <item row="1" column="3" rowspan="2">
-       <layout class="QVBoxLayout" name="verticalLayout_13">
-        <item>
-         <layout class="QVBoxLayout" name="verticalLayout_3">
+         <layout class="QVBoxLayout" name="verticalLayout_20">
           <item>
-           <widget class="QLabel" name="label_2">
+           <widget class="QLabel" name="label_5">
             <property name="font">
              <font>
               <bold>true</bold>
@@ -67,7 +34,7 @@
            </widget>
           </item>
           <item>
-           <widget class="Line" name="line_2">
+           <widget class="Line" name="line_25">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -79,18 +46,18 @@
          </layout>
         </item>
         <item>
-         <widget class="Line" name="line_13">
+         <widget class="Line" name="line_26">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
          </widget>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <layout class="QHBoxLayout" name="horizontalLayout_7">
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_2">
+           <layout class="QVBoxLayout" name="verticalLayout_21">
             <item>
-             <widget class="QLabel" name="label_4">
+             <widget class="QLabel" name="label_6">
               <property name="font">
                <font>
                 <bold>true</bold>
@@ -102,7 +69,7 @@
              </widget>
             </item>
             <item>
-             <widget class="Line" name="line_4">
+             <widget class="Line" name="line_27">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -114,16 +81,16 @@
            </layout>
           </item>
           <item>
-           <widget class="Line" name="line_19">
+           <widget class="Line" name="line_28">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
             </property>
            </widget>
           </item>
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_4">
+           <layout class="QVBoxLayout" name="verticalLayout_22">
             <item>
-             <widget class="QLabel" name="label_3">
+             <widget class="QLabel" name="label_10">
               <property name="font">
                <font>
                 <bold>true</bold>
@@ -135,7 +102,7 @@
              </widget>
             </item>
             <item>
-             <widget class="Line" name="line_3">
+             <widget class="Line" name="line_29">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -150,33 +117,255 @@
         </item>
        </layout>
       </item>
-      <item row="1" column="2" rowspan="2">
-       <widget class="Line" name="line_17">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1" colspan="5">
-       <widget class="Line" name="line_10">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1" colspan="5">
-       <widget class="Line" name="line_11">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="5" rowspan="2">
-       <layout class="QVBoxLayout" name="verticalLayout_12">
+      <item row="1" column="0" colspan="5">
+       <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_8">
+         <widget class="QGroupBox" name="Fetch">
+          <property name="title">
+           <string>Fetch</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout">
+           <item>
+            <widget class="QLineEdit" name="fetch_instruction_bits">
+             <property name="placeholderText">
+              <string>Instruction Bits</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="fetch_pc">
+             <property name="placeholderText">
+              <string>Program Counter</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="Line" name="line">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="Decode">
+          <property name="title">
+           <string>Decode</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_2">
+           <item>
+            <widget class="QLineEdit" name="decode_s1">
+             <property name="placeholderText">
+              <string>Instruction Bits</string>
+             </property>
+            </widget>
+           </item>
+           <!-- <item>
+            <widget class="QLineEdit" name="decode_s2">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="placeholderText">
+              <string>Program COunte</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="decode_s3">
+             <property name="placeholderText">
+              <string>s3</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="decode_mnemonic">
+             <property name="placeholderText">
+              <string>Mnemonic</string>
+             </property>
+            </widget>
+           </item> -->
+           <item>
+            <widget class="QLineEdit" name="decode_pc">
+             <property name="placeholderText">
+              <string>Program Counter</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="Line" name="line_2">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="Execute">
+          <property name="title">
+           <string>Execute</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_3">
+           <item>
+            <widget class="QLineEdit" name="execute_s1">
+             <property name="placeholderText">
+              <string>s1</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="execute_s2">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="placeholderText">
+              <string>s2</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="execute_s3">
+             <property name="placeholderText">
+              <string>s3</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="execute_mnemonic">
+             <property name="placeholderText">
+              <string>Mnemonic</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="execute_pc">
+             <property name="placeholderText">
+              <string>Program Counter</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="Line" name="line_3">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="Memory">
+          <property name="title">
+           <string>Memory</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_4">
+           <item>
+            <widget class="QLineEdit" name="memory_s1">
+             <property name="placeholderText">
+              <string>s1</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="memory_s2">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="placeholderText">
+              <string>s2</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="memory_s3">
+             <property name="placeholderText">
+              <string>s3</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="memory_mnemonic">
+             <property name="placeholderText">
+              <string>Mnemonic</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="memory_pc">
+             <property name="placeholderText">
+              <string>Program Counter</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="Line" name="line_4">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="WriteBack">
+          <property name="title">
+           <string>Write Back</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_5">
+           <item>
+            <widget class="QLineEdit" name="wb_s1">
+             <property name="placeholderText">
+              <string>s1</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="wb_s2">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="placeholderText">
+              <string>s2</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="wb_s3">
+             <property name="placeholderText">
+              <string>s3</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="wb_mnemonic">
+             <property name="placeholderText">
+              <string>Mnemonic</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="wb_pc">
+             <property name="placeholderText">
+              <string>Program Counter</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="0" column="3">
+       <layout class="QVBoxLayout" name="verticalLayout_23">
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_24">
           <item>
-           <widget class="QLabel" name="label_7">
+           <widget class="QLabel" name="label_12">
             <property name="font">
              <font>
               <bold>true</bold>
@@ -188,14 +377,14 @@
            </widget>
           </item>
           <item>
-           <widget class="Line" name="line_5">
+           <widget class="Line" name="line_33">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
            </widget>
           </item>
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_6">
+           <layout class="QVBoxLayout" name="verticalLayout_25">
             <item>
              <widget class="QPushButton" name="upload_intructions_btn">
               <property name="text">
@@ -204,7 +393,7 @@
              </widget>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_3">
+             <layout class="QHBoxLayout" name="horizontalLayout_8">
               <item>
                <widget class="QPushButton" name="upload_program_state_btn">
                 <property name="text">
@@ -217,7 +406,7 @@
            </layout>
           </item>
           <item>
-           <widget class="Line" name="line_7">
+           <widget class="Line" name="line_34">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -226,9 +415,9 @@
          </layout>
         </item>
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_9">
+         <layout class="QVBoxLayout" name="verticalLayout_26">
           <item>
-           <widget class="QLabel" name="label_8">
+           <widget class="QLabel" name="label_13">
             <property name="font">
              <font>
               <bold>true</bold>
@@ -240,16 +429,16 @@
            </widget>
           </item>
           <item>
-           <widget class="Line" name="line_8">
+           <widget class="Line" name="line_35">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
            </widget>
           </item>
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_5">
+           <layout class="QVBoxLayout" name="verticalLayout_27">
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <layout class="QHBoxLayout" name="horizontalLayout_9">
               <item>
                <widget class="QPushButton" name="refresh_dram_btn">
                 <property name="text">
@@ -274,11 +463,24 @@
              </layout>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout">
+             <layout class="QHBoxLayout" name="horizontalLayout_10">
+              <item>
+               <widget class="QPushButton" name="Reset_Btn">
+                <property name="text">
+                 <string>Reset</string>
+                </property>
+               </widget>
+              </item>
               <item>
                <widget class="QCheckBox" name="enable_pipeline_checkbox">
                 <property name="text">
                  <string>Enable Pipeline</string>
+                </property>
+                <property name="checkable">
+                 <bool>false</bool>
+                </property>
+                <property name="checked">
+                 <bool>false</bool>
                 </property>
                </widget>
               </item>
@@ -286,6 +488,9 @@
                <widget class="QCheckBox" name="enabl_cache_checkbox">
                 <property name="text">
                  <string>Enable Cache</string>
+                </property>
+                <property name="checkable">
+                 <bool>false</bool>
                 </property>
                </widget>
               </item>
@@ -296,16 +501,16 @@
          </layout>
         </item>
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_10">
+         <layout class="QVBoxLayout" name="verticalLayout_28">
           <item>
-           <widget class="Line" name="line_15">
+           <widget class="Line" name="line_36">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="label_9">
+           <widget class="QLabel" name="label_14">
             <property name="font">
              <font>
               <bold>true</bold>
@@ -317,16 +522,16 @@
            </widget>
           </item>
           <item>
-           <widget class="Line" name="line_9">
+           <widget class="Line" name="line_37">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
            </widget>
           </item>
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_7">
+           <layout class="QVBoxLayout" name="verticalLayout_29">
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_4">
+             <layout class="QHBoxLayout" name="horizontalLayout_11">
               <item>
                <widget class="QLineEdit" name="number_steps_inp">
                 <property name="placeholderText">
@@ -355,16 +560,16 @@
          </layout>
         </item>
         <item>
-         <widget class="Line" name="line_16">
+         <widget class="Line" name="line_38">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
          </widget>
         </item>
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_11">
+         <layout class="QVBoxLayout" name="verticalLayout_30">
           <item>
-           <widget class="QLabel" name="label_11">
+           <widget class="QLabel" name="label_15">
             <property name="font">
              <font>
               <bold>true</bold>
@@ -376,7 +581,7 @@
            </widget>
           </item>
           <item>
-           <widget class="Line" name="line_6">
+           <widget class="Line" name="line_39">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -400,15 +605,8 @@
         </item>
        </layout>
       </item>
-      <item row="0" column="0" rowspan="3">
-       <widget class="Line" name="line_12">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="4" rowspan="2">
-       <widget class="Line" name="line_18">
+      <item row="0" column="2">
+       <widget class="Line" name="line_5">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>

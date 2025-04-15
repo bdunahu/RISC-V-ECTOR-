@@ -38,6 +38,8 @@ class Stage
 	 */
 	virtual InstrDTO *advance(Response p);
 
+	virtual std::vector<int> stage_info();
+
 	/* The following methods are made public so that they may be tested, and are
 	 * not to be called from outside classes during standard execution.
 	 */
@@ -132,6 +134,7 @@ class Stage
 	 * The current status of this stage.
 	 */
 	Response status;
+
 };
 
 #endif /* STAGE_H_INCLUDED */

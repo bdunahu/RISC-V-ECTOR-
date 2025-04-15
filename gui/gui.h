@@ -7,6 +7,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QTextEdit>
+#include <QMessageBox>
 #include "worker.h"
 
 QT_BEGIN_NAMESPACE
@@ -32,6 +33,16 @@ signals:
 
 private slots:
     void onWorkerClockCycles(int value, int pc);
+
+    void onWorkerFetchInfo(const std::vector<int> info);
+
+    void onWorkerDecodeInfo(const std::vector<int> info);
+
+    void onWorkerExecuteInfo(const std::vector<int> info);
+
+    void onWorkerMemoryInfo(const std::vector<int> info);
+
+    void onWorkerWriteBackInfo(const std::vector<int> info);
 
     void onWorkerShowDram(const std::vector<std::array<signed int, LINE_SIZE>> data);
 
@@ -65,5 +76,48 @@ private:
     Ui::GUI *ui;
     QThread workerThread;
     Worker *worker;
+    const std::map<Mnemonic, QString> mnemonicNameMap = {
+        {Mnemonic::ADD, "ADD"},
+        {Mnemonic::SUB, "SUB"},
+        {Mnemonic::MUL, "MUL"},
+        {Mnemonic::QUOT, "QUOT"},
+        {Mnemonic::SFTR, "SFTR"},
+        {Mnemonic::SFTL, "SFTL"},
+        {Mnemonic::AND, "AND"},
+        {Mnemonic::OR, "OR"},
+        {Mnemonic::NOT, "NOT"},
+        {Mnemonic::XOR, "XOR"},
+        {Mnemonic::ADDV, "ADDV"},
+        {Mnemonic::SUBV, "SUBV"},
+        {Mnemonic::MULV, "MULV"},
+        {Mnemonic::DIVV, "DIVV"},
+        {Mnemonic::CMP, "CMP"},
+        {Mnemonic::CEV, "CEV"},
+        {Mnemonic::LOAD, "LOAD"},
+        {Mnemonic::LOADV, "LOADV"},
+        {Mnemonic::ADDI, "ADDI"},
+        {Mnemonic::SUBI, "SUBI"},
+        {Mnemonic::SFTRI, "SFTRI"},
+        {Mnemonic::SFTLI, "SFTLI"},
+        {Mnemonic::ANDI, "ANDI"},
+        {Mnemonic::ORI, "ORI"},
+        {Mnemonic::XORI, "XORI"},
+        {Mnemonic::STORE, "STORE"},
+        {Mnemonic::STOREV, "STOREV"},
+        {Mnemonic::JMP, "JMP"},
+        {Mnemonic::JRL, "JRL"},
+        {Mnemonic::JAL, "JAL"},
+        {Mnemonic::BEQ, "BEQ"},
+        {Mnemonic::BGT, "BGT"},
+        {Mnemonic::BUF, "BUF"},
+        {Mnemonic::BOF, "BOF"},
+        {Mnemonic::PUSH, "PUSH"},
+        {Mnemonic::POP, "POP"},
+        {Mnemonic::NOP, "NOP"},
+    };
+    QString mnemonicToString(Mnemonic mnemonic) {
+        auto it = mnemonicNameMap.find(mnemonic);
+        return (it != mnemonicNameMap.end()) ? it->second : "Unknown";
+    }
 };
 #endif // GUI_H
