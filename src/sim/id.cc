@@ -142,3 +142,12 @@ void ID::decode_J_type(signed int &s1, signed int &s2, signed int &s3)
 
 	this->status = this->read_guard(*&s1);
 }
+
+std::vector<int> ID::stage_info() { 
+	std::vector<int> info;
+	if(this->curr_instr){
+		info.push_back(this->curr_instr->get_pc());
+		info.push_back(this->curr_instr->get_instr_bits());
+	} 
+	return info;
+}

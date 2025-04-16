@@ -23,6 +23,15 @@ InstrDTO *IF::advance(Response p)
 	return r;
 }
 
+std::vector<int> IF::stage_info() { 
+	std::vector<int> info;
+	if(this->curr_instr){
+		info.push_back(this->curr_instr->get_pc());
+		info.push_back(this->curr_instr->get_instr_bits());
+	} 
+	return info;
+}
+
 void IF::advance_helper()
 {
 	Response r;

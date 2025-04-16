@@ -63,6 +63,8 @@ void Worker::doWork()
 	this->d->load(p);
 }
 
+
+
 Worker::~Worker()
 {
 	emit finished();
@@ -98,6 +100,11 @@ void Worker::runSteps(int steps)
 	emit cache_storage(this->c->view(0, 8));
 	emit register_storage(this->ct->get_gprs());
 	emit clock_cycles(this->ct->get_clock_cycle(), this->ct->get_pc());
+	emit if_info(this->if_stage->stage_info());
+	emit id_info(this->id_stage->stage_info());
+	emit ex_info(this->ex_stage->stage_info());
+	emit mm_info(this->mm_stage->stage_info());
+	emit wb_info(this->wb_stage->stage_info());
 }
 
 void Worker::runStep()
@@ -107,6 +114,10 @@ void Worker::runStep()
 	emit dram_storage(this->d->view(0, 256));
 	emit cache_storage(this->c->view(0, 8));
 	emit register_storage(this->ct->get_gprs());
-	qDebug() << "PC " << this->ct->get_pc();
 	emit clock_cycles(this->ct->get_clock_cycle(), this->ct->get_pc());
+	emit if_info(this->if_stage->stage_info());
+	emit id_info(this->id_stage->stage_info());
+	emit ex_info(this->ex_stage->stage_info());
+	emit mm_info(this->mm_stage->stage_info());
+	emit wb_info(this->wb_stage->stage_info());
 }
