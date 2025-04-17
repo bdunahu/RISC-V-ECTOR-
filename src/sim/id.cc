@@ -198,8 +198,6 @@ void ID::decode_J_type(
 		this->status = this->read_guard(*&s1);
 	}
 
-	std::cout << m << ":" << this->status << std::endl;
-
 }
 
 std::vector<int> ID::stage_info()

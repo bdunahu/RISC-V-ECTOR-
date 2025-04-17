@@ -340,9 +340,7 @@ EX::EX(Stage *stage) : Stage(stage)
 		INIT_INSTRUCTION(
 			PUSH,
 			{
-				std::cout << "adding " << s1 << " and " << s3;
 				s1 = s1 + s3;
-				std::cout << " for " << s1 << std::endl;
 				(void)pc;
 				(void)s2;
 				(void)this;
