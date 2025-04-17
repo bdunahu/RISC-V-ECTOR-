@@ -44,7 +44,6 @@ void ID::write_guard(signed int &v)
 		// keep track in checked_out so we can still access this information!
 		this->checked_out.push_back(v);
 		this->curr_instr->set_checked_out(v);
-		std::cout << "checked out: " << v << std::endl;
 	}
 	v = this->dereference_register(v);
 }
@@ -79,7 +78,7 @@ void ID::get_instr_fields(
 	switch (type) {
 	case 0b00:
 		t = R;
-		this->decode_R_type(s1, s2, s3);
+		this->decode_R_type(s1, s2, s3, m);
 		break;
 	case 0b01:
 		t = I;
@@ -95,7 +94,8 @@ void ID::get_instr_fields(
 	}
 }
 
-void ID::decode_R_type(signed int &s1, signed int &s2, signed int &s3)
+void ID::decode_R_type(
+	signed int &s1, signed int &s2, signed int &s3, Mnemonic &m)
 {
 	unsigned int s0b, s1b, s2b;
 	Response r1, r2;
@@ -111,30 +111,52 @@ void ID::decode_R_type(signed int &s1, signed int &s2, signed int &s3)
 	r2 = this->read_guard(s2);
 	this->status = (r1 == OK && r2 == OK) ? OK : STALLED;
 
-	if (this->status == OK)
-		this->write_guard(s3);
+	switch (m) {
+	case CMP:
+	case CEV:
+		break;
+	default:
+		if (this->status == OK)
+			this->write_guard(s3);
+	}
 }
 
 void ID::decode_I_type(
 	signed int &s1, signed int &s2, signed int &s3, Mnemonic &m)
 {
 	unsigned int s0b, s1b, s2b;
-	Response r1;
+	Response r1, r2;
 
 	s0b = REG_SIZE;
 	s1b = s0b + REG_SIZE;
 	s2b = WORD_SPEC - LINE_SPEC - OPCODE_SIZE;
 	s3 = GET_BITS_SIGN_EXTEND(s1, s1b, s2b);
-	s2 = GET_MID_BITS(s1, s0b, s1b);
-	s1 = GET_LS_BITS(s1, s0b);
+
+	switch (m) {
+	case STORE:
+	case STOREV:
+		s2 = GET_MID_BITS(s1, s0b, s1b);
+		s1 = GET_LS_BITS(s1, s0b);
+
+		// both operands are read values
+		r1 = this->read_guard(s1);
+		r2 = this->read_guard(s2);
+		this->status = (r1 == OK && r2 == OK) ? OK : STALLED;
+		return;
+	case LOAD:
+	case LOADV:
+		s2 = GET_LS_BITS(s1, s0b);
+		s1 = GET_MID_BITS(s1, s0b, s1b);
+		break;
+	default:
+		s2 = GET_MID_BITS(s1, s0b, s1b);
+		s1 = GET_LS_BITS(s1, s0b);
+	}
 
 	r1 = this->read_guard(s1);
-	if (m != STORE && m != STOREV) {
-		this->status = r1;
-		if (r1 == OK)
-			this->write_guard(s2);
-	} else
-		this->status = (this->read_guard(s2) == OK && r1 == OK) ? OK : STALLED;
+	if (r1 == OK)
+		this->write_guard(s2);
+	this->status = r1;
 }
 
 void ID::decode_J_type(signed int &s1, signed int &s2, signed int &s3)
@@ -147,13 +169,13 @@ void ID::decode_J_type(signed int &s1, signed int &s2, signed int &s3)
 	s2 = GET_BITS_SIGN_EXTEND(s1, s0b, s1b);
 	s1 = GET_LS_BITS(s1, s0b);
 
-	std::cout << "s1: " << s1 << ", s2: " << s2 << ", s3: " << s3 << std::endl;
 	this->status = this->read_guard(*&s1);
 }
 
-std::vector<int> ID::stage_info() {
+std::vector<int> ID::stage_info()
+{
 	std::vector<int> info;
-	if(this->curr_instr){
+	if (this->curr_instr) {
 		info.push_back(this->curr_instr->get_pc());
 		info.push_back(this->curr_instr->get_instr_bits());
 	}
