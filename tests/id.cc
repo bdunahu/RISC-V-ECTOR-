@@ -13,7 +13,7 @@ class IDFixture
 	IDFixture()
 	{
 		this->dr = new Dram(3);
-		this->c = new Cache(this->dr, 1);
+		this->c = new Cache(this->dr, 5, 0, 1);
 		this->dum = new DUM(nullptr);
 		this->d = new ID(dum);
 		this->ct = new Controller(this->d, this->c, true);
@@ -140,7 +140,7 @@ TEST_CASE_METHOD(IDFixture, "Parse arbitrary i-type # one", "[id]")
 	CHECK(i->get_s1() == 0x00000000); // registers are empty
 	CHECK(i->get_s2() == 0x00000000);
 	CHECK(i->get_s3() == 0xF);
-	CHECK(i->get_mnemonic() == SFTLI);
+	CHECK(i->get_mnemonic() == ANDI);
 
 	delete i;
 }
@@ -152,11 +152,11 @@ TEST_CASE_METHOD(IDFixture, "Parse arbitrary i-type # two", "[id]")
 
 	t = this->encode_I_type(0xCC, 0b010, 0b101, 0b1011, 0b1);
 	i = this->decode_bits(t);
-	
+
 	CHECK(i->get_s1() == 0x00000000); // registers are empty
 	CHECK(i->get_s2() == 0x00000000);
 	CHECK(i->get_s3() == 0xCC);
-	CHECK(i->get_mnemonic() == STORE);
+	CHECK(i->get_mnemonic() == STOREV);
 
 	delete i;
 }
@@ -185,7 +185,7 @@ TEST_CASE_METHOD(IDFixture, "Parse arbitrary j-type # two", "[id]")
 	i = this->decode_bits(t);
 
 	CHECK(i->get_s1() == 0x00000000); // registers are empty
-	CHECK(i->get_s2() == 0xBBCCF);
+	CHECK(i->get_s2() == 0xFFFBBCCF);
 	CHECK(i->get_mnemonic() == JAL);
 
 	delete i;
@@ -254,7 +254,7 @@ TEST_CASE_METHOD(IDFixture, "stores indefinite conflicts", "[id]")
 	signed int v, ov;
 	Response r;
 
-	v = 0b0;
+	v = 0b1;
 	ov = v;
 	while (v < 0b110) {
 		this->d->write_guard(v);
@@ -269,8 +269,8 @@ TEST_CASE_METHOD(IDFixture, "stores indefinite conflicts", "[id]")
 	CHECK(v == 0b110);
 	REQUIRE(r == STALLED);
 
-	v = 0b0;
+	v = 0b1;
 	r = this->d->read_guard(v);
-	CHECK(v == 0b0);
+	CHECK(v == 0b1);
 	REQUIRE(r == STALLED);
 }

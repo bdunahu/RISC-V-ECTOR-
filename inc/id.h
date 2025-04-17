@@ -41,7 +41,6 @@ class ID : public Stage
 	std::vector<int> stage_info() override;
 
   private:
-	void advance_helper() override;
 	/**
 	 * Helper for `get_instr_fields`
 	 * Attempts to parse and dereference instruction arguments. Uses read and
@@ -52,6 +51,7 @@ class ID : public Stage
 	 * @param the resulting second field.
 	 * @param the resulting third field.
 	 */
+	void advance_helper() override;
 	/**
 	 * Parse an instruction into a type, opcode, and fields. If the type is
 	 * invalid, only the type field will be set.
@@ -67,7 +67,7 @@ class ID : public Stage
 	 * @param the resulting mnemonic.
 	 */
 	void get_instr_fields(signed int &s1, signed int &s2, signed int &s3, Mnemonic &m, Type &t);
-	void decode_R_type(signed int &s1, signed int &s2, signed int &s3);
+	void decode_R_type(signed int &s1, signed int &s2, signed int &s3, Mnemonic &m);
 	void decode_I_type(signed int &s1, signed int &s2, signed int &s3, Mnemonic &m);
 	void decode_J_type(signed int &s1, signed int &s2, signed int &s3);
 	/**

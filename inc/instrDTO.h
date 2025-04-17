@@ -15,18 +15,15 @@ class InstrDTO
 	InstrDTO();
 	~InstrDTO() = default;
 
-	/**
-	 * @return hist entry for Accessor
-	 */
-	int get_time_of(Accessor);
-	/**
-	 * @return id_cycle
-	 */
 	int get_id_cycle();
 	/**
 	 * @return instr_bits
 	 */
 	signed int get_instr_bits();
+	/**
+	 * @return checked_out
+	 */
+	signed int get_checked_out();
 	/**
 	 * @return s1
 	 */
@@ -53,13 +50,13 @@ class InstrDTO
 	unsigned int get_pc();
 
 	/**
-	 * @param set hist key
-	 */
-	void set_time_of(Accessor, int);
-	/**
 	 * @param instr_bits
 	 */
 	void set_instr_bits(signed int);
+	/**
+	 * @param checked_out
+	 */
+	void set_checked_out(signed int);
 	/**
 	 * @param s1
 	 */
@@ -88,13 +85,15 @@ class InstrDTO
 
   private:
 	/**
-	 * The clock cycle each stage finished an operation.
-	 */
-	std::unordered_map<Accessor, int> hist;
-	/**
 	 * The raw bits encoding the instruction.
 	 */
 	signed int instr_bits;
+	/**
+	 * The register, if any, this instruction has checked out. A checked out
+	 * register cannot be checked out by another register. This prevents RAW
+	 * conflicts.
+	 */
+	signed int checked_out;
 	/**
 	 * Slots in this instruction, for storing temporary registers, immediates,
 	 * or other.

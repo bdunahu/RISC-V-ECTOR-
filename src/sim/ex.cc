@@ -1,10 +1,9 @@
 #include "ex.h"
 #include "accessor.h"
-#include "pipe_spec.h"
 #include "instrDTO.h"
+#include "pipe_spec.h"
 #include "response.h"
 #include "stage.h"
-#include "utils.h"
 #include <unordered_map>
 
 // clang-format off
@@ -313,32 +312,28 @@ EX::EX(Stage *stage) : Stage(stage)
 		INIT_INSTRUCTION(
 			BEQ,
 			{
-				(this->get_condition(EQ)) ? s1 = wrap_address(pc + s2)
-										  : s1 = -1;
+				(this->get_condition(EQ)) ? s1 = pc + s2 : s1 = -1;
 				(void)s3;
 			}),
 
 		INIT_INSTRUCTION(
 			BGT,
 			{
-				(this->get_condition(GT)) ? s1 = wrap_address(pc + s2)
-										  : s1 = -1;
+				(this->get_condition(GT)) ? s1 = pc + s2 : s1 = -1;
 				(void)s3;
 			}),
 
 		INIT_INSTRUCTION(
 			BUF,
 			{
-				(this->get_condition(UF)) ? s1 = wrap_address(pc + s2)
-										  : s1 = -1;
+				(this->get_condition(UF)) ? s1 = pc + s2 : s1 = -1;
 				(void)s3;
 			}),
 
 		INIT_INSTRUCTION(
 			BOF,
 			{
-				(this->get_condition(OF)) ? s1 = wrap_address(pc + s2)
-										  : s1 = -1;
+				(this->get_condition(OF)) ? s1 = pc + s2 : s1 = -1;
 				(void)s3;
 			}),
 
@@ -387,7 +382,7 @@ void EX::advance_helper()
 	s3 = this->curr_instr->get_s3();
 	pc = this->curr_instr->get_pc();
 
-	this->instr_map[m](s1, s2, s3, pc );
+	this->instr_map[m](s1, s2, s3, pc);
 
 	this->curr_instr->set_s1(s1);
 	this->status = OK;

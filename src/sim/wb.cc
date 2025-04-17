@@ -3,6 +3,8 @@
 #include "instrDTO.h"
 #include "response.h"
 #include "stage.h"
+#include <array>
+#include <algorithm>
 
 WB::WB(Stage *stage) : Stage(stage) { this->id = WRITE; }
 
@@ -10,7 +12,7 @@ void WB::advance_helper()
 {
 	if (this->curr_instr->get_mnemonic() != NOP &&
 		this->curr_instr->get_type() != INV) {
-		if (this->should_write())
+		if (this->curr_instr->get_checked_out() > 0)
 			this->write_handler();
 		else if (this->should_jump())
 			this->jump_handler();
@@ -26,8 +28,8 @@ void WB::write_handler()
 		throw std::runtime_error("instruction tried to pop a register out of "
 								 "an empty queue during writeback.");
 
-	reg = this->checked_out.front();
 	this->checked_out.pop_front();
+	reg = this->curr_instr->get_checked_out();
 	this->store_register(reg, this->curr_instr->get_s1());
 }
 
@@ -48,14 +50,4 @@ bool WB::should_jump()
 
 	t = this->curr_instr->get_type();
 	return t == J;
-}
-
-bool WB::should_write()
-{
-	Mnemonic m;
-	Type t;
-
-	m = this->curr_instr->get_mnemonic();
-	t = this->curr_instr->get_type();
-	return (t == R || t == I) && (m != STORE && m != STOREV);
 }

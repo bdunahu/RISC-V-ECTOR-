@@ -17,7 +17,7 @@ class IFFixture
 		p = {0xC000, 0xC001, 0xC002, 0xC003};
 		d->load(p);
 
-		this->c = new Cache(d, this->c_delay);
+		this->c = new Cache(d, 5, 0, this->c_delay);
 		this->f = new IF(nullptr);
 		this->ct = new Controller(this->f, this->c, true);
 	}
@@ -77,7 +77,6 @@ TEST_CASE_METHOD(IFFixture, "fetch returns single instuction", "[if_pipe]")
 
 	expected_cycles = this->m_delay + this->c_delay + 2;
 	i = this->fetch_through();
-	CHECK(i->get_time_of(FETCH) == expected_cycles);
 	REQUIRE(i->get_instr_bits() == this->p[0]);
 
 	delete i;
@@ -91,14 +90,12 @@ TEST_CASE_METHOD(IFFixture, "fetch returns two instuctions", "[if_pipe]")
 	expected_cycles = this->m_delay + this->c_delay + 2;
 	i = this->fetch_through();
 
-	CHECK(i->get_time_of(FETCH) == expected_cycles);
 	REQUIRE(i->get_instr_bits() == this->p[0]);
 	delete i;
 
 	expected_cycles += this->c_delay + 1;
 	i = this->fetch_cache();
 
-	CHECK(i->get_time_of(FETCH) == expected_cycles);
 	REQUIRE(i->get_instr_bits() == this->p[1]);
 	delete i;
 }
@@ -129,7 +126,6 @@ TEST_CASE_METHOD(IFFixture, "fetch waits with old instruction", "[if_pipe]")
 
 	i = this->ct->advance(WAIT);
 	REQUIRE(i != nullptr);
-	CHECK(i->get_time_of(FETCH) == expected_cycles);
 	REQUIRE(i->get_instr_bits() == this->p[0]);
 
 	delete i;

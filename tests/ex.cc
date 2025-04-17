@@ -13,7 +13,7 @@ class EXFixture
 	EXFixture()
 	{
 		this->dr = new Dram(3);
-		this->c = new Cache(this->dr, 1);
+		this->c = new Cache(this->dr, 5, 0, 1);
 		this->dum = new DUM(nullptr);
 		this->e = new EX(dum);
 		this->ct = new Controller(this->e, this->c, true);
