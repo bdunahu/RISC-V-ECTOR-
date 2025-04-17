@@ -19,7 +19,7 @@ class Controller : public Stage
 	 */
 	Controller(Stage *stage, Storage *storage, bool is_pipelined);
 	InstrDTO *advance(Response p) override;
-	
+
 	/**
 	 * Direct the simulator to run for `number` clock cycles.
 	 * @param the number of clock cycles to run for.
@@ -37,10 +37,6 @@ class Controller : public Stage
 	 * @return the pc.
 	 */
 	int get_pc();
-
-	void set_gprs(int index, int value);
-
-	void set_pipelined(bool value);
 
   private:
 	void advance_helper() override;

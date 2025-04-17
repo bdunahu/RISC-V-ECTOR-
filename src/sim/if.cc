@@ -37,13 +37,14 @@ void IF::advance_helper()
 	int i;
 	signed int bits;
 
-	if (this->curr_instr == nullptr) {
+	if (this->curr_instr == nullptr && (this->is_pipelined || this->is_empty)) {
 		i = this->storage->read_word(this, this->pc, bits);
 		r = i ? OK : STALLED;
 		if (r == OK) {
 			this->curr_instr = new InstrDTO();
 			this->curr_instr->set_instr_bits(bits);
 			this->curr_instr->set_pc(this->pc);
+			this->is_empty = false;
 		}
 	}
 }

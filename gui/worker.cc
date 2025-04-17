@@ -12,7 +12,7 @@ void Worker::doWork()
 	this->ex_stage = new EX(id_stage);
 	this->mm_stage = new MM(ex_stage);
 	this->wb_stage = new WB(mm_stage);
-	this->ct = new Controller(wb_stage, this->c, true);
+	this->ct = new Controller(wb_stage, this->c, false);
 
 	emit clock_cycles(this->ct->get_clock_cycle(), this->ct->get_pc());
 	emit dram_storage(this->d->view(0, 32));
