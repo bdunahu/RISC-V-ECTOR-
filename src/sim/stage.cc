@@ -1,5 +1,4 @@
 #include "stage.h"
-#include "utils.h"
 #include <array>
 #include <deque>
 
@@ -28,12 +27,12 @@ InstrDTO *Stage::advance(Response p)
 	InstrDTO *s = nullptr;
 	Response n;
 
-	// std::cout << "advance: " << this->id << ": " << this->curr_instr << "?: " << p << ": " << this->checked_out.size() << ": ";
-	// if (curr_instr)
+	// std::cout << "advance: " << this->id << ": " << this->curr_instr << "?: "
+	// << p << ": " << this->checked_out.size() << ": "; if (curr_instr)
 	// 	std::cout << curr_instr->get_mnemonic();
 	// for (long unsigned int i = 0; i < this->checked_out.size(); ++i)
 	// 	std::cout << this->checked_out[i] << " ";
-	// std::cout << std::endl;	
+	// std::cout << std::endl;
 	if (this->curr_instr && this->status != OK) {
 		this->advance_helper();
 	}
@@ -53,9 +52,10 @@ InstrDTO *Stage::advance(Response p)
 	return r;
 }
 
-std::vector<int> Stage::stage_info() { 
+std::vector<int> Stage::stage_info()
+{
 	std::vector<int> info;
-	if(this->curr_instr){
+	if (this->curr_instr) {
 		info.push_back(this->curr_instr->get_mnemonic());
 		info.push_back(this->curr_instr->get_pc());
 		info.push_back(this->curr_instr->get_s1());
@@ -63,7 +63,7 @@ std::vector<int> Stage::stage_info() {
 		info.push_back(this->curr_instr->get_s3());
 	}
 	return info;
- }
+}
 
 void Stage::set_condition(CC c, bool v)
 {
@@ -78,10 +78,8 @@ signed int Stage::dereference_register(signed int v)
 	signed int r;
 
 	if (v < 0 || v >= GPR_NUM + V_NUM) {
-		throw std::out_of_range(string_format(
-			"instruction tried to access register %d, which does "
-			"not exist",
-			v));
+		throw std::out_of_range(
+			"instruction tried to access register which does not exist");
 	}
 
 	r = (v >= GPR_NUM) ? this->vrs[v % GPR_NUM] : this->gprs[v];
@@ -91,10 +89,8 @@ signed int Stage::dereference_register(signed int v)
 void Stage::store_register(signed int v, signed int d)
 {
 	if (v < 0 || v >= GPR_NUM + V_NUM) {
-		throw std::out_of_range(string_format(
-			"instruction tried to access register %d, which does "
-			"not exist",
-			v));
+		throw std::out_of_range(
+			"instruction tried to access register which does not exist");
 	}
 
 	if (v >= GPR_NUM)

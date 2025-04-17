@@ -17,7 +17,7 @@ class IFFixture
 		p = {0xC000, 0xC001, 0xC002, 0xC003};
 		d->load(p);
 
-		this->c = new Cache(d, this->c_delay);
+		this->c = new Cache(d, 5, 0, this->c_delay);
 		this->f = new IF(nullptr);
 		this->ct = new Controller(this->f, this->c, true);
 	}

@@ -6,7 +6,7 @@ void Worker::doWork()
 {
 	qDebug() << "Initializing...";
 	this->d = new Dram(0);
-	this->c = new Cache(this->d, 0);
+	this->c = new Cache(this->d, 5, 0, 0);
 	this->if_stage = new IF(nullptr);
 	this->id_stage = new ID(if_stage);
 	this->ex_stage = new EX(id_stage);

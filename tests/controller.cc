@@ -16,7 +16,7 @@ class ControllerPipeFixture
 	ControllerPipeFixture()
 	{
 		this->d = new Dram(1);
-		this->c = new Cache(this->d, 0);
+		this->c = new Cache(this->d, 5, 0, 0);
 
 		IF *f = new IF(nullptr);
 		ID *d = new ID(f);

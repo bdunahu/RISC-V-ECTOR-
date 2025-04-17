@@ -3,7 +3,6 @@
 #include "instrDTO.h"
 #include "response.h"
 #include "stage.h"
-#include "utils.h"
 
 DUM::DUM(Stage *stage) : Stage(stage) { this->id = IDLE; }
 

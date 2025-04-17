@@ -13,7 +13,7 @@ class IDFixture
 	IDFixture()
 	{
 		this->dr = new Dram(3);
-		this->c = new Cache(this->dr, 1);
+		this->c = new Cache(this->dr, 5, 0, 1);
 		this->dum = new DUM(nullptr);
 		this->d = new ID(dum);
 		this->ct = new Controller(this->d, this->c, true);
@@ -152,7 +152,7 @@ TEST_CASE_METHOD(IDFixture, "Parse arbitrary i-type # two", "[id]")
 
 	t = this->encode_I_type(0xCC, 0b010, 0b101, 0b1011, 0b1);
 	i = this->decode_bits(t);
-	
+
 	CHECK(i->get_s1() == 0x00000000); // registers are empty
 	CHECK(i->get_s2() == 0x00000000);
 	CHECK(i->get_s3() == 0xCC);
