@@ -311,7 +311,7 @@ TEST_CASE_METHOD(ControllerPipeFixture, "two num adder", "[full pipe]")
 	CHECK(i->get_time_of(MEM) == 28);
 	CHECK(i->get_time_of(WRITE) == 29);
 	CHECK(i->get_s1() == 0x8);
-	CHECK(i->get_s2() == 0b111111111111111111001);
+	CHECK(i->get_s2() == 0xfffffff9);
 	CHECK(this->ct->get_gprs().at(2) == 0x200);
 	CHECK(this->ct->get_gprs().at(5) == 0x0);
 	CHECK(this->ct->get_gprs().at(6) == 0x1);

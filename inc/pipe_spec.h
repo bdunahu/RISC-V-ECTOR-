@@ -65,4 +65,21 @@
  */
 #define GET_MID_BITS(k, m, n) GET_LS_BITS((k) >> (m), ((n) - (m)))
 
+/**
+ * Return the bits from integer K starting at N and ending at M using a bit
+ * mask, but sign-extends the result. This is required to parse immediates.
+ * @param the integer to be parsed
+ * @param the index of the starting bit to be parsed
+ * @param the index of the ending bit to be parsed
+ * @return a section of bits from K
+ */
+// clang-format off
+#define GET_BITS_SIGN_EXTEND(k, m, n) \
+  ({\
+    int _f = GET_MID_BITS(k, m, n); \
+    int _w = (n) - (m) - (1); \
+    _f = (_f & (1 << (_w - 1))) ? (_f | (-1 << _w)) : _f; \
+  })
+// clang-format on
+
 #endif /* DEFINITIONS_H_INCLUDED */

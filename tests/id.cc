@@ -185,7 +185,7 @@ TEST_CASE_METHOD(IDFixture, "Parse arbitrary j-type # two", "[id]")
 	i = this->decode_bits(t);
 
 	CHECK(i->get_s1() == 0x00000000); // registers are empty
-	CHECK(i->get_s2() == 0xBBCCF);
+	CHECK(i->get_s2() == 0xFFFBBCCF);
 	CHECK(i->get_mnemonic() == JAL);
 
 	delete i;

@@ -116,8 +116,8 @@ void ID::decode_I_type(
 
 	s0b = REG_SIZE;
 	s1b = s0b + REG_SIZE;
-	s2b = WORD_SPEC;
-	s3 = GET_MID_BITS(s1, s1b, s2b);
+	s2b = WORD_SPEC - LINE_SPEC - OPCODE_SIZE;
+	s3 = GET_BITS_SIGN_EXTEND(s1, s1b, s2b);
 	s2 = GET_MID_BITS(s1, s0b, s1b);
 	s1 = GET_LS_BITS(s1, s0b);
 
@@ -135,19 +135,20 @@ void ID::decode_J_type(signed int &s1, signed int &s2, signed int &s3)
 	unsigned int s0b, s1b;
 
 	s0b = REG_SIZE;
-	s1b = WORD_SPEC;
+	s1b = WORD_SPEC - LINE_SPEC - OPCODE_SIZE;
 	s3 = 0;
-	s2 = GET_MID_BITS(s1, s0b, s1b);
+	s2 = GET_BITS_SIGN_EXTEND(s1, s0b, s1b);
 	s1 = GET_LS_BITS(s1, s0b);
 
+	std::cout << "s1: " << s1 << ", s2: " << s2 << ", s3: " << s3 << std::endl;
 	this->status = this->read_guard(*&s1);
 }
 
-std::vector<int> ID::stage_info() { 
+std::vector<int> ID::stage_info() {
 	std::vector<int> info;
 	if(this->curr_instr){
 		info.push_back(this->curr_instr->get_pc());
 		info.push_back(this->curr_instr->get_instr_bits());
-	} 
+	}
 	return info;
 }
