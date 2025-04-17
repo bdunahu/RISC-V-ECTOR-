@@ -394,6 +394,6 @@ void EX::handle_divide(signed int &s1, signed int s2, bool is_mod)
 		this->status = OK;
 		throw HaltException();
 	} else {
-		s1 = (is_mod) ? s1 / s2 : s1 % s2;
+		s1 = (is_mod) ? s1 % s2 : s1 / s2;
 	}
 }
