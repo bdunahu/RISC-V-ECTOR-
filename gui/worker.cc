@@ -33,6 +33,8 @@ void Worker::doWork()
 	p.push_back(0b00000000000000000000000110100110);
 	p.push_back(0b00000000000000000000000111100110);
 	p.push_back(0b00000000000000000000001000100110);
+	p.push_back(0b00000000000000000000000000101110);
+	p.push_back(0b00000000000000000000000000101110);
 	p.push_back(0b00000000000000000000000000010000);
 
 	// p.push_back(0b00000000000000000010100010001101);
@@ -118,7 +120,7 @@ void Worker::runSteps(int steps)
 void Worker::runStep()
 {
 	qDebug() << "Running for 1 step ";
-	this->ct->advance(WAIT);
+	this->ct->run_for(1);
 	emit dram_storage(this->d->view(0, 256));
 	emit cache_storage(this->c->view(24, 8));
 	emit register_storage(this->ct->get_gprs());

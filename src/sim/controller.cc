@@ -1,4 +1,5 @@
 #include "controller.h"
+#include "ex.h"
 #include "response.h"
 #include "storage.h"
 
@@ -20,7 +21,11 @@ void Controller::run_for(int number)
 {
 	int i;
 	for (i = 0; i < number; ++i) {
-		this->advance(WAIT);
+		try {
+			this->advance(WAIT);
+		} catch (HaltException &e) {
+			break;
+		}
 	}
 }
 

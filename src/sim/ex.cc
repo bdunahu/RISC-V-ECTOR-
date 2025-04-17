@@ -49,15 +49,15 @@ EX::EX(Stage *stage) : Stage(stage)
 		INIT_INSTRUCTION(
 			QUOT,
 			{
-				s1 = s1 / s2;
+				this->handle_divide(s1, s2, false);
 				(void)pc;
 				(void)s3;
-				(void)this;
 			}),
 
 		INIT_INSTRUCTION(
 			REM,
 			{
+				this->handle_divide(s1, s2, true);
 				s1 = s1 % s2;
 				(void)pc;
 				(void)s3;
@@ -384,4 +384,16 @@ void EX::advance_helper()
 
 	this->curr_instr->set_s1(s1);
 	this->status = OK;
+}
+
+void EX::handle_divide(signed int &s1, signed int s2, bool is_mod)
+{
+	if (s2 == 0) {
+		// handle everything here
+		this->curr_instr->set_s1(MAX_INT);
+		this->status = OK;
+		throw HaltException();
+	} else {
+		s1 = (is_mod) ? s1 / s2 : s1 % s2;
+	}
 }
