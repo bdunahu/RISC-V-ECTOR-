@@ -31,6 +31,13 @@ void WB::write_handler()
 	this->checked_out.pop_front();
 	reg = this->curr_instr->get_checked_out();
 	this->store_register(reg, this->curr_instr->get_s1());
+
+	if (this->curr_instr->get_mnemonic() == POP) {
+		// POP performs a second register write
+		reg = this->checked_out.front();
+		this->checked_out.pop_front();
+		this->store_register(reg, this->curr_instr->get_s3());
+	}
 }
 
 void WB::jump_handler()
