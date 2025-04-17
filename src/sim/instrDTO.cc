@@ -4,6 +4,7 @@
 InstrDTO::InstrDTO()
 {
 	this->instr_bits = 0;
+	this->checked_out = -1;
 	this->s1 = 0;
 	this->s2 = 0;
 	this->s3 = 0;
@@ -12,9 +13,9 @@ InstrDTO::InstrDTO()
 	this->pc = 0;
 }
 
-int InstrDTO::get_time_of(Accessor a) { return this->hist[a]; }
-
 signed int InstrDTO::get_instr_bits() { return this->instr_bits; }
+
+signed int InstrDTO::get_checked_out() { return this->checked_out; }
 
 signed int InstrDTO::get_s1() { return this->s1; }
 
@@ -28,9 +29,12 @@ Type InstrDTO::get_type() { return this->type; }
 
 unsigned int InstrDTO::get_pc() { return this->pc; }
 
-void InstrDTO::set_time_of(Accessor a, int i) { this->hist[a] = i; }
-
 void InstrDTO::set_instr_bits(signed int instr) { this->instr_bits = instr; }
+
+void InstrDTO::set_checked_out(signed int checked_out)
+{
+	this->checked_out = checked_out;
+}
 
 void InstrDTO::set_s1(signed int s) { this->s1 = s; }
 

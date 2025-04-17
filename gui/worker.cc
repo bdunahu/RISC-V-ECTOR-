@@ -16,7 +16,7 @@ void Worker::doWork()
 
 	emit clock_cycles(this->ct->get_clock_cycle(), this->ct->get_pc());
 	emit dram_storage(this->d->view(0, 32));
-	emit cache_storage(this->c->view(0, 8));
+	emit cache_storage(this->c->view(0, 7));
 	emit register_storage(this->ct->get_gprs());
 
 	signed int b0, b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14,
@@ -44,10 +44,10 @@ void Worker::doWork()
 	b17 = 0b00000000000000010010100101001101;
 	b18 = 0b00000000000000000101001101000000;
 	b19 = 0b11111111111111111100100000010110;
-	b20 = 0b00000000000000000000000000010000;
+	// b20 = 0b00000000000000000000000000010000;
 
 	p = {b0,  b1,  b2,	b3,	 b4,  b5,  b6,	b7,	 b8,  b9,  b10,
-		 b11, b12, b13, b14, b15, b16, b17, b18, b19, b20};
+		 b11, b12, b13, b14, b15, b16, b17, b18, b19};
 	this->d->load(p);
 }
 
@@ -69,7 +69,7 @@ void Worker::refreshDram()
 void Worker::refreshCache()
 {
 	qDebug() << "Refreshing Dram";
-	emit cache_storage(this->c->view(0, 8));
+	emit cache_storage(this->c->view(0, 7));
 }
 
 void Worker::refreshRegisters()
@@ -83,7 +83,7 @@ void Worker::runSteps(int steps)
 	qDebug() << "Running for steps: " << steps;
 	this->ct->run_for(steps);
 	emit dram_storage(this->d->view(0, 256));
-	emit cache_storage(this->c->view(0, 8));
+	emit cache_storage(this->c->view(0, 7));
 	emit register_storage(this->ct->get_gprs());
 	emit clock_cycles(this->ct->get_clock_cycle(), this->ct->get_pc());
 	emit if_info(this->if_stage->stage_info());
@@ -98,7 +98,7 @@ void Worker::runStep()
 	qDebug() << "Running for 1 step ";
 	this->ct->advance(WAIT);
 	emit dram_storage(this->d->view(0, 256));
-	emit cache_storage(this->c->view(0, 8));
+	emit cache_storage(this->c->view(0, 7));
 	emit register_storage(this->ct->get_gprs());
 	emit clock_cycles(this->ct->get_clock_cycle(), this->ct->get_pc());
 	emit if_info(this->if_stage->stage_info());

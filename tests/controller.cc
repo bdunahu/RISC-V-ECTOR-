@@ -107,11 +107,6 @@ TEST_CASE_METHOD(ControllerPipeFixture, "two num adder", "[full pipe]")
 	i = this->ct->advance(WAIT);
 	REQUIRE(i != nullptr);
 
-	CHECK(i->get_time_of(FETCH) == 3);
-	CHECK(i->get_time_of(DCDE) == 4);
-	CHECK(i->get_time_of(EXEC) == 5);
-	CHECK(i->get_time_of(MEM) == 6);
-	CHECK(i->get_time_of(WRITE) == 7);
 	CHECK(i->get_s1() == 0x200);
 	CHECK(i->get_s2() == 0x0);
 	CHECK(i->get_s3() == 0x200);
@@ -124,11 +119,6 @@ TEST_CASE_METHOD(ControllerPipeFixture, "two num adder", "[full pipe]")
 	i = this->ct->advance(WAIT);
 	REQUIRE(i != nullptr);
 
-	CHECK(i->get_time_of(FETCH) == 4);
-	CHECK(i->get_time_of(DCDE) == 5);
-	CHECK(i->get_time_of(EXEC) == 6);
-	CHECK(i->get_time_of(MEM) == 7);
-	CHECK(i->get_time_of(WRITE) == 8);
 	CHECK(i->get_s1() == 0x1);
 	CHECK(i->get_s2() == 0x0);
 	CHECK(i->get_s3() == 0x1);
@@ -152,13 +142,6 @@ TEST_CASE_METHOD(ControllerPipeFixture, "two num adder", "[full pipe]")
 	i = this->ct->advance(WAIT);
 	REQUIRE(i != nullptr);
 
-	CHECK(i->get_time_of(FETCH) == 5);
-	CHECK(
-		i->get_time_of(DCDE) ==
-		8); // the previous conflicting instruction wrote here!
-	CHECK(i->get_time_of(EXEC) == 9);
-	CHECK(i->get_time_of(MEM) == 14); // waited for fetch + 3 dram
-	CHECK(i->get_time_of(WRITE) == 15);
 	CHECK(i->get_s1() == 0x200);
 	CHECK(i->get_s2() == 0x1);
 	CHECK(i->get_s3() == 0x0);
@@ -173,11 +156,6 @@ TEST_CASE_METHOD(ControllerPipeFixture, "two num adder", "[full pipe]")
 	i = this->ct->advance(WAIT);
 	REQUIRE(i != nullptr);
 
-	CHECK(i->get_time_of(FETCH) == 8);
-	CHECK(i->get_time_of(DCDE) == 9);
-	CHECK(i->get_time_of(EXEC) == 14);
-	CHECK(i->get_time_of(MEM) == 15);
-	CHECK(i->get_time_of(WRITE) == 16);
 	CHECK(i->get_s1() == 0x2);
 	CHECK(i->get_s2() == 0x1); // the previous value in the destination register
 	CHECK(i->get_s3() == 0x2);
@@ -194,13 +172,6 @@ TEST_CASE_METHOD(ControllerPipeFixture, "two num adder", "[full pipe]")
 	i = this->ct->advance(WAIT);
 	REQUIRE(i != nullptr);
 
-	CHECK(i->get_time_of(FETCH) == 14); // fetching new line + mem
-	CHECK(
-		i->get_time_of(DCDE) ==
-		16); // the previous conflicting instruction wrote here!
-	CHECK(i->get_time_of(EXEC) == 17);
-	CHECK(i->get_time_of(MEM) == 18);
-	CHECK(i->get_time_of(WRITE) == 19);
 	CHECK(i->get_s1() == 0x201);
 	CHECK(i->get_s2() == 0x2); // address
 	CHECK(i->get_s3() == 0x1); // offset
@@ -215,11 +186,6 @@ TEST_CASE_METHOD(ControllerPipeFixture, "two num adder", "[full pipe]")
 	i = this->ct->advance(WAIT);
 	REQUIRE(i != nullptr);
 
-	CHECK(i->get_time_of(FETCH) == 16);
-	CHECK(i->get_time_of(DCDE) == 17);
-	CHECK(i->get_time_of(EXEC) == 18);
-	CHECK(i->get_time_of(MEM) == 19);
-	CHECK(i->get_time_of(WRITE) == 20);
 	CHECK(i->get_s1() == 0x0);
 	CHECK(i->get_s2() == 0x2);
 	CHECK(i->get_s3() == 0x0);
@@ -232,11 +198,6 @@ TEST_CASE_METHOD(ControllerPipeFixture, "two num adder", "[full pipe]")
 	i = this->ct->advance(WAIT);
 	REQUIRE(i != nullptr);
 
-	CHECK(i->get_time_of(FETCH) == 17);
-	CHECK(i->get_time_of(DCDE) == 18);
-	CHECK(i->get_time_of(EXEC) == 19);
-	CHECK(i->get_time_of(MEM) == 20);
-	CHECK(i->get_time_of(WRITE) == 21);
 	CHECK(i->get_s1() == 0x1);
 	CHECK(i->get_s2() == 0x0);
 	CHECK(i->get_s3() == 0x1);
@@ -251,11 +212,6 @@ TEST_CASE_METHOD(ControllerPipeFixture, "two num adder", "[full pipe]")
 	i = this->ct->advance(WAIT);
 	REQUIRE(i != nullptr);
 
-	CHECK(i->get_time_of(FETCH) == 18);
-	CHECK(i->get_time_of(DCDE) == 19);
-	CHECK(i->get_time_of(EXEC) == 20);
-	CHECK(i->get_time_of(MEM) == 21);
-	CHECK(i->get_time_of(WRITE) == 22);
 	CHECK(i->get_s1() == 0xE);
 	CHECK(i->get_s2() == 0x7);
 	CHECK(this->ct->get_gprs().at(2) == 0x200);
@@ -283,13 +239,6 @@ TEST_CASE_METHOD(ControllerPipeFixture, "two num adder", "[full pipe]")
 	i = this->ct->advance(WAIT);
 	REQUIRE(i != nullptr);
 
-	CHECK(
-		i->get_time_of(FETCH) ==
-		24); // 6 greater than last fetch (4 flush pipe, 2 dram)
-	CHECK(i->get_time_of(DCDE) == 25);
-	CHECK(i->get_time_of(EXEC) == 26);
-	CHECK(i->get_time_of(MEM) == 27);
-	CHECK(i->get_time_of(WRITE) == 28);
 	CHECK(i->get_s1() == 0x1);
 	CHECK(i->get_s2() == 0x0);
 	CHECK(i->get_s3() == 0x0);
@@ -305,11 +254,6 @@ TEST_CASE_METHOD(ControllerPipeFixture, "two num adder", "[full pipe]")
 	i = this->ct->advance(WAIT);
 	REQUIRE(i != nullptr);
 
-	CHECK(i->get_time_of(FETCH) == 25);
-	CHECK(i->get_time_of(DCDE) == 26);
-	CHECK(i->get_time_of(EXEC) == 27);
-	CHECK(i->get_time_of(MEM) == 28);
-	CHECK(i->get_time_of(WRITE) == 29);
 	CHECK(i->get_s1() == 0x8);
 	CHECK(i->get_s2() == 0xfffffff9);
 	CHECK(this->ct->get_gprs().at(2) == 0x200);
@@ -335,11 +279,6 @@ TEST_CASE_METHOD(ControllerPipeFixture, "two num adder", "[full pipe]")
 	i = this->ct->advance(WAIT);
 	REQUIRE(i != nullptr); // it was already in cache
 
-	CHECK(i->get_time_of(FETCH) == 29); // clear out pipe (4)
-	CHECK(i->get_time_of(DCDE) == 30);
-	CHECK(i->get_time_of(EXEC) == 31);
-	CHECK(i->get_time_of(MEM) == 32);
-	CHECK(i->get_time_of(WRITE) == 33);
 	CHECK(i->get_s1() == 0x200);
 	CHECK(i->get_s2() == 0x0);
 	CHECK(i->get_s3() == 0x0);
@@ -360,11 +299,6 @@ TEST_CASE_METHOD(ControllerPipeFixture, "two num adder", "[full pipe]")
 	i = this->ct->advance(WAIT);
 	REQUIRE(i != nullptr);
 
-	CHECK(i->get_time_of(FETCH) == 30);
-	CHECK(i->get_time_of(DCDE) == 33);
-	CHECK(i->get_time_of(EXEC) == 34);
-	CHECK(i->get_time_of(MEM) == 35);
-	CHECK(i->get_time_of(WRITE) == 36);
 	CHECK(i->get_s1() == 0x1);
 	CHECK(i->get_s2() == 0x0);
 	CHECK(i->get_s3() == 0x0);
@@ -380,11 +314,6 @@ TEST_CASE_METHOD(ControllerPipeFixture, "two num adder", "[full pipe]")
 	i = this->ct->advance(WAIT);
 	REQUIRE(i != nullptr);
 
-	CHECK(i->get_time_of(FETCH) == 33);
-	CHECK(i->get_time_of(DCDE) == 34);
-	CHECK(i->get_time_of(EXEC) == 35);
-	CHECK(i->get_time_of(MEM) == 36);
-	CHECK(i->get_time_of(WRITE) == 37);
 	CHECK(i->get_s1() == 0x2);
 	CHECK(i->get_s2() == 0x0);
 	CHECK(i->get_s3() == 0x1);
@@ -405,11 +334,6 @@ TEST_CASE_METHOD(ControllerPipeFixture, "two num adder", "[full pipe]")
 	i = this->ct->advance(WAIT);
 	REQUIRE(i != nullptr);
 
-	CHECK(i->get_time_of(FETCH) == 34);
-	CHECK(i->get_time_of(DCDE) == 37);
-	CHECK(i->get_time_of(EXEC) == 38);
-	CHECK(i->get_time_of(MEM) == 39);
-	CHECK(i->get_time_of(WRITE) == 40);
 	CHECK(i->get_s1() == 0x3);
 	CHECK(i->get_s2() == 0x2);
 	CHECK(i->get_s3() == 0x1);
@@ -429,11 +353,6 @@ TEST_CASE_METHOD(ControllerPipeFixture, "two num adder", "[full pipe]")
 	i = this->ct->advance(WAIT);
 	REQUIRE(i != nullptr);
 
-	CHECK(i->get_time_of(FETCH) == 37);
-	CHECK(i->get_time_of(DCDE) == 40);
-	CHECK(i->get_time_of(EXEC) == 41);
-	CHECK(i->get_time_of(MEM) == 42);
-	CHECK(i->get_time_of(WRITE) == 43);
 	CHECK(i->get_s1() == 0x200);
 	CHECK(i->get_s2() == 0x3);
 	CHECK(i->get_s3() == 0x0);

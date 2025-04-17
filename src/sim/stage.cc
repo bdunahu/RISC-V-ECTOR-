@@ -38,7 +38,6 @@ InstrDTO *Stage::advance(Response p)
 	}
 	if (this->status == OK && p == WAIT && this->curr_instr) {
 		// mutual consent
-		this->curr_instr->set_time_of(this->id, this->clock_cycle);
 		r = new InstrDTO(*this->curr_instr);
 		delete curr_instr;
 		curr_instr = nullptr;

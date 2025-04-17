@@ -41,7 +41,6 @@ class ID : public Stage
 	std::vector<int> stage_info() override;
 
   private:
-	void advance_helper() override;
 	/**
 	 * Helper for `get_instr_fields`
 	 * Attempts to parse and dereference instruction arguments. Uses read and
@@ -52,6 +51,7 @@ class ID : public Stage
 	 * @param the resulting second field.
 	 * @param the resulting third field.
 	 */
+	void advance_helper() override;
 	/**
 	 * Parse an instruction into a type, opcode, and fields. If the type is
 	 * invalid, only the type field will be set.

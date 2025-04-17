@@ -38,7 +38,14 @@ Response ID::read_guard(signed int &v)
 
 void ID::write_guard(signed int &v)
 {
-	this->checked_out.push_back(v);
+	// zero register shouldn't be written.
+	if (v != 0) {
+		// keep track in the instrDTO for displaying to user and writeback
+		// keep track in checked_out so we can still access this information!
+		this->checked_out.push_back(v);
+		this->curr_instr->set_checked_out(v);
+		std::cout << "checked out: " << v << std::endl;
+	}
 	v = this->dereference_register(v);
 }
 

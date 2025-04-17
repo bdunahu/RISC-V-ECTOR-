@@ -11,7 +11,6 @@ InstrDTO *DUM::advance(Response p)
 	InstrDTO *r = nullptr;
 
 	if (this->curr_instr && p == WAIT) {
-		this->curr_instr->set_time_of(this->id, this->clock_cycle);
 		r = new InstrDTO(*this->curr_instr);
 		delete this->curr_instr;
 		curr_instr = nullptr;
