@@ -30,7 +30,6 @@ void WB::write_handler()
 
 	this->checked_out.pop_front();
 	reg = this->curr_instr->get_checked_out();
-	std::cout << "checked in: " << reg << std::endl;
 	this->store_register(reg, this->curr_instr->get_s1());
 }
 
