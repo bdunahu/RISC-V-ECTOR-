@@ -41,6 +41,9 @@ GUI::GUI(QWidget *parent)
     // Refresh DRAM from worker thread
     connect(this, &GUI::sendRefreshDram, worker, &Worker::refreshDram, Qt::QueuedConnection);
 
+    // Load program from worker thread
+    connect(this, &GUI::sendLoadProgram, worker, &Worker::loadProgram, Qt::QueuedConnection);
+
     // Refresh Cache from worker thread
     connect(this, &GUI::sendRefreshCache, worker, &Worker::refreshCache, Qt::QueuedConnection);
 
@@ -113,45 +116,28 @@ void displayTableHTML(QTextEdit *textEdit, const std::vector<std::array<signed i
     textEdit->setReadOnly(true);
 }
 
-void browseAndUploadFile(QWidget* parent) {
-    QString filePath = QFileDialog::getOpenFileName(nullptr, "Open File", QDir::homePath(), "Text Files (*.txt);;All Files (*.*)");
+std::vector<signed int> browseAndRetrieveFile(QWidget* parent) {
+    QString filePath = QFileDialog::getOpenFileName(parent, "Open Binary File", QDir::homePath(), "Binary Files (*.bin *.rv);;All Files (*.*)");
+    std::vector<signed int> program;
     
-    if (filePath.isEmpty()) {
-        return;
-    }
+    if (filePath.isEmpty()) return program;
 
     QFile file(filePath);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-       // textEdit->setPlainText("Error: Unable to open file!");
-       QMessageBox::critical(parent, "File Upload", "Unable to open file!");
-        return;
+    if (!file.open(QIODevice::ReadOnly)) {
+        QMessageBox::critical(parent, "File Upload", "Unable to open file!");
+        return program;
     }
 
-    QTextStream in(&file);
-    QString content;
-    int lineNumber = 0;
-
-    while (!in.atEnd()) {
-        QString line = in.readLine();
-        
-        content += QString("<div id='line_%1' style='display: flex; justify-content: space-between; align-items: center;'>"
-                           "<span style='font-size: 10px; font-weight: bold; color: gray;'>%1.</span>"
-                           "<span>%2</span>"
-                           "</div><hr>")
-                   .arg(lineNumber)  
-                   .arg(line);       
-        
-        lineNumber++;
+    while (!file.atEnd()) {
+        int32_t word = 0;
+        if (file.read(reinterpret_cast<char*>(&word), sizeof(int32_t)) == sizeof(int32_t)) {
+            program.push_back(static_cast<signed int>(word));
+        }
     }
 
     file.close();
 
-
-    QMessageBox::information(parent, "File Upload", "Instructions loaded successfully!");
-
-    // textEdit->setReadOnly(false);  
-    // textEdit->setHtml(content);
-    // textEdit->setReadOnly(true);
+    return program;
 }
 
 void GUI::onWorkerClockCycles(int cycles, int pc) {
@@ -257,8 +243,14 @@ void GUI::onWorkerFinished() {
 void GUI::on_upload_intructions_btn_clicked()
 {
     qDebug() << "Upload intructions button clicked.";
-    browseAndUploadFile(ui->register_table);
-
+    std::vector<signed int> program;
+    program = browseAndRetrieveFile(ui->register_table);
+    if(program.empty()){
+        QMessageBox::critical(ui->register_table, "File Upload", "Invalid Program File!");
+    }
+    emit sendLoadProgram(program);
+    emit sendRefreshDram();
+    QMessageBox::information(ui->register_table, "File Upload", "Instructions loaded successfully!");
 }
 
 

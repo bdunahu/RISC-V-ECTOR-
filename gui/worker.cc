@@ -60,6 +60,10 @@ Worker::~Worker()
 	delete this->c;
 }
 
+void Worker::loadProgram(std::vector<signed int> p) { 
+	this->d->load(p); 
+}
+
 void Worker::refreshDram()
 {
 	qDebug() << "Refreshing Dram";
