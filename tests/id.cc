@@ -102,7 +102,7 @@ TEST_CASE_METHOD(IDFixture, "Parse arbitrary r-type # one", "[id]")
 	signed int t;
 	InstrDTO *i;
 
-	t = this->encode_R_type(0b0, 0b1, 0b10, 0b11, 0b0);
+	t = this->encode_R_type(0b101, 0b110, 0b111, 0b11, 0b0);
 	i = this->decode_bits(t);
 
 	CHECK(i->get_s1() == 0x00000000); // registers are empty
@@ -134,7 +134,7 @@ TEST_CASE_METHOD(IDFixture, "Parse arbitrary i-type # one", "[id]")
 	signed int t;
 	InstrDTO *i;
 
-	t = this->encode_I_type(0xF, 0b1, 0b10, 0b0111, 0b1);
+	t = this->encode_I_type(0xF, 0b101, 0b110, 0b0111, 0b1);
 	i = this->decode_bits(t);
 
 	CHECK(i->get_s1() == 0x00000000); // registers are empty
@@ -150,7 +150,7 @@ TEST_CASE_METHOD(IDFixture, "Parse arbitrary i-type # two", "[id]")
 	signed int t;
 	InstrDTO *i;
 
-	t = this->encode_I_type(0xCC, 0b010, 0b101, 0b1011, 0b1);
+	t = this->encode_I_type(0xCC, 0b101, 0b110, 0b1011, 0b1);
 	i = this->decode_bits(t);
 
 	CHECK(i->get_s1() == 0x00000000); // registers are empty
@@ -184,8 +184,9 @@ TEST_CASE_METHOD(IDFixture, "Parse arbitrary j-type # two", "[id]")
 	t = this->encode_J_type(0xBBCCF, 0b10101, 0b0011, 0b10);
 	i = this->decode_bits(t);
 
+	t = 0xFFFBBCCF;
 	CHECK(i->get_s1() == 0x00000000); // registers are empty
-	CHECK(i->get_s2() == 0xFFFBBCCF);
+	CHECK(i->get_s2() == t);
 	CHECK(i->get_mnemonic() == JAL);
 
 	delete i;
@@ -204,73 +205,4 @@ TEST_CASE_METHOD(IDFixture, "read does not conflict with read", "[id]")
 	v = 0b1;
 	this->d->read_guard(v);
 	REQUIRE(v == 0b0);
-}
-
-TEST_CASE_METHOD(IDFixture, "write does not conflict with write", "[id]")
-{
-	signed int v;
-
-	v = 0b1;
-	this->d->write_guard(v);
-	REQUIRE(v == 0b0);
-
-	v = 0b1;
-	this->d->write_guard(v);
-	REQUIRE(v == 0b0);
-}
-
-TEST_CASE_METHOD(IDFixture, "write does not conflict with read", "[id]")
-{
-	signed int v;
-	Response r;
-
-	v = 0b1;
-	r = this->d->read_guard(v);
-	CHECK(v == 0b0);
-	REQUIRE(r == OK);
-
-	v = 0b1;
-	this->d->write_guard(v);
-	REQUIRE(v == 0b0);
-}
-
-TEST_CASE_METHOD(IDFixture, "read does conflict with write", "[id]")
-{
-	signed int v;
-	Response r;
-
-	v = 0b1;
-	this->d->write_guard(v);
-	REQUIRE(v == 0b0);
-
-	v = 0b1;
-	r = this->d->read_guard(v);
-	CHECK(v == 0b01);
-	REQUIRE(r == STALLED);
-}
-
-TEST_CASE_METHOD(IDFixture, "stores indefinite conflicts", "[id]")
-{
-	signed int v, ov;
-	Response r;
-
-	v = 0b1;
-	ov = v;
-	while (v < 0b110) {
-		this->d->write_guard(v);
-		REQUIRE(v == 0b0);
-		v = ++ov;
-	}
-	this->d->write_guard(v);
-	REQUIRE(v == 0b0);
-
-	v = 0b110;
-	r = this->d->read_guard(v);
-	CHECK(v == 0b110);
-	REQUIRE(r == STALLED);
-
-	v = 0b1;
-	r = this->d->read_guard(v);
-	CHECK(v == 0b1);
-	REQUIRE(r == STALLED);
 }

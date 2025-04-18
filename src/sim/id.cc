@@ -86,7 +86,7 @@ void ID::get_instr_fields(
 		break;
 	case 0b10:
 		t = J;
-		this->decode_J_type(s1, s2, s3);
+		this->decode_J_type(s1, s2, s3, m);
 		break;
 	case 0b11:
 		t = INV;
@@ -159,8 +159,10 @@ void ID::decode_I_type(
 	this->status = r1;
 }
 
-void ID::decode_J_type(signed int &s1, signed int &s2, signed int &s3)
+void ID::decode_J_type(
+	signed int &s1, signed int &s2, signed int &s3, Mnemonic &m)
 {
+	Response r1, r2;
 	unsigned int s0b, s1b;
 
 	s0b = REG_SIZE;
@@ -169,7 +171,33 @@ void ID::decode_J_type(signed int &s1, signed int &s2, signed int &s3)
 	s2 = GET_BITS_SIGN_EXTEND(s1, s0b, s1b);
 	s1 = GET_LS_BITS(s1, s0b);
 
-	this->status = this->read_guard(*&s1);
+	switch (m) {
+	case PUSH:
+		s2 = s1; // source
+		s3 = 2;  // stack pointer
+		s1 = -1; // increment amount
+		r1 = this->read_guard(s2);
+		r2 = (this->is_checked_out(s3)) ? STALLED : OK; // we read the stack pointer
+		if (r1 == OK && r2 == OK) {
+			this->write_guard(s3); // we write the stack pointer
+		}
+		this->status = (r1 == OK && r2 == OK) ? OK : STALLED;
+		break;
+	case POP:
+		s2 = s1; // destination
+		s3 = 2;  // stack pointer
+		s1 = 1;  // increment amount
+		r1 = (this->is_checked_out(s3)) ? STALLED : OK; // we read the stack pointer
+		if (r1 == OK) {
+			this->write_guard(s2);
+			this->write_guard(s3); // we write the stack pointer
+		}
+		this->status = r1;
+		break;
+	default:
+		this->status = this->read_guard(*&s1);
+	}
+
 }
 
 std::vector<int> ID::stage_info()

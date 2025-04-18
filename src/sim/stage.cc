@@ -17,6 +17,7 @@ std::deque<signed int> Stage::checked_out;
 unsigned int Stage::pc;
 Storage *Stage::storage;
 bool Stage::is_pipelined;
+bool Stage::is_empty;
 int Stage::clock_cycle;
 
 bool Stage::get_condition(CC c) { return (this->gprs[3] >> c) & 1; }

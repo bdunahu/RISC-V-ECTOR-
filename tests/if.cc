@@ -73,9 +73,7 @@ class IFFixture
 TEST_CASE_METHOD(IFFixture, "fetch returns single instuction", "[if_pipe]")
 {
 	InstrDTO *i;
-	int expected_cycles;
 
-	expected_cycles = this->m_delay + this->c_delay + 2;
 	i = this->fetch_through();
 	REQUIRE(i->get_instr_bits() == this->p[0]);
 

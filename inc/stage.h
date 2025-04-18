@@ -119,6 +119,11 @@ class Stage
 	 */
 	static bool is_pipelined;
 	/**
+	 * A flag which tells fetch when the pipe is empty. Only used when the pipe
+	 * is turned off.
+	 */
+	static bool is_empty;
+	/**
 	 * The current clock cycle.
 	 */
 	static int clock_cycle;
@@ -134,7 +139,6 @@ class Stage
 	 * The current status of this stage.
 	 */
 	Response status;
-
 };
 
 #endif /* STAGE_H_INCLUDED */

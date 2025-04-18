@@ -28,9 +28,17 @@ void WB::write_handler()
 		throw std::runtime_error("instruction tried to pop a register out of "
 								 "an empty queue during writeback.");
 
+	if (this->curr_instr->get_mnemonic() == POP) {
+		// POP performs a second register write
+		reg = this->checked_out.front();
+		this->checked_out.pop_front();
+		this->store_register(reg, this->curr_instr->get_s3());
+	}
+
 	this->checked_out.pop_front();
 	reg = this->curr_instr->get_checked_out();
 	this->store_register(reg, this->curr_instr->get_s1());
+
 }
 
 void WB::jump_handler()
