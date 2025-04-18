@@ -1,5 +1,6 @@
 #include "gui.h"
 #include "./ui_gui.h"
+#include "byteswap.h"
 
 GUI::GUI(QWidget *parent)
     : QMainWindow(parent)
@@ -37,7 +38,7 @@ GUI::GUI(QWidget *parent)
 
     // Display registers
     connect(worker, &Worker::register_storage, this, &GUI::onWorkerShowRegisters);
-    
+
     // Refresh DRAM from worker thread
     connect(this, &GUI::sendRefreshDram, worker, &Worker::refreshDram, Qt::QueuedConnection);
 
@@ -85,7 +86,7 @@ void displayArrayHTML(QTextEdit *textEdit, const std::array<int, GPR_NUM> &data)
                      .arg(index);
         index++;
     }
-    tableText += "</tr>";  
+    tableText += "</tr>";
     tableText += "</table>";
 
     textEdit->setHtml(tableText);
@@ -119,7 +120,7 @@ void displayTableHTML(QTextEdit *textEdit, const std::vector<std::array<signed i
 std::vector<signed int> browseAndRetrieveFile(QWidget* parent) {
     QString filePath = QFileDialog::getOpenFileName(parent, "Open Binary File", QDir::homePath(), "Binary Files (*.bin *.rv);;All Files (*.*)");
     std::vector<signed int> program;
-    
+
     if (filePath.isEmpty()) return program;
 
     QFile file(filePath);
@@ -131,7 +132,7 @@ std::vector<signed int> browseAndRetrieveFile(QWidget* parent) {
     while (!file.atEnd()) {
         int32_t word = 0;
         if (file.read(reinterpret_cast<char*>(&word), sizeof(int32_t)) == sizeof(int32_t)) {
-            program.push_back(static_cast<signed int>(word));
+            program.push_back(static_cast<signed int>(bswap_32(word)));
         }
     }
 
@@ -141,10 +142,10 @@ std::vector<signed int> browseAndRetrieveFile(QWidget* parent) {
 }
 
 void GUI::onWorkerClockCycles(int cycles, int pc) {
-    QFont font = ui->cycles_label->font(); 
+    QFont font = ui->cycles_label->font();
     font.setBold(true);
     font.setItalic(true);
-    font.setPointSize(14);           
+    font.setPointSize(14);
     ui->cycles_label->setFont(font);
     ui->cycles_label->setText("Clock Cycles: " + QString::number(cycles) + "\t\t" + "PC: " + QString::number(pc));
 }
@@ -297,10 +298,10 @@ void GUI::on_enable_pipeline_checkbox_checkStateChanged(const Qt::CheckState &ar
 void GUI::on_enabl_cache_checkbox_checkStateChanged(const Qt::CheckState &arg1)
 {
     //TODO: handle cache enabling
-    if(arg1 == Qt::CheckState::Checked) {   
+    if(arg1 == Qt::CheckState::Checked) {
         qDebug() << "enable cache checkbox checked.";
     } else {
-        qDebug() << "enable cache checkbox unchecked.";   
+        qDebug() << "enable cache checkbox unchecked.";
     }
 
 }
@@ -325,4 +326,3 @@ void GUI::on_save_program_state_btn_clicked()
     //TODO: save program state
     qDebug() << "save program state button is clicked.";
 }
-
