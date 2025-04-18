@@ -34,6 +34,8 @@ InstrDTO *Stage::advance(Response p)
 	// for (long unsigned int i = 0; i < this->checked_out.size(); ++i)
 	// 	std::cout << this->checked_out[i] << " ";
 	// std::cout << std::endl;
+	if (this->curr_instr && this->curr_instr->is_squashed() == 1)
+		this->status = OK;
 	if (this->curr_instr && this->status != OK) {
 		this->advance_helper();
 	}
@@ -108,7 +110,7 @@ bool Stage::is_checked_out(signed int r)
 void Stage::squash()
 {
 	if (curr_instr) {
-		this->curr_instr->set_mnemonic(NOP);
+		this->curr_instr->squash();
 		this->status = OK;
 	}
 	if (this->next) {

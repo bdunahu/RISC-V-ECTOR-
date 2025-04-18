@@ -12,8 +12,9 @@ InstrDTO *IF::advance(Response p)
 
 	this->advance_helper();
 	if (this->curr_instr != nullptr && p == WAIT) {
-		// mutual consent
-		++this->pc;
+		// don't increment PC if the PC was just set by wb
+		if (this->curr_instr->is_squashed() != 1)
+			++this->pc;
 		r = new InstrDTO(*this->curr_instr);
 		delete curr_instr;
 		curr_instr = nullptr;

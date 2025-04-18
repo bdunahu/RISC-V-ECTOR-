@@ -11,6 +11,7 @@ InstrDTO::InstrDTO()
 	this->mnemonic = ADD;
 	this->type = INV;
 	this->pc = 0;
+	this->squashed = 0;
 }
 
 signed int InstrDTO::get_instr_bits() { return this->instr_bits; }
@@ -28,6 +29,8 @@ Mnemonic InstrDTO::get_mnemonic() { return this->mnemonic; }
 Type InstrDTO::get_type() { return this->type; }
 
 unsigned int InstrDTO::get_pc() { return this->pc; }
+
+int InstrDTO::is_squashed() { return this->squashed; }
 
 void InstrDTO::set_instr_bits(signed int instr) { this->instr_bits = instr; }
 
@@ -47,3 +50,5 @@ void InstrDTO::set_mnemonic(Mnemonic m) { this->mnemonic = m; }
 void InstrDTO::set_type(Type t) { this->type = t; }
 
 void InstrDTO::set_pc(unsigned int pc) { this->pc = pc; }
+
+void InstrDTO::squash() { this->squashed = 1; }

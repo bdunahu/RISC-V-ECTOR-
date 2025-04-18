@@ -48,6 +48,10 @@ class InstrDTO
 	 * @return the program counter at the time this instruction was fetched
 	 */
 	unsigned int get_pc();
+	/**
+	 * @return 1 if this instruction is invalid, 0 otherwise
+	 */
+	int is_squashed();
 
 	/**
 	 * @param instr_bits
@@ -82,6 +86,10 @@ class InstrDTO
 	 * @param the program counter at the time this instruction was fetched
 	 */
 	void set_pc(unsigned int pc);
+	/**
+	 * squashes this instruction
+	 */
+	void squash();
 
   private:
 	/**
@@ -115,6 +123,10 @@ class InstrDTO
 	 * The PC of the instruction
 	 */
 	unsigned int pc;
+	/**
+	 * If this instruction was made dead
+	 */
+	unsigned int squashed;
 };
 
 #endif /* INSTRDTO_H_INCLUDED */
