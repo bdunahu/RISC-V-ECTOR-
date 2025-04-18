@@ -3,7 +3,7 @@
 Worker::Worker(QObject *parent) : QObject(parent) {}
 
 void Worker::configure(std::vector<int> ways, std::vector<int> size, bool is_pipelined, bool is_cache_enabled) {
-	this->d = new Dram(ways.size()+1);
+	this->d = new Dram(ways.size()+10);
 	setWays(ways);
 	setSize(size);
 	qDebug() << "is cache enabled:" << is_cache_enabled;
