@@ -45,6 +45,9 @@ GUI::GUI(QWidget *parent)
     // Load program from worker thread
     connect(this, &GUI::sendLoadProgram, worker, &Worker::loadProgram, Qt::QueuedConnection);
 
+    // Configure pipeline
+    connect(this, &GUI::sendConfigure, worker, &Worker::configure, Qt::QueuedConnection);
+
     // Refresh Cache from worker thread
     connect(this, &GUI::sendRefreshCache, worker, &Worker::refreshCache, Qt::QueuedConnection);
 
@@ -121,6 +124,7 @@ std::vector<signed int> browseAndRetrieveFile(QWidget* parent) {
     QString filePath = QFileDialog::getOpenFileName(parent, "Open Binary File", QDir::homePath(), "Binary Files (*.bin *.rv);;All Files (*.*)");
     std::vector<signed int> program;
 
+
     if (filePath.isEmpty()) return program;
 
     QFile file(filePath);
@@ -130,14 +134,19 @@ std::vector<signed int> browseAndRetrieveFile(QWidget* parent) {
     }
 
     while (!file.atEnd()) {
-        int32_t word = 0;
-        if (file.read(reinterpret_cast<char*>(&word), sizeof(int32_t)) == sizeof(int32_t)) {
-            program.push_back(static_cast<signed int>(bswap_32(word)));
+        char bytes[4];
+        if (file.read(bytes, 4) == 4) {
+            uint32_t word =
+                (static_cast<uint8_t>(bytes[0]) << 24) |
+                (static_cast<uint8_t>(bytes[1]) << 16) |
+                (static_cast<uint8_t>(bytes[2]) << 8)  |
+                (static_cast<uint8_t>(bytes[3]));
+
+            program.push_back(static_cast<signed int>(word));
         }
     }
 
     file.close();
-
     return program;
 }
 
@@ -261,26 +270,39 @@ void GUI::on_upload_program_state_btn_clicked()
     qDebug() << "upload program state button is clicked.";
 }
 
-
-void GUI::on_refresh_dram_btn_clicked()
+void GUI::on_set_levels_btn_clicked()
 {
-    qDebug() << "Refresh DRAM button clicked.";
-    emit sendRefreshDram();
-
+    qDebug() << "Set levels button clicked.";
+    bool ok;
+    int value = QInputDialog::getInt(this, "Enter Value", "Enter value:", 
+                                     0,
+                                     0, 10, 1, &ok);
+    if (ok) {
+        cache_levels = value;
+        ui->cache_levels_dropdwn->clear();  // Clear previous entries
+        for (int i = 0; i < cache_levels; ++i) {
+            ui->cache_levels_dropdwn->addItem(QString::number(i));
+            ways.push_back(2);
+            size.push_back(5);
+        }   
+    } else {
+        qDebug() << "User cancelled input.";
+    }
 }
 
-
-void GUI::on_refresh_cache_btn_clicked()
-{
-    qDebug() << "Refresh cache button clicked.";
-    emit sendRefreshCache();
-}
-
-
-void GUI::on_refresh_registers_btn_clicked()
-{
-    qDebug() << "Refresh registers button clicked.";
-    emit sendRefreshRegisters();
+void GUI::on_set_cache_btn_clicked() {
+    int current_cache = ui->cache_levels_dropdwn->currentIndex();
+    // qDebug() << "current cache: " << current_cache;
+    int prevWays = ways[current_cache];
+    int prevSize = size[current_cache];
+    QString cache_ways = ui->cache_ways_inp->text();
+    QString cache_size = ui->cache_size_inp->text();
+    ways[current_cache] = cache_ways.isEmpty() ? prevWays : cache_ways.toInt();
+    size[current_cache] = cache_size.isEmpty() ? prevSize : cache_size.toInt();
+    QMessageBox::information(ui->register_table, "Cache Configuration", "Cache" + QString::number(current_cache) + " values set successfully! Please click on Configure button to configure the pipeline or configure other caches.");
+    // for(int i=0;i<ways.size();i++) {
+    //     qDebug() << "ways: " << ways[i] << " size: " << size[i];
+    // }
 }
 
 
@@ -289,8 +311,10 @@ void GUI::on_enable_pipeline_checkbox_checkStateChanged(const Qt::CheckState &ar
     //TODO: handle pipeline enabling
     if(arg1 == Qt::CheckState::Checked) {
         qDebug() << "enable pipeline checkbox checked.";
+        is_pipelined = true;
     } else {
         qDebug() << "enable pipeline checkbox unchecked.";
+        is_pipelined = false;
     }
 }
 
@@ -300,8 +324,10 @@ void GUI::on_enabl_cache_checkbox_checkStateChanged(const Qt::CheckState &arg1)
     //TODO: handle cache enabling
     if(arg1 == Qt::CheckState::Checked) {
         qDebug() << "enable cache checkbox checked.";
+        is_cache_enabled = true;
     } else {
-        qDebug() << "enable cache checkbox unchecked.";
+        qDebug() << "enable cache checkbox unchecked.";  
+        is_cache_enabled = false; 
     }
 
 }
@@ -326,3 +352,10 @@ void GUI::on_save_program_state_btn_clicked()
     //TODO: save program state
     qDebug() << "save program state button is clicked.";
 }
+
+void GUI::on_Configure_Btn_clicked()
+{
+    emit sendConfigure(ways, size, is_pipelined, is_cache_enabled);
+    QMessageBox::information(ui->register_table, "Pipeline Configuration", "Pipeline and memory subsystem configured successfully!");
+}
+

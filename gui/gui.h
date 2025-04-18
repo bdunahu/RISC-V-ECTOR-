@@ -8,6 +8,7 @@
 #include <QTextStream>
 #include <QTextEdit>
 #include <QMessageBox>
+#include <QInputDialog>
 #include "worker.h"
 
 QT_BEGIN_NAMESPACE
@@ -23,6 +24,11 @@ class GUI : public QMainWindow
 public:
     GUI(QWidget *parent = nullptr);
     ~GUI();
+    bool is_pipelined = false;
+    bool is_cache_enabled = false;
+    int cache_levels = 0;
+    std::vector<int> ways;
+    std::vector<int> size;
 
 signals:
     void sendRefreshDram();
@@ -31,6 +37,7 @@ signals:
     void sendRunSteps(int steps);
     void sendRunStep();
     void sendLoadProgram(std::vector<signed int> program);
+    void sendConfigure(std::vector<int> ways, std::vector<int> size, bool is_pipelined, bool is_cache_enabled);
 
 private slots:
     void onWorkerClockCycles(int value, int pc);
@@ -56,12 +63,12 @@ private slots:
     void on_upload_intructions_btn_clicked();
     
     void on_upload_program_state_btn_clicked();
+
+    void on_Configure_Btn_clicked();
     
-    void on_refresh_dram_btn_clicked();
-    
-    void on_refresh_cache_btn_clicked();
-    
-    void on_refresh_registers_btn_clicked();
+    void on_set_levels_btn_clicked();
+
+    void on_set_cache_btn_clicked();
     
     void on_enable_pipeline_checkbox_checkStateChanged(const Qt::CheckState &arg1);
     

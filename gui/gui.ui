@@ -437,26 +437,36 @@
           </item>
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_27">
-            <item>
+           <item>
              <layout class="QHBoxLayout" name="horizontalLayout_9">
-              <item>
-               <widget class="QPushButton" name="refresh_dram_btn">
+             <item>
+               <widget class="QPushButton" name="set_levels_btn">
                 <property name="text">
-                 <string>Refresh DRAM</string>
+                 <string>Cache Levels</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="refresh_cache_btn">
-                <property name="text">
-                 <string>Refresh Cache</string>
+               <widget class="QComboBox" name="cache_levels_dropdwn"/>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="cache_size_inp">
+                <property name="placeholderText">
+                 <string>size</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="refresh_registers_btn">
+               <widget class="QLineEdit" name="cache_ways_inp">
+                <property name="placeholderText">
+                 <string>ways</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="set_cache_btn">
                 <property name="text">
-                 <string>Refresh Registers</string>
+                 <string>Cache Conf</string>
                 </property>
                </widget>
               </item>
@@ -465,9 +475,9 @@
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_10">
               <item>
-               <widget class="QPushButton" name="Reset_Btn">
+               <widget class="QPushButton" name="Configure_Btn">
                 <property name="text">
-                 <string>Reset</string>
+                 <string>Configure</string>
                 </property>
                </widget>
               </item>
@@ -476,12 +486,12 @@
                 <property name="text">
                  <string>Enable Pipeline</string>
                 </property>
-                <property name="checkable">
+                <!-- <property name="checkable">
                  <bool>false</bool>
                 </property>
                 <property name="checked">
                  <bool>false</bool>
-                </property>
+                </property> -->
                </widget>
               </item>
               <item>
@@ -489,9 +499,9 @@
                 <property name="text">
                  <string>Enable Cache</string>
                 </property>
-                <property name="checkable">
+                <!-- <property name="checkable">
                  <bool>false</bool>
-                </property>
+                </property> -->
                </widget>
               </item>
              </layout>
