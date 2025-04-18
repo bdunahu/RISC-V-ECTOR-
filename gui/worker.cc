@@ -8,7 +8,7 @@ void Worker::configure(std::vector<int> ways, std::vector<int> size, bool is_pip
 	setSize(size);
 	qDebug() << "is cache enabled:" << is_cache_enabled;
 	qDebug() << "is pipelined:" << is_pipelined;
-	this->cache_enabled = is_cache_enabled;	
+	this->cache_enabled = is_cache_enabled;
 	if (!is_cache_enabled || ways.size() == 0) {
 		this->ct = new Controller(wb_stage, this->d, is_pipelined);
 	} else {
@@ -46,7 +46,7 @@ std::vector<int> Worker::getSize() {
 void Worker::doWork()
 {
 	qDebug() << "Initializing...";
-	
+
 	this->if_stage = new IF(nullptr);
 	this->id_stage = new ID(if_stage);
 	this->ex_stage = new EX(id_stage);
@@ -88,24 +88,6 @@ void Worker::refreshRegisters()
 {
 	qDebug() << "Refreshing Registers";
 	emit register_storage(this->ct->get_gprs());
-}
-
-void Worker::runSteps(int steps)
-{
-	qDebug() << "Running for steps: " << steps;
-	this->ct->run_for(steps);
-	emit dram_storage(this->d->view(0, 255));
-	if(this->cache_enabled && getWays().size() > 0) {
-		unsigned int size = this->c.at(getWays().size()-1)->get_size();
-		emit cache_storage(this->c.at(getWays().size()-1)->view(0, 1<<size));
-	}
-	emit register_storage(this->ct->get_gprs());
-	emit clock_cycles(this->ct->get_clock_cycle(), this->ct->get_pc());
-	emit if_info(this->if_stage->stage_info());
-	emit id_info(this->id_stage->stage_info());
-	emit ex_info(this->ex_stage->stage_info());
-	emit mm_info(this->mm_stage->stage_info());
-	emit wb_info(this->wb_stage->stage_info());
 }
 
 void Worker::runStep()

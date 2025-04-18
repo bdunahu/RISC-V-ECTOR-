@@ -43,9 +43,8 @@ public slots:
     void refreshDram();
     void loadProgram(std::vector<signed int> p);
     void configure(std::vector<int> ways, std::vector<int> size, bool is_pipelined, bool is_cache_enabled);
-    void refreshCache(); 
-    void refreshRegisters(); 
-    void runSteps(int steps);
+    void refreshCache();
+    void refreshRegisters();
     void runStep();
 
 signals:

@@ -54,9 +54,6 @@ GUI::GUI(QWidget *parent)
     // Refresh Registers from worker thread
     connect(this, &GUI::sendRefreshRegisters, worker, &Worker::refreshRegisters, Qt::QueuedConnection);
 
-    // Advance controller by #steps
-    connect(this, &GUI::sendRunSteps, worker, &Worker::runSteps, Qt::QueuedConnection);
-
     // Advance controller by 1 step
     connect(this, &GUI::sendRunStep, worker, &Worker::runStep, Qt::QueuedConnection);
 
@@ -274,7 +271,7 @@ void GUI::on_set_levels_btn_clicked()
 {
     qDebug() << "Set levels button clicked.";
     bool ok;
-    int value = QInputDialog::getInt(this, "Enter Value", "Enter value:", 
+    int value = QInputDialog::getInt(this, "Enter Value", "Enter value:",
                                      0,
                                      0, 10, 1, &ok);
     if (ok) {
@@ -284,7 +281,7 @@ void GUI::on_set_levels_btn_clicked()
             ui->cache_levels_dropdwn->addItem(QString::number(i));
             ways.push_back(2);
             size.push_back(5);
-        }   
+        }
     } else {
         qDebug() << "User cancelled input.";
     }
@@ -305,7 +302,6 @@ void GUI::on_set_cache_btn_clicked() {
     // }
 }
 
-
 void GUI::on_enable_pipeline_checkbox_checkStateChanged(const Qt::CheckState &arg1)
 {
     //TODO: handle pipeline enabling
@@ -318,7 +314,6 @@ void GUI::on_enable_pipeline_checkbox_checkStateChanged(const Qt::CheckState &ar
     }
 }
 
-
 void GUI::on_enabl_cache_checkbox_checkStateChanged(const Qt::CheckState &arg1)
 {
     //TODO: handle cache enabling
@@ -326,26 +321,17 @@ void GUI::on_enabl_cache_checkbox_checkStateChanged(const Qt::CheckState &arg1)
         qDebug() << "enable cache checkbox checked.";
         is_cache_enabled = true;
     } else {
-        qDebug() << "enable cache checkbox unchecked.";  
-        is_cache_enabled = false; 
+        qDebug() << "enable cache checkbox unchecked.";
+        is_cache_enabled = false;
     }
 
 }
-
-
-void GUI::on_run_steps_btn_clicked()
-{
-    qDebug() << "Run steps button clicked.";
-    emit sendRunSteps(ui->number_steps_inp->text().toInt());
-}
-
 
 void GUI::on_step_btn_clicked()
 {
     qDebug() << "Run step button clicked.";
     emit sendRunStep();
 }
-
 
 void GUI::on_save_program_state_btn_clicked()
 {
@@ -358,4 +344,3 @@ void GUI::on_Configure_Btn_clicked()
     emit sendConfigure(ways, size, is_pipelined, is_cache_enabled);
     QMessageBox::information(ui->register_table, "Pipeline Configuration", "Pipeline and memory subsystem configured successfully!");
 }
-
