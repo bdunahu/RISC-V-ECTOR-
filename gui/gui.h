@@ -30,6 +30,7 @@ signals:
     void sendRefreshRegisters();
     void sendRunSteps(int steps);
     void sendRunStep();
+    void sendLoadProgram(std::vector<signed int> program);
 
 private slots:
     void onWorkerClockCycles(int value, int pc);

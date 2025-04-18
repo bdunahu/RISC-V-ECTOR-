@@ -34,6 +34,7 @@ public:
 public slots:
     void doWork();
     void refreshDram();
+    void loadProgram(std::vector<signed int> p);
     void refreshCache(); 
     void refreshRegisters(); 
     void runSteps(int steps);

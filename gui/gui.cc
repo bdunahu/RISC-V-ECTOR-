@@ -1,5 +1,6 @@
 #include "gui.h"
 #include "./ui_gui.h"
+#include "byteswap.h"
 
 GUI::GUI(QWidget *parent)
     : QMainWindow(parent)
@@ -37,9 +38,12 @@ GUI::GUI(QWidget *parent)
 
     // Display registers
     connect(worker, &Worker::register_storage, this, &GUI::onWorkerShowRegisters);
-    
+
     // Refresh DRAM from worker thread
     connect(this, &GUI::sendRefreshDram, worker, &Worker::refreshDram, Qt::QueuedConnection);
+
+    // Load program from worker thread
+    connect(this, &GUI::sendLoadProgram, worker, &Worker::loadProgram, Qt::QueuedConnection);
 
     // Refresh Cache from worker thread
     connect(this, &GUI::sendRefreshCache, worker, &Worker::refreshCache, Qt::QueuedConnection);
@@ -82,7 +86,7 @@ void displayArrayHTML(QTextEdit *textEdit, const std::array<int, GPR_NUM> &data)
                      .arg(index);
         index++;
     }
-    tableText += "</tr>";  
+    tableText += "</tr>";
     tableText += "</table>";
 
     textEdit->setHtml(tableText);
@@ -113,52 +117,35 @@ void displayTableHTML(QTextEdit *textEdit, const std::vector<std::array<signed i
     textEdit->setReadOnly(true);
 }
 
-void browseAndUploadFile(QWidget* parent) {
-    QString filePath = QFileDialog::getOpenFileName(nullptr, "Open File", QDir::homePath(), "Text Files (*.txt);;All Files (*.*)");
-    
-    if (filePath.isEmpty()) {
-        return;
-    }
+std::vector<signed int> browseAndRetrieveFile(QWidget* parent) {
+    QString filePath = QFileDialog::getOpenFileName(parent, "Open Binary File", QDir::homePath(), "Binary Files (*.bin *.rv);;All Files (*.*)");
+    std::vector<signed int> program;
+
+    if (filePath.isEmpty()) return program;
 
     QFile file(filePath);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-       // textEdit->setPlainText("Error: Unable to open file!");
-       QMessageBox::critical(parent, "File Upload", "Unable to open file!");
-        return;
+    if (!file.open(QIODevice::ReadOnly)) {
+        QMessageBox::critical(parent, "File Upload", "Unable to open file!");
+        return program;
     }
 
-    QTextStream in(&file);
-    QString content;
-    int lineNumber = 0;
-
-    while (!in.atEnd()) {
-        QString line = in.readLine();
-        
-        content += QString("<div id='line_%1' style='display: flex; justify-content: space-between; align-items: center;'>"
-                           "<span style='font-size: 10px; font-weight: bold; color: gray;'>%1.</span>"
-                           "<span>%2</span>"
-                           "</div><hr>")
-                   .arg(lineNumber)  
-                   .arg(line);       
-        
-        lineNumber++;
+    while (!file.atEnd()) {
+        int32_t word = 0;
+        if (file.read(reinterpret_cast<char*>(&word), sizeof(int32_t)) == sizeof(int32_t)) {
+            program.push_back(static_cast<signed int>(bswap_32(word)));
+        }
     }
 
     file.close();
 
-
-    QMessageBox::information(parent, "File Upload", "Instructions loaded successfully!");
-
-    // textEdit->setReadOnly(false);  
-    // textEdit->setHtml(content);
-    // textEdit->setReadOnly(true);
+    return program;
 }
 
 void GUI::onWorkerClockCycles(int cycles, int pc) {
-    QFont font = ui->cycles_label->font(); 
+    QFont font = ui->cycles_label->font();
     font.setBold(true);
     font.setItalic(true);
-    font.setPointSize(14);           
+    font.setPointSize(14);
     ui->cycles_label->setFont(font);
     ui->cycles_label->setText("Clock Cycles: " + QString::number(cycles) + "\t\t" + "PC: " + QString::number(pc));
 }
@@ -257,8 +244,14 @@ void GUI::onWorkerFinished() {
 void GUI::on_upload_intructions_btn_clicked()
 {
     qDebug() << "Upload intructions button clicked.";
-    browseAndUploadFile(ui->register_table);
-
+    std::vector<signed int> program;
+    program = browseAndRetrieveFile(ui->register_table);
+    if(program.empty()){
+        QMessageBox::critical(ui->register_table, "File Upload", "Invalid Program File!");
+    }
+    emit sendLoadProgram(program);
+    emit sendRefreshDram();
+    QMessageBox::information(ui->register_table, "File Upload", "Instructions loaded successfully!");
 }
 
 
@@ -305,10 +298,10 @@ void GUI::on_enable_pipeline_checkbox_checkStateChanged(const Qt::CheckState &ar
 void GUI::on_enabl_cache_checkbox_checkStateChanged(const Qt::CheckState &arg1)
 {
     //TODO: handle cache enabling
-    if(arg1 == Qt::CheckState::Checked) {   
+    if(arg1 == Qt::CheckState::Checked) {
         qDebug() << "enable cache checkbox checked.";
     } else {
-        qDebug() << "enable cache checkbox unchecked.";   
+        qDebug() << "enable cache checkbox unchecked.";
     }
 
 }
@@ -333,4 +326,3 @@ void GUI::on_save_program_state_btn_clicked()
     //TODO: save program state
     qDebug() << "save program state button is clicked.";
 }
-
