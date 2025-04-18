@@ -90,10 +90,10 @@ void Worker::refreshRegisters()
 	emit register_storage(this->ct->get_gprs());
 }
 
-void Worker::runStep()
+void Worker::runSteps(int steps)
 {
-	qDebug() << "Running for 1 step ";
-	this->ct->advance(WAIT);
+	qDebug() << "Running for " << steps << "steps";
+	this->ct->run_for(steps);
 	emit dram_storage(this->d->view(0, 255));
 	if(this->cache_enabled && getWays().size() > 0) {
 		unsigned int size = this->c.at(getWays().size()-1)->get_size();

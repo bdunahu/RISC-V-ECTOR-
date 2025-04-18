@@ -35,7 +35,6 @@ signals:
     void sendRefreshCache();
     void sendRefreshRegisters();
     void sendRunSteps(int steps);
-    void sendRunStep();
     void sendLoadProgram(std::vector<signed int> program);
     void sendConfigure(std::vector<int> ways, std::vector<int> size, bool is_pipelined, bool is_cache_enabled);
 
@@ -82,6 +81,7 @@ private:
     Ui::GUI *ui;
     QThread workerThread;
     Worker *worker;
+    QVector<int> step_values = {1, 5, 10, 50, 250, 1000, 10000};
     const std::map<Mnemonic, QString> mnemonicNameMap = {
         {Mnemonic::ADD, "ADD"},
         {Mnemonic::SUB, "SUB"},

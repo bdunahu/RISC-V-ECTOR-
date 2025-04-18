@@ -54,8 +54,14 @@ GUI::GUI(QWidget *parent)
     // Refresh Registers from worker thread
     connect(this, &GUI::sendRefreshRegisters, worker, &Worker::refreshRegisters, Qt::QueuedConnection);
 
-    // Advance controller by 1 step
-    connect(this, &GUI::sendRunStep, worker, &Worker::runStep, Qt::QueuedConnection);
+    // Advance controller by somes steps
+    connect(this, &GUI::sendRunSteps, worker, &Worker::runSteps, Qt::QueuedConnection);
+
+    // Update the step button with step amount
+    connect(ui->step_slider, &QSlider::valueChanged, this, [=](int index){
+      int value = step_values[index];
+      ui->step_btn->setText(QString("Step %1").arg(value));
+    });
 
     // Proper cleanup when worker finishes
     connect(worker, &Worker::finished, this, &GUI::onWorkerFinished);
@@ -330,7 +336,8 @@ void GUI::on_enabl_cache_checkbox_checkStateChanged(const Qt::CheckState &arg1)
 void GUI::on_step_btn_clicked()
 {
     qDebug() << "Run step button clicked.";
-    emit sendRunStep();
+		int steps = step_values[ui->step_slider->value()];
+    emit sendRunSteps(steps);
 }
 
 void GUI::on_save_program_state_btn_clicked()

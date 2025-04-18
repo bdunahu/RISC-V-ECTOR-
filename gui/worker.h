@@ -45,7 +45,7 @@ public slots:
     void configure(std::vector<int> ways, std::vector<int> size, bool is_pipelined, bool is_cache_enabled);
     void refreshCache();
     void refreshRegisters();
-    void runStep();
+    void runSteps(int steps);
 
 signals:
     void clock_cycles(int value, int pc);
