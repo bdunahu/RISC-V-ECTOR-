@@ -1,7 +1,7 @@
 #ifndef MESSAGES_H
 #define MESSAGES_H
-#include <vector>
 #include <string>
+#include <vector>
 
 /**
  * Humorous computer speak.
@@ -16,7 +16,7 @@ const std::vector<std::string> load_file = {
 	"FILE LOADED", "FINISHED READING DATA. EAGERLY WAITING"};
 
 /**
- * @return a random waiting message
+ * @return an unsolicited waiting message
  */
 std::string get_waiting() { return RANDOM_MESSAGE(waiting); }
 

@@ -24,10 +24,18 @@ class GUI : public QMainWindow
 	Q_OBJECT
 
   public:
+	/**
+	 * Constructor.
+	 * @return A newly allocated GUI object.
+	 */
 	GUI(QWidget *parent = nullptr);
 	~GUI();
-	bool is_pipelined = false;
-	std::vector<int> ways;
+
+	/**
+	 * Uses `func' to set the current status.
+	 * @param a function which returns a string.
+	 */
+	void set_status(const std::function<std::string()> &func);
 
   signals:
 	void sendRefreshDram();
@@ -82,11 +90,21 @@ class GUI : public QMainWindow
 	 */
 	std::vector<signed int> p;
 
+	/**
+	 * The current cache configurations.
+	 */
+	std::vector<unsigned int> c;
+
+	/**
+	 * If this stage is pipelined or not.
+	 */
+	bool is_pipelined = false;
+
 	QThread workerThread;
 
 	Worker *worker;
 
-	QVector<int> step_values = {1, 5, 10, 50, 250, 1000, 10000};
+	QVector<int> step_values = {1, 5, 20, 50, 250, 1000, 10000};
 
 	const std::map<Mnemonic, QString> mnemonicNameMap = {
 		{Mnemonic::ADD, "ADD"},		  {Mnemonic::SUB, "SUB"},
@@ -115,6 +133,5 @@ class GUI : public QMainWindow
 		return (it != mnemonicNameMap.end()) ? it->second : "Unknown";
 	}
 
-	QString make_status(const std::function<std::string()> &func);
 };
 #endif // GUI_H

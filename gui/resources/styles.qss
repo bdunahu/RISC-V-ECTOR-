@@ -10,6 +10,7 @@ QWidget {
 }
 
 QGroupBox {
+    text-decoration: underline "#00cc00";
     font-size: 17pt;
     background-color: "#000004";
     border: 4px solid ;
@@ -29,7 +30,7 @@ QLabel {
 
 /* text entry */
 QLineEdit {
-    font-size: 15pt;
+    font-size: 18pt;
     border-radius: 0px;
     padding: 0 4px;
     selection-background-color: "#00cc00";

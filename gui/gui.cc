@@ -6,7 +6,8 @@ GUI::GUI(QWidget *parent) : QMainWindow(parent), ui(new Ui::GUI)
 {
 	ui->setupUi(this);
 
-	this->status_label = new QLabel(this->make_status(get_waiting), this);
+	this->status_label = new QLabel("", this);
+	this->set_status(get_waiting);
 	QLabel *risc_vector =
 		new QLabel("RISC V[ECTOR], CS535 UMASS AMHERST", this);
 	status_label->setMinimumWidth(1200);
@@ -250,7 +251,7 @@ void GUI::on_upload_intructions_btn_clicked()
 		"Binary Files (*.bin *.rv);;All Files (*.*)");
 	QFile file(filePath);
 	if (filePath.isEmpty() || !file.open(QIODevice::ReadOnly)) {
-		this->status_label->setText(this->make_status(get_bad_file));
+		this->set_status(get_bad_file);
 		return;
 	}
 
@@ -267,7 +268,7 @@ void GUI::on_upload_intructions_btn_clicked()
 		}
 	}
 
-	this->status_label->setText(this->make_status(get_load_file));
+	this->set_status(get_load_file);
 
 	file.close();
 }
@@ -283,10 +284,10 @@ void GUI::on_enable_pipeline_checkbox_checkStateChanged(
 {
 	if (arg1 == Qt::CheckState::Checked) {
 		qDebug() << "enable pipeline checkbox checked.";
-		is_pipelined = true;
+		this->is_pipelined = true;
 	} else {
 		qDebug() << "enable pipeline checkbox unchecked.";
-		is_pipelined = false;
+		this->is_pipelined = false;
 	}
 }
 
@@ -303,7 +304,7 @@ void GUI::on_save_program_state_btn_clicked()
 	qDebug() << "save program state button is clicked.";
 }
 
-QString GUI::make_status(const std::function<std::string()> &func)
+void GUI::set_status(const std::function<std::string()> &func)
 {
-	return "CPU SAYS: \"" + QString::fromStdString(func()) + "\"";
+	this->status_label->setText("CPU SAYS: \"" + QString::fromStdString(func()) + "\"");
 }
