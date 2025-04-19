@@ -74,7 +74,6 @@ int main(int argc, char **argv)
 		":/resources/BigBlueTermPlusNerdFontMono-Regular.ttf");
 	QFile ssf(":/resources/styles.qss");
 	QString f = QFontDatabase::applicationFontFamilies(fId).at(0);
-	a.setFont(QFont(f));
 
 	ssf.open(QFile::ReadOnly);
 	QString ss = QLatin1String(ssf.readAll());

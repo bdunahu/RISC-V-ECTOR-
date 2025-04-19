@@ -23,8 +23,8 @@ void Worker::configure(
 
 	this->ct_mutex.lock();
 	if (ways.size() != 0) {
-		// will ensure the largest cache is only half of DRAM
-		this->size_inc = (MEM_LINE_SPEC / ways.size()) / 2;
+		// TODO optimal proper sizes
+		this->size_inc = ((MEM_LINE_SPEC * 0.75) / ways.size());
 	}
 	d = new Dram(DRAM_DELAY);
 	s = static_cast<Storage *>(d);
