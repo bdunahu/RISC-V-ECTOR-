@@ -42,7 +42,10 @@ class GUI : public QMainWindow
 	void sendRefreshCache();
 	void sendRefreshRegisters();
 	void sendRunSteps(int steps);
-	void sendConfigure(std::vector<unsigned int> ways, bool is_pipelined);
+	void sendConfigure(
+		std::vector<unsigned int> ways,
+		vector<int> program,
+		bool is_pipelined);
 
   private slots:
 	void onWorkerClockCycles(int value, int pc);

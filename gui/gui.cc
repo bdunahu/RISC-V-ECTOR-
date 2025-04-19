@@ -351,7 +351,7 @@ void GUI::on_config_clicked()
 	else
 		this->set_status(get_initialize);
 
-	emit sendConfigure(ways, is_pipelined);
+	emit sendConfigure(ways, this->p, is_pipelined);
 }
 
 void GUI::set_status(const std::function<std::string()> &func)

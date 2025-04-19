@@ -1,4 +1,5 @@
 #include "worker.h"
+#include "storage.h"
 
 Worker::Worker(QObject *parent) : QObject(parent) {}
 
@@ -10,30 +11,38 @@ Worker::~Worker()
 	delete this->ct;
 }
 
-void Worker::configure(std::vector<unsigned int> ways, bool is_pipelined)
+void Worker::configure(
+	std::vector<unsigned int> ways,
+	std::vector<signed int> program,
+	bool is_pipelined)
 {
-	// this->d = new Dram(DRAM_DELAY);
-	// setWays(ways);
-	// setSize(size);
-	// this->cache_enabled = is_cache_enabled;
-	// if (!is_cache_enabled || ways.size() == 0) {
-	// 	this->ct = new Controller(wb_stage, this->d, is_pipelined);
-	// } else {
-	// 	// 0th index cache has largest delay
-	// 	for (int i = 0; i < ways.size(); i++) {
-	// 		if (i == 0) {
-	// 			Cache *cache =
-	// 				new Cache(this->d, size[i], ways[i], ways.size());
-	// 			this->c.push_back(cache);
-	// 		} else {
-	// 			Cache *cache = new Cache(
-	// 				this->c[i - 1], size[i], ways[i], ways.size() - i);
-	// 			this->c.push_back(cache);
-	// 		}
-	// 	}
-	// 	this->ct =
-	// 		new Controller(wb_stage, this->c.at(ways.size() - 1), is_pipelined);
-	// }
+	unsigned int size_inc;
+	Dram *d;
+	Storage *s;
+	int i;
+
+	if (ways.size() != 0)
+		size_inc = MEM_LINE_SPEC / ways.size();
+	d = new Dram(DRAM_DELAY);
+	s = (Storage *)d;
+
+	this->s.push_front(s);
+	d->load(program);
+
+	for (i = ways.size(); i > 0; --i) {
+		s = (Storage *)new Cache(
+			s, size_inc * (i), ways.at(i - 1), CACHE_DELAY + i);
+		this->s.push_front(s);
+	}
+
+	this->if_stage = new IF(nullptr);
+	this->id_stage = new ID(if_stage);
+	this->ex_stage = new EX(id_stage);
+	this->mm_stage = new MM(ex_stage);
+	this->wb_stage = new WB(mm_stage);
+	this->ct =
+		new Controller(wb_stage, s, is_pipelined);
+
 	emit clock_cycles(this->ct->get_clock_cycle(), this->ct->get_pc());
 }
 
