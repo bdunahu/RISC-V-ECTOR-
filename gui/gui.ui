@@ -76,7 +76,14 @@
              </widget>
             </item>
             <item>
-             <widget class="QTextEdit" name="cache_table"/>
+             <widget class="QTextEdit" name="cache_table">
+              <property name="minimumSize">
+               <size>
+                <width>500</width>
+                <height>0</height>
+               </size>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
@@ -109,7 +116,14 @@
              </widget>
             </item>
             <item>
-             <widget class="QTextEdit" name="dram_table"/>
+             <widget class="QTextEdit" name="dram_table">
+              <property name="minimumSize">
+               <size>
+                <width>500</width>
+                <height>0</height>
+               </size>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
@@ -358,7 +372,7 @@
          <widget class="QGroupBox" name="Fetch">
           <property name="minimumSize">
            <size>
-            <width>150</width>
+            <width>200</width>
             <height>0</height>
            </size>
           </property>
@@ -397,7 +411,7 @@
          <widget class="QGroupBox" name="Decode">
           <property name="minimumSize">
            <size>
-            <width>150</width>
+            <width>200</width>
             <height>0</height>
            </size>
           </property>
@@ -436,7 +450,7 @@
          <widget class="QGroupBox" name="Execute">
           <property name="minimumSize">
            <size>
-            <width>150</width>
+            <width>200</width>
             <height>0</height>
            </size>
           </property>
@@ -499,7 +513,7 @@
          <widget class="QGroupBox" name="Memory">
           <property name="minimumSize">
            <size>
-            <width>150</width>
+            <width>200</width>
             <height>0</height>
            </size>
           </property>
@@ -559,7 +573,7 @@
          <widget class="QGroupBox" name="WriteBack">
           <property name="minimumSize">
            <size>
-            <width>150</width>
+            <width>200</width>
             <height>0</height>
            </size>
           </property>
