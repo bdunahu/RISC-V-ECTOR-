@@ -452,60 +452,17 @@
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_27">
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_9">
-              <item>
-               <widget class="QPushButton" name="set_levels_btn">
-                <property name="text">
-                 <string>Cache Levels</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QComboBox" name="cache_levels_dropdwn"/>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="cache_size_inp">
-                <property name="placeholderText">
-                 <string>size</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="cache_ways_inp">
-                <property name="placeholderText">
-                 <string>ways</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="set_cache_btn">
-                <property name="text">
-                 <string>Cache Conf</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
+             <widget class="QLineEdit" name="way_box_1"/>
             </item>
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_10">
-              <item>
-               <widget class="QPushButton" name="Configure_Btn">
-                <property name="text">
-                 <string>Configure</string>
-                </property>
-               </widget>
-              </item>
               <item>
                <widget class="QCheckBox" name="enable_pipeline_checkbox">
                 <property name="text">
                  <string>Enable Pipeline</string>
                 </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QCheckBox" name="enabl_cache_checkbox">
-                <property name="text">
-                 <string>Enable Cache</string>
+                <property name="checked">
+                 <bool>true</bool>
                 </property>
                </widget>
               </item>

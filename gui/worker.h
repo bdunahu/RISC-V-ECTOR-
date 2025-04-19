@@ -18,31 +18,16 @@ class Worker : public QObject {
     Q_OBJECT
 
 private:
-    std::vector<Cache*> c;
-    std::vector<int> cache_ways;
-    std::vector<int> cache_size;
-    bool cache_enabled = false;
-    Dram *d;
+    std::vector<Storage*> s;
+    std::vector<Stage*> p;
     Controller *ct;
-    ID *id_stage;
-    IF *if_stage;
-    EX *ex_stage;
-    MM *mm_stage;
-    WB *wb_stage;
 
 public:
     explicit Worker(QObject *parent = nullptr);
     ~Worker();
-    std::vector<int> getWays();
-    std::vector<int> getSize();
-    void setWays(std::vector<int> ways);
-    void setSize(std::vector<int> size);
 
 public slots:
-    void doWork();
     void refreshDram();
-    void loadProgram(std::vector<signed int> p);
-    void configure(std::vector<int> ways, std::vector<int> size, bool is_pipelined, bool is_cache_enabled);
     void refreshCache();
     void refreshRegisters();
     void runSteps(int steps);

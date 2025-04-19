@@ -1,6 +1,5 @@
 #include "gui.h"
 #include "./ui_gui.h"
-// #include "byteswap.h"
 
 GUI::GUI(QWidget *parent)
     : QMainWindow(parent)
@@ -8,16 +7,13 @@ GUI::GUI(QWidget *parent)
 {
     ui->setupUi(this);
 
-    ui->enabl_cache_checkbox->setChecked(true);
-    ui->enable_pipeline_checkbox->setChecked(true);
-
     worker = new Worker();
     worker->moveToThread(&workerThread);
 
     // Connect worker thread lifecycle
-    connect(&workerThread, &QThread::started, worker, &Worker::doWork);
+    // connect(&workerThread, &QThread::started, worker, &Worker::doWork);
 
-    // Display clock cycles and PC
+    // display clock cycles and PC
     connect(worker, &Worker::clock_cycles, this, &GUI::onWorkerClockCycles);
 
     connect(worker, &Worker::if_info, this, &GUI::onWorkerFetchInfo);
@@ -39,17 +35,11 @@ GUI::GUI(QWidget *parent)
     // Display registers
     connect(worker, &Worker::register_storage, this, &GUI::onWorkerShowRegisters);
 
-    // Refresh DRAM from worker thread
-    connect(this, &GUI::sendRefreshDram, worker, &Worker::refreshDram, Qt::QueuedConnection);
+    // // Refresh DRAM from worker thread
+    // connect(this, &GUI::sendRefreshDram, worker, &Worker::refreshDram, Qt::QueuedConnection);
 
-    // Load program from worker thread
-    connect(this, &GUI::sendLoadProgram, worker, &Worker::loadProgram, Qt::QueuedConnection);
-
-    // Configure pipeline
-    connect(this, &GUI::sendConfigure, worker, &Worker::configure, Qt::QueuedConnection);
-
-    // Refresh Cache from worker thread
-    connect(this, &GUI::sendRefreshCache, worker, &Worker::refreshCache, Qt::QueuedConnection);
+    // // Refresh Cache from worker thread
+    // connect(this, &GUI::sendRefreshCache, worker, &Worker::refreshCache, Qt::QueuedConnection);
 
     // Refresh Registers from worker thread
     connect(this, &GUI::sendRefreshRegisters, worker, &Worker::refreshRegisters, Qt::QueuedConnection);
@@ -257,51 +247,14 @@ void GUI::on_upload_intructions_btn_clicked()
     QMessageBox::information(ui->register_table, "File Upload", "Instructions loaded successfully!");
 }
 
-
 void GUI::on_upload_program_state_btn_clicked()
 {
     //TODO:Upload and set program state ( have to decide how to use this)
     qDebug() << "upload program state button is clicked.";
 }
 
-void GUI::on_set_levels_btn_clicked()
-{
-    qDebug() << "Set levels button clicked.";
-    bool ok;
-    int value = QInputDialog::getInt(this, "Enter Value", "Enter value:",
-                                     0,
-                                     0, 10, 1, &ok);
-    if (ok) {
-        cache_levels = value;
-        ui->cache_levels_dropdwn->clear();  // Clear previous entries
-        for (int i = 0; i < cache_levels; ++i) {
-            ui->cache_levels_dropdwn->addItem(QString::number(i));
-            ways.push_back(2);
-            size.push_back(5);
-        }
-    } else {
-        qDebug() << "User cancelled input.";
-    }
-}
-
-void GUI::on_set_cache_btn_clicked() {
-    int current_cache = ui->cache_levels_dropdwn->currentIndex();
-    // qDebug() << "current cache: " << current_cache;
-    int prevWays = ways[current_cache];
-    int prevSize = size[current_cache];
-    QString cache_ways = ui->cache_ways_inp->text();
-    QString cache_size = ui->cache_size_inp->text();
-    ways[current_cache] = cache_ways.isEmpty() ? prevWays : cache_ways.toInt();
-    size[current_cache] = cache_size.isEmpty() ? prevSize : cache_size.toInt();
-    QMessageBox::information(ui->register_table, "Cache Configuration", "Cache" + QString::number(current_cache) + " values set successfully! Please click on Configure button to configure the pipeline or configure other caches.");
-    // for(int i=0;i<ways.size();i++) {
-    //     qDebug() << "ways: " << ways[i] << " size: " << size[i];
-    // }
-}
-
 void GUI::on_enable_pipeline_checkbox_checkStateChanged(const Qt::CheckState &arg1)
 {
-    //TODO: handle pipeline enabling
     if(arg1 == Qt::CheckState::Checked) {
         qDebug() << "enable pipeline checkbox checked.";
         is_pipelined = true;
@@ -309,19 +262,6 @@ void GUI::on_enable_pipeline_checkbox_checkStateChanged(const Qt::CheckState &ar
         qDebug() << "enable pipeline checkbox unchecked.";
         is_pipelined = false;
     }
-}
-
-void GUI::on_enabl_cache_checkbox_checkStateChanged(const Qt::CheckState &arg1)
-{
-    //TODO: handle cache enabling
-    if(arg1 == Qt::CheckState::Checked) {
-        qDebug() << "enable cache checkbox checked.";
-        is_cache_enabled = true;
-    } else {
-        qDebug() << "enable cache checkbox unchecked.";
-        is_cache_enabled = false;
-    }
-
 }
 
 void GUI::on_step_btn_clicked()
@@ -335,10 +275,4 @@ void GUI::on_save_program_state_btn_clicked()
 {
     //TODO: save program state
     qDebug() << "save program state button is clicked.";
-}
-
-void GUI::on_Configure_Btn_clicked()
-{
-    emit sendConfigure(ways, size, is_pipelined, is_cache_enabled);
-    QMessageBox::information(ui->register_table, "Pipeline Configuration", "Pipeline and memory subsystem configured successfully!");
 }
