@@ -124,18 +124,21 @@
           <property name="title">
            <string>Fetch</string>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
+          </property>
           <layout class="QVBoxLayout" name="verticalLayout">
            <item>
             <widget class="QLineEdit" name="fetch_instruction_bits">
              <property name="placeholderText">
-              <string>Instruction Bits</string>
+              <string/>
              </property>
             </widget>
            </item>
            <item>
             <widget class="QLineEdit" name="fetch_pc">
              <property name="placeholderText">
-              <string>Program Counter</string>
+              <string/>
              </property>
             </widget>
            </item>
@@ -154,18 +157,21 @@
           <property name="title">
            <string>Decode</string>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
+          </property>
           <layout class="QVBoxLayout" name="verticalLayout_2">
            <item>
             <widget class="QLineEdit" name="decode_s1">
              <property name="placeholderText">
-              <string>Instruction Bits</string>
+              <string> </string>
              </property>
             </widget>
            </item>
            <item>
             <widget class="QLineEdit" name="decode_pc">
              <property name="placeholderText">
-              <string>Program Counter</string>
+              <string> </string>
              </property>
             </widget>
            </item>
@@ -184,11 +190,14 @@
           <property name="title">
            <string>Execute</string>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
+          </property>
           <layout class="QVBoxLayout" name="verticalLayout_3">
            <item>
             <widget class="QLineEdit" name="execute_s1">
              <property name="placeholderText">
-              <string>s1</string>
+              <string/>
              </property>
             </widget>
            </item>
@@ -198,28 +207,28 @@
               <string/>
              </property>
              <property name="placeholderText">
-              <string>s2</string>
+              <string/>
              </property>
             </widget>
            </item>
            <item>
             <widget class="QLineEdit" name="execute_s3">
              <property name="placeholderText">
-              <string>s3</string>
+              <string/>
              </property>
             </widget>
            </item>
            <item>
             <widget class="QLineEdit" name="execute_mnemonic">
              <property name="placeholderText">
-              <string>Mnemonic</string>
+              <string/>
              </property>
             </widget>
            </item>
            <item>
             <widget class="QLineEdit" name="execute_pc">
              <property name="placeholderText">
-              <string>Program Counter</string>
+              <string/>
              </property>
             </widget>
            </item>
@@ -238,11 +247,14 @@
           <property name="title">
            <string>Memory</string>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
+          </property>
           <layout class="QVBoxLayout" name="verticalLayout_4">
            <item>
             <widget class="QLineEdit" name="memory_s1">
              <property name="placeholderText">
-              <string>s1</string>
+              <string/>
              </property>
             </widget>
            </item>
@@ -252,28 +264,28 @@
               <string/>
              </property>
              <property name="placeholderText">
-              <string>s2</string>
+              <string/>
              </property>
             </widget>
            </item>
            <item>
             <widget class="QLineEdit" name="memory_s3">
              <property name="placeholderText">
-              <string>s3</string>
+              <string/>
              </property>
             </widget>
            </item>
            <item>
             <widget class="QLineEdit" name="memory_mnemonic">
              <property name="placeholderText">
-              <string>Mnemonic</string>
+              <string/>
              </property>
             </widget>
            </item>
            <item>
             <widget class="QLineEdit" name="memory_pc">
              <property name="placeholderText">
-              <string>Program Counter</string>
+              <string/>
              </property>
             </widget>
            </item>
@@ -292,11 +304,14 @@
           <property name="title">
            <string>Write Back</string>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
+          </property>
           <layout class="QVBoxLayout" name="verticalLayout_5">
            <item>
             <widget class="QLineEdit" name="wb_s1">
              <property name="placeholderText">
-              <string>s1</string>
+              <string/>
              </property>
             </widget>
            </item>
@@ -306,28 +321,28 @@
               <string/>
              </property>
              <property name="placeholderText">
-              <string>s2</string>
+              <string/>
              </property>
             </widget>
            </item>
            <item>
             <widget class="QLineEdit" name="wb_s3">
              <property name="placeholderText">
-              <string>s3</string>
+              <string/>
              </property>
             </widget>
            </item>
            <item>
             <widget class="QLineEdit" name="wb_mnemonic">
              <property name="placeholderText">
-              <string>Mnemonic</string>
+              <string/>
              </property>
             </widget>
            </item>
            <item>
             <widget class="QLineEdit" name="wb_pc">
              <property name="placeholderText">
-              <string>Program Counter</string>
+              <string/>
              </property>
             </widget>
            </item>
@@ -372,8 +387,14 @@
           </item>
           <item>
            <widget class="QPushButton" name="step_btn">
+            <property name="minimumSize">
+             <size>
+              <width>400</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="text">
-             <string>Step</string>
+             <string>Step 1</string>
             </property>
            </widget>
           </item>
@@ -421,15 +442,21 @@
              </widget>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_8">
-              <item>
-               <widget class="QPushButton" name="upload_program_state_btn">
-                <property name="text">
-                 <string>Upload Program State File</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
+             <widget class="QPushButton" name="upload_program_state_btn">
+              <property name="text">
+               <string>Upload Program State File</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="save_program_state_btn">
+              <property name="text">
+               <string>Save Current Program State</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_8"/>
             </item>
            </layout>
           </item>
@@ -582,13 +609,6 @@
            <widget class="QLabel" name="cycles_label">
             <property name="text">
              <string>Clock Cycles</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="save_program_state_btn">
-            <property name="text">
-             <string>Save Current Program State</string>
             </property>
            </widget>
           </item>

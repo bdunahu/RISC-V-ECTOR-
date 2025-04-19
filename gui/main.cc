@@ -1,7 +1,9 @@
-#include "pipe_spec.h"
 #include "gui.h"
 #include "logger.h"
+#include "pipe_spec.h"
 #include <QApplication>
+#include <QFile>
+#include <QFontDatabase>
 #include <getopt.h>
 #include <iostream>
 
@@ -67,6 +69,17 @@ int main(int argc, char **argv)
 
 	global_log->log(INFO, "Starting QT...");
 	QApplication a(argc, argv);
+
+	int fId = QFontDatabase::addApplicationFont(
+		":/resources/BigBlueTermPlusNerdFontMono-Regular.ttf");
+	QFile ssf(":/resources/styles.qss");
+	QString f = QFontDatabase::applicationFontFamilies(fId).at(0);
+	a.setFont(QFont(f));
+
+	ssf.open(QFile::ReadOnly);
+	QString ss = QLatin1String(ssf.readAll());
+	a.setStyleSheet(ss);
+
 	GUI w;
 	w.show();
 	return a.exec();

@@ -336,7 +336,7 @@ void GUI::on_enabl_cache_checkbox_checkStateChanged(const Qt::CheckState &arg1)
 void GUI::on_step_btn_clicked()
 {
     qDebug() << "Run step button clicked.";
-		int steps = step_values[ui->step_slider->value()];
+    int steps = step_values[ui->step_slider->value()];
     emit sendRunSteps(steps);
 }
 

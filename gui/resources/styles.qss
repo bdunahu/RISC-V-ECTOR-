@@ -1,0 +1,139 @@
+* {
+    font-family: "BigBlueTermPlusNerdFontMono", "monospace";
+    font-size: 20pt;
+    color: "#00cc00";
+    background-color: "#000004";
+}
+
+/* main window */
+QWidget {
+}
+
+QGroupBox {
+    font-size: 17pt;
+    background-color: "#000004";
+    border: 4px solid ;
+    border-radius: 0px;
+    margin-bottom: 1ex; /* leave space at the bottom for the title */
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: bottom left;
+    border-radius: 0px;
+    padding: 0 2px;
+    background-color: "#00cc00";
+    color: "#000000";
+}
+
+QLabel {
+}
+
+/* text entry */
+QLineEdit {
+    font-size: 15pt;
+    border-radius: 0px;
+    padding: 0 4px;
+    selection-background-color: "#00cc00";
+}
+
+QTextEdit, QListView {
+    font-size: 10pt;
+    background-color: "#000004";
+}
+
+QPushButton {
+    border: 4px solid "#00cc00";
+}
+
+QPushButton:pressed {
+    color: "#000004";
+    background-color: "#00cc00";
+}
+
+QPushButton:flat {
+    border: none; /* no border for a flat push button */
+}
+
+QPushButton:default {
+    border-color: "#00cc00";
+}
+
+QMenuBar {
+    background-color: "#00cc00";
+    spacing: 3px; /* spacing between menu bar items */
+}
+
+QMenuBar::item {
+    padding: 1px 4px;
+    background: transparent;
+    border-radius: 4px;
+}
+
+QMenuBar::item:selected { /* when selected using mouse or keyboard */
+    background: #a8a8a8;
+}
+
+QMenuBar::item:pressed {
+    background: #888888;
+}
+
+QCheckBox {
+    spacing: 5px;
+}
+
+QCheckBox::indicator {
+    width: 13px;
+    height: 13px;
+    border: 2px solid "#00cc00";
+}
+
+QCheckBox::indicator:unchecked {
+}
+
+/* QCheckBox::indicator:unchecked:pressed { */
+/*     image: url(:/images/checkbox_unchecked_pressed.png); */
+/* } */
+
+QCheckBox::indicator:checked {
+    background: "#00cc00";
+}
+
+QSlider::groove:horizontal {
+    height: 5px; /* the groove expands to the size of the slider by default. by giving it a height, it has a fixed size */
+    background: "#00cc00";
+    margin: 2px 0;
+}
+
+QSlider::handle:horizontal {
+    background: "#00cc00";
+    width: 10px;
+    margin: -30px 0; /* handle is placed by default on the contents rect of the groove. Expand outside the groove */
+    border-radius: 3px;
+}
+
+QScrollBar:horizontal {
+    border: 2px solid "#00cc00";
+    height: 4px;
+    margin: 0px 20px 0 20px;
+}
+QScrollBar::handle:horizontal {
+    min-width: 20px;
+}
+QScrollBar::add-line:horizontal {
+    border: 2px solid "#00cc00";
+    width: 4px;
+    subcontrol-position: right;
+    subcontrol-origin: margin;
+}
+
+QScrollBar::sub-line:horizontal {
+    border: 2px solid "#00cc00";
+    width: 4px;
+    subcontrol-position: left;
+    subcontrol-origin: margin;
+}
+
+/* Local Variables: */
+/* mode: css */
+/* End: */
