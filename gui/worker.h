@@ -23,15 +23,16 @@ class Worker : public QObject
 	 * The storage objects, stored smallest to largest.
 	 */
 	std::deque<Storage *> s;
-	/**
-	 * The stage objects, starting with fetch.
-	 */
 	IF *if_stage;
 	ID *id_stage;
 	EX *ex_stage;
 	MM *mm_stage;
 	WB *wb_stage;
 	Controller *ct;
+	/**
+	 * The size each progressive cache level increases by.
+	 */
+	unsigned int size_inc;
 
   public:
 	explicit Worker(QObject *parent = nullptr);

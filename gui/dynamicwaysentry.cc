@@ -26,6 +26,8 @@ int DynamicWaysEntry::parse_valid_way(QString t)
 	return (s && i >= 0 && 5 > i) ? i : -1;
 }
 
+// TODO if you enter something valid and then make it invalid,
+// the next box still shows
 void DynamicWaysEntry::on_number_enter(const QString &t)
 {
 	int i;
