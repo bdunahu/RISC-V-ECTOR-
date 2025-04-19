@@ -1,3 +1,7 @@
+#ifndef DYNAMICWAYSENTRY_H
+#define DYNAMICWAYSENTRY_H
+
+
 #include <QLineEdit>
 #include <QStringList>
 #include <QVBoxLayout>
@@ -26,3 +30,5 @@ class DynamicWaysEntry : public QWidget
 	void add_field();
 	void remove_last_field();
 };
+
+#endif // DYNAMICWAYSENTRY_H

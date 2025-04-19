@@ -10,6 +10,33 @@ Worker::~Worker()
 	delete this->ct;
 }
 
+void Worker::configure(std::vector<unsigned int> ways, bool is_pipelined)
+{
+	// this->d = new Dram(DRAM_DELAY);
+	// setWays(ways);
+	// setSize(size);
+	// this->cache_enabled = is_cache_enabled;
+	// if (!is_cache_enabled || ways.size() == 0) {
+	// 	this->ct = new Controller(wb_stage, this->d, is_pipelined);
+	// } else {
+	// 	// 0th index cache has largest delay
+	// 	for (int i = 0; i < ways.size(); i++) {
+	// 		if (i == 0) {
+	// 			Cache *cache =
+	// 				new Cache(this->d, size[i], ways[i], ways.size());
+	// 			this->c.push_back(cache);
+	// 		} else {
+	// 			Cache *cache = new Cache(
+	// 				this->c[i - 1], size[i], ways[i], ways.size() - i);
+	// 			this->c.push_back(cache);
+	// 		}
+	// 	}
+	// 	this->ct =
+	// 		new Controller(wb_stage, this->c.at(ways.size() - 1), is_pipelined);
+	// }
+	emit clock_cycles(this->ct->get_clock_cycle(), this->ct->get_pc());
+}
+
 void Worker::refreshDram()
 {
 	qDebug() << "Refreshing Dram";

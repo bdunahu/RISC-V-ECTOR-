@@ -1,5 +1,6 @@
 #include "gui.h"
 #include "./ui_gui.h"
+#include "dynamicwaysentry.h"
 #include "messages.h"
 
 GUI::GUI(QWidget *parent) : QMainWindow(parent), ui(new Ui::GUI)
@@ -43,6 +44,11 @@ GUI::GUI(QWidget *parent) : QMainWindow(parent), ui(new Ui::GUI)
 	connect(
 		worker, &Worker::register_storage, this, &GUI::onWorkerShowRegisters);
 
+	// Configure pipeline
+	connect(
+		this, &GUI::sendConfigure, worker, &Worker::configure,
+		Qt::QueuedConnection);
+
 	// // Refresh DRAM from worker thread
 	// connect(this, &GUI::sendRefreshDram, worker, &Worker::refreshDram,
 	// Qt::QueuedConnection);
@@ -56,7 +62,7 @@ GUI::GUI(QWidget *parent) : QMainWindow(parent), ui(new Ui::GUI)
 		this, &GUI::sendRefreshRegisters, worker, &Worker::refreshRegisters,
 		Qt::QueuedConnection);
 
-	// Advance controller by somes steps
+	// Advance controller by some steps
 	connect(
 		this, &GUI::sendRunSteps, worker, &Worker::runSteps,
 		Qt::QueuedConnection);
@@ -269,7 +275,7 @@ void GUI::on_upload_intructions_btn_clicked()
 	}
 
 	if (this->p.empty())
-			this->set_status(get_no_instructions);
+		this->set_status(get_no_instructions);
 	else
 		this->set_status(get_load_file);
 
@@ -297,6 +303,8 @@ void GUI::on_enable_pipeline_checkbox_checkStateChanged(
 void GUI::on_step_btn_clicked()
 {
 	qDebug() << "Run step button clicked.";
+	if (!this->ready)
+		return this->on_config_clicked();
 	int steps = step_values[ui->step_slider->value()];
 	emit sendRunSteps(steps);
 }
@@ -307,7 +315,47 @@ void GUI::on_save_program_state_btn_clicked()
 	qDebug() << "save program state button is clicked.";
 }
 
+void GUI::on_config_clicked()
+{
+	std::vector<unsigned int> ways;
+	QStringList entries;
+	signed int i;
+	DynamicWaysEntry *dwe = ui->cache_way_selector;
+
+	for (const QString &s : dwe->get_entries()) {
+
+		if (s.isEmpty())
+			continue;
+
+		i = dwe->parse_valid_way(s);
+		if (i != -1) {
+			ways.push_back((unsigned int)i);
+		} else {
+			this->set_status(get_bad_cache);
+			return;
+		}
+	}
+
+	if (this->p.empty()) {
+		this->set_status(get_no_instructions);
+		return;
+	}
+
+	this->ready = true;
+
+	// say something snarky
+	if (!is_pipelined)
+		this->set_status(get_no_pipeline);
+	else if (ways.size() == 0)
+		this->set_status(get_no_cache);
+	else
+		this->set_status(get_initialize);
+
+	emit sendConfigure(ways, is_pipelined);
+}
+
 void GUI::set_status(const std::function<std::string()> &func)
 {
-	this->status_label->setText("COMPUTER SAYS: \"" + QString::fromStdString(func()) + "\"");
+	this->status_label->setText(
+		"COMPUTER SAYS: \"" + QString::fromStdString(func()) + "\"");
 }

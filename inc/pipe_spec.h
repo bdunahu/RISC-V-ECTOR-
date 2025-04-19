@@ -49,6 +49,16 @@
 #define MAX_INT 2147483647
 
 /**
+ * The delay on DRAM objects.
+ */
+#define DRAM_DELAY 10
+
+/**
+ * The (base) on cache objects.
+ */
+#define CACHE_DELAY 1
+
+/**
  * Return the N least-significant bits from integer K using a bit mask
  * @param the integer to be parsed
  * @param the number of bits to be parsed

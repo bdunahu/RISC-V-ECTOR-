@@ -5,8 +5,8 @@
 #include <QFile>
 #include <QFileDialog>
 #include <QInputDialog>
+#include <QLabel>
 #include <QMainWindow>
-#include <QMessageBox>
 #include <QTextEdit>
 #include <QTextStream>
 #include <QThread>
@@ -42,6 +42,7 @@ class GUI : public QMainWindow
 	void sendRefreshCache();
 	void sendRefreshRegisters();
 	void sendRunSteps(int steps);
+	void sendConfigure(std::vector<unsigned int> ways, bool is_pipelined);
 
   private slots:
 	void onWorkerClockCycles(int value, int pc);
@@ -77,8 +78,21 @@ class GUI : public QMainWindow
 
 	void on_save_program_state_btn_clicked();
 
+	/**
+	 * Validates that the user has provided a valid program and cache.
+	 * If so, `this->ready' is set and the user options are passed to the
+	 * worker.
+	 * If not, rudely complains.
+	 */
+	void on_config_clicked();
+
   private:
 	Ui::GUI *ui;
+
+	/**
+	 * Indicates if the program has been initialized.
+	 */
+	bool ready;
 
 	/**
 	 * The message displayed on the status bar.
@@ -91,20 +105,18 @@ class GUI : public QMainWindow
 	std::vector<signed int> p;
 
 	/**
-	 * The current cache configurations.
-	 */
-	std::vector<unsigned int> c;
-
-	/**
 	 * If this stage is pipelined or not.
 	 */
 	bool is_pipelined = false;
 
+	/**
+	 * The possible step slider values.
+	 */
+	QVector<int> step_values = {1, 5, 20, 50, 250, 1000, 10000};
+
 	QThread workerThread;
 
 	Worker *worker;
-
-	QVector<int> step_values = {1, 5, 20, 50, 250, 1000, 10000};
 
 	const std::map<Mnemonic, QString> mnemonicNameMap = {
 		{Mnemonic::ADD, "ADD"},		  {Mnemonic::SUB, "SUB"},
@@ -132,6 +144,5 @@ class GUI : public QMainWindow
 		auto it = mnemonicNameMap.find(mnemonic);
 		return (it != mnemonicNameMap.end()) ? it->second : "Unknown";
 	}
-
 };
 #endif // GUI_H
