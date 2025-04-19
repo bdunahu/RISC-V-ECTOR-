@@ -7,6 +7,12 @@ GUI::GUI(QWidget *parent)
 {
     ui->setupUi(this);
 
+		QLabel* status_label = new QLabel("CONSENSUS: WAITING FOR USER.", this);
+		QLabel* risc_vector = new QLabel("RISC V[ECTOR], CS535 UMASS AMHERST", this);
+		status_label->setMinimumWidth(1200);
+		ui->statusBar->addWidget(status_label);
+		ui->statusBar->addPermanentWidget(risc_vector);
+
     worker = new Worker();
     worker->moveToThread(&workerThread);
 
