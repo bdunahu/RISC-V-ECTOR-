@@ -163,42 +163,35 @@ void GUI::onWorkerClockCycles(int cycles, int pc) {
 }
 
 void GUI::onWorkerFetchInfo(const std::vector<int> info) {
-    //QString::asprintf("%04X", value)
-    if(!info.empty()) {
-        ui->fetch_pc->setText(QString::number(info[0]));
-        ui->fetch_instruction_bits->setText(QString::asprintf("%04X", info[1]));
+    if (!info.empty()) {
+        ui->fetch_squashed->setText(QString::number(info[0]));
+        ui->fetch_bits->setText(QString::asprintf("%04X", info[1]));
     } else {
-        ui->fetch_pc->clear();
-        ui->fetch_instruction_bits->clear();
+        ui->fetch_squashed->clear();
+        ui->fetch_bits->clear();
     }
 }
 
 void GUI::onWorkerDecodeInfo(const std::vector<int> info) {
     if(!info.empty()) {
-        // ui->decode_mnemonic->setText(mnemonicToString((Mnemonic)info[0]));
-        ui->decode_pc->setText(QString::number(info[0]));
-        ui->decode_s1->setText(QString::asprintf("%04X", info[1]));
-        // ui->decode_s2->setText(QString::asprintf("%04X", info[3]));
-        // ui->decode_s3->setText(QString::asprintf("%04X", info[4]));
+        ui->decode_squashed->setText(QString::number(info[0]));
+        ui->decode_bits->setText(QString::asprintf("%04X", info[1]));
     } else {
-        // ui->decode_mnemonic->clear();
-        ui->decode_pc->clear();
-        ui->decode_s1->clear();
-        // ui->decode_s2->clear();
-        // ui->decode_s3->clear();
+        ui->decode_squashed->clear();
+        ui->decode_bits->clear();
     }
 }
 
 void GUI::onWorkerExecuteInfo(const std::vector<int> info) {
     if(!info.empty()) {
-        ui->execute_mnemonic->setText(mnemonicToString((Mnemonic)info[0]));
-        ui->execute_pc->setText(QString::number(info[1]));
+				ui->execute_mnemonic->setText(mnemonicToString((Mnemonic)info[0]));
+        ui->execute_squashed->setText(QString::number(info[1]));
         ui->execute_s1->setText(QString::asprintf("%04X", info[2]));
         ui->execute_s2->setText(QString::asprintf("%04X", info[3]));
         ui->execute_s3->setText(QString::asprintf("%04X", info[4]));
     } else {
         ui->execute_mnemonic->clear();
-        ui->execute_pc->clear();
+        ui->execute_squashed->clear();
         ui->execute_s1->clear();
         ui->execute_s2->clear();
         ui->execute_s3->clear();
@@ -207,14 +200,14 @@ void GUI::onWorkerExecuteInfo(const std::vector<int> info) {
 
 void GUI::onWorkerMemoryInfo(const std::vector<int> info) {
     if(!info.empty()) {
-        ui->memory_mnemonic->setText(mnemonicToString((Mnemonic)info[0]));
-        ui->memory_pc->setText(QString::number(info[1]));
+				ui->memory_mnemonic->setText(mnemonicToString((Mnemonic)info[0]));
+        ui->memory_squashed->setText(QString::number(info[1]));
         ui->memory_s1->setText(QString::asprintf("%04X", info[2]));
         ui->memory_s2->setText(QString::asprintf("%04X", info[3]));
         ui->memory_s3->setText(QString::asprintf("%04X", info[4]));
     } else {
         ui->memory_mnemonic->clear();
-        ui->memory_pc->clear();
+        ui->memory_squashed->clear();
         ui->memory_s1->clear();
         ui->memory_s2->clear();
         ui->memory_s3->clear();
@@ -223,17 +216,15 @@ void GUI::onWorkerMemoryInfo(const std::vector<int> info) {
 
 void GUI::onWorkerWriteBackInfo(const std::vector<int> info) {
     if(!info.empty()) {
-        ui->wb_mnemonic->setText(mnemonicToString((Mnemonic)info[0]));
-        ui->wb_pc->setText(QString::number(info[1]));
-        ui->wb_s1->setText(QString::asprintf("%04X", info[2]));
-        ui->wb_s2->setText(QString::asprintf("%04X", info[3]));
-        ui->wb_s3->setText(QString::asprintf("%04X", info[4]));
+				ui->write_mnemonic->setText(mnemonicToString((Mnemonic)info[0]));
+        ui->write_s1->setText(QString::asprintf("%04X", info[2]));
+        ui->write_s2->setText(QString::asprintf("%04X", info[3]));
+        ui->write_s3->setText(QString::asprintf("%04X", info[4]));
     } else {
-        ui->wb_mnemonic->clear();
-        ui->wb_pc->clear();
-        ui->wb_s1->clear();
-        ui->wb_s2->clear();
-        ui->wb_s3->clear();
+        ui->write_mnemonic->clear();
+        ui->write_s1->clear();
+        ui->write_s2->clear();
+        ui->write_s3->clear();
     }
 }
 

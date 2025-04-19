@@ -121,6 +121,12 @@
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
          <widget class="QGroupBox" name="Fetch">
+          <property name="minimumSize">
+           <size>
+            <width>150</width>
+            <height>0</height>
+           </size>
+          </property>
           <property name="title">
            <string>Fetch</string>
           </property>
@@ -129,15 +135,15 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout">
            <item>
-            <widget class="QLineEdit" name="fetch_instruction_bits">
-             <property name="placeholderText">
+            <widget class="QLabel" name="fetch_bits">
+             <property name="text">
               <string/>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="fetch_pc">
-             <property name="placeholderText">
+            <widget class="QLabel" name="fetch_squashed">
+             <property name="text">
               <string/>
              </property>
             </widget>
@@ -154,6 +160,12 @@
         </item>
         <item>
          <widget class="QGroupBox" name="Decode">
+          <property name="minimumSize">
+           <size>
+            <width>150</width>
+            <height>0</height>
+           </size>
+          </property>
           <property name="title">
            <string>Decode</string>
           </property>
@@ -162,16 +174,16 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_2">
            <item>
-            <widget class="QLineEdit" name="decode_s1">
-             <property name="placeholderText">
-              <string> </string>
+            <widget class="QLabel" name="decode_bits">
+             <property name="text">
+              <string/>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="decode_pc">
-             <property name="placeholderText">
-              <string> </string>
+            <widget class="QLabel" name="decode_squashed">
+             <property name="text">
+              <string/>
              </property>
             </widget>
            </item>
@@ -187,6 +199,12 @@
         </item>
         <item>
          <widget class="QGroupBox" name="Execute">
+          <property name="minimumSize">
+           <size>
+            <width>150</width>
+            <height>0</height>
+           </size>
+          </property>
           <property name="title">
            <string>Execute</string>
           </property>
@@ -195,40 +213,40 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_3">
            <item>
-            <widget class="QLineEdit" name="execute_s1">
-             <property name="placeholderText">
-              <string/>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="execute_s2">
+            <widget class="QLabel" name="execute_s1">
              <property name="text">
               <string/>
              </property>
-             <property name="placeholderText">
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="execute_s2">
+             <property name="text">
               <string/>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="execute_s3">
-             <property name="placeholderText">
+            <widget class="QLabel" name="execute_s3">
+             <property name="text">
               <string/>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="execute_mnemonic">
-             <property name="placeholderText">
+            <widget class="QLabel" name="execute_mnemonic">
+             <property name="text">
               <string/>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="execute_pc">
-             <property name="placeholderText">
+            <widget class="QLabel" name="execute_squashed">
+             <property name="text">
               <string/>
+             </property>
+             <property name="textFormat">
+              <enum>Qt::TextFormat::MarkdownText</enum>
              </property>
             </widget>
            </item>
@@ -244,6 +262,12 @@
         </item>
         <item>
          <widget class="QGroupBox" name="Memory">
+          <property name="minimumSize">
+           <size>
+            <width>150</width>
+            <height>0</height>
+           </size>
+          </property>
           <property name="title">
            <string>Memory</string>
           </property>
@@ -252,39 +276,36 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_4">
            <item>
-            <widget class="QLineEdit" name="memory_s1">
-             <property name="placeholderText">
-              <string/>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="memory_s2">
+            <widget class="QLabel" name="memory_s1">
              <property name="text">
               <string/>
              </property>
-             <property name="placeholderText">
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="memory_s2">
+             <property name="text">
               <string/>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="memory_s3">
-             <property name="placeholderText">
+            <widget class="QLabel" name="memory_s3">
+             <property name="text">
               <string/>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="memory_mnemonic">
-             <property name="placeholderText">
+            <widget class="QLabel" name="memory_mnemonic">
+             <property name="text">
               <string/>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="memory_pc">
-             <property name="placeholderText">
+            <widget class="QLabel" name="memory_squashed">
+             <property name="text">
               <string/>
              </property>
             </widget>
@@ -301,6 +322,12 @@
         </item>
         <item>
          <widget class="QGroupBox" name="WriteBack">
+          <property name="minimumSize">
+           <size>
+            <width>150</width>
+            <height>0</height>
+           </size>
+          </property>
           <property name="title">
            <string>Write Back</string>
           </property>
@@ -309,39 +336,29 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_5">
            <item>
-            <widget class="QLineEdit" name="wb_s1">
-             <property name="placeholderText">
-              <string/>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="wb_s2">
+            <widget class="QLabel" name="write_s1">
              <property name="text">
               <string/>
              </property>
-             <property name="placeholderText">
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="write_s2">
+             <property name="text">
               <string/>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="wb_s3">
-             <property name="placeholderText">
+            <widget class="QLabel" name="write_s3">
+             <property name="text">
               <string/>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="wb_mnemonic">
-             <property name="placeholderText">
-              <string/>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="wb_pc">
-             <property name="placeholderText">
+            <widget class="QLabel" name="write_mnemonic">
+             <property name="text">
               <string/>
              </property>
             </widget>
@@ -411,64 +428,6 @@
       </item>
       <item row="0" column="3">
        <layout class="QVBoxLayout" name="verticalLayout_23">
-        <item>
-         <layout class="QVBoxLayout" name="verticalLayout_24">
-          <item>
-           <widget class="QLabel" name="label_12">
-            <property name="font">
-             <font>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Upload Files</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="Line" name="line_33">
-            <property name="orientation">
-             <enum>Qt::Orientation::Horizontal</enum>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <layout class="QVBoxLayout" name="verticalLayout_25">
-            <item>
-             <widget class="QPushButton" name="upload_intructions_btn">
-              <property name="text">
-               <string>Upload Instruction File</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="upload_program_state_btn">
-              <property name="text">
-               <string>Upload Program State File</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="save_program_state_btn">
-              <property name="text">
-               <string>Save Current Program State</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_8"/>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <widget class="Line" name="line_34">
-            <property name="orientation">
-             <enum>Qt::Orientation::Horizontal</enum>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_26">
           <item>
@@ -573,7 +532,66 @@
            </widget>
           </item>
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_29"/>
+           <layout class="QVBoxLayout" name="verticalLayout_29">
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_24">
+              <item>
+               <widget class="QLabel" name="label_12">
+                <property name="font">
+                 <font>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Upload Files</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="Line" name="line_33">
+                <property name="orientation">
+                 <enum>Qt::Orientation::Horizontal</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <layout class="QVBoxLayout" name="verticalLayout_25">
+                <item>
+                 <widget class="QPushButton" name="upload_intructions_btn">
+                  <property name="text">
+                   <string>Load Instructions</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="upload_program_state_btn">
+                  <property name="text">
+                   <string>Upload Program State</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="save_program_state_btn">
+                  <property name="text">
+                   <string>Save Program State</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <layout class="QHBoxLayout" name="horizontalLayout_8"/>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <widget class="Line" name="line_34">
+                <property name="orientation">
+                 <enum>Qt::Orientation::Horizontal</enum>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
           </item>
          </layout>
         </item>

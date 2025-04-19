@@ -59,7 +59,7 @@ std::vector<int> Stage::stage_info()
 	std::vector<int> info;
 	if (this->curr_instr) {
 		info.push_back(this->curr_instr->get_mnemonic());
-		info.push_back(this->curr_instr->get_pc());
+		info.push_back(this->curr_instr->is_squashed());
 		info.push_back(this->curr_instr->get_s1());
 		info.push_back(this->curr_instr->get_s2());
 		info.push_back(this->curr_instr->get_s3());
