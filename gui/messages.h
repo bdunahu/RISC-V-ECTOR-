@@ -10,10 +10,11 @@
 
 const std::vector<std::string> waiting = {
 	"WAITING FOR USER", "FRIENDS MISSING", "BORED", "SLEEPING"};
-const std::vector<std::string> bad_file = {
-	"BAD FILE", "TRY AGAIN", "SEEKING NEW READING MATERIAL"};
 const std::vector<std::string> load_file = {
 	"FILE LOADED", "FINISHED READING DATA. EAGERLY WAITING"};
+const std::vector<std::string> no_instructions = {
+	"NO PROGRAM PROVIDED", "RISC V[ECTOR]: INSTRUCTIONS NOT INCLUDED",
+	"NOTHING TO DO, GIVING UP"};
 
 /**
  * @return an unsolicited waiting message
@@ -21,13 +22,13 @@ const std::vector<std::string> load_file = {
 std::string get_waiting() { return RANDOM_MESSAGE(waiting); }
 
 /**
- * @return a complaint about a bad file name
- */
-std::string get_bad_file() { return RANDOM_MESSAGE(bad_file); }
-
-/**
  * @return confirmation of file upload
  */
 std::string get_load_file() { return RANDOM_MESSAGE(load_file); }
+
+/**
+ * @return a friendly reminder that the simulation is not configured yet
+ */
+std::string get_no_instructions() { return RANDOM_MESSAGE(no_instructions); }
 
 #endif // MESSAGES_H

@@ -251,7 +251,7 @@ void GUI::on_upload_intructions_btn_clicked()
 		"Binary Files (*.bin *.rv);;All Files (*.*)");
 	QFile file(filePath);
 	if (filePath.isEmpty() || !file.open(QIODevice::ReadOnly)) {
-		this->set_status(get_bad_file);
+		this->set_status(get_no_instructions);
 		return;
 	}
 
@@ -268,7 +268,10 @@ void GUI::on_upload_intructions_btn_clicked()
 		}
 	}
 
-	this->set_status(get_load_file);
+	if (this->p.empty())
+			this->set_status(get_no_instructions);
+	else
+		this->set_status(get_load_file);
 
 	file.close();
 }
@@ -306,5 +309,5 @@ void GUI::on_save_program_state_btn_clicked()
 
 void GUI::set_status(const std::function<std::string()> &func)
 {
-	this->status_label->setText("CPU SAYS: \"" + QString::fromStdString(func()) + "\"");
+	this->status_label->setText("COMPUTER SAYS: \"" + QString::fromStdString(func()) + "\"");
 }

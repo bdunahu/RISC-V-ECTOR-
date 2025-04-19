@@ -135,6 +135,16 @@
           </item>
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_9">
+            <property name="sizeConstraint">
+             <enum>QLayout::SizeConstraint::SetMinimumSize</enum>
+            </property>
+            <item>
+             <widget class="Line" name="line_8">
+              <property name="orientation">
+               <enum>Qt::Orientation::Vertical</enum>
+              </property>
+             </widget>
+            </item>
             <item>
              <layout class="QVBoxLayout" name="verticalLayout_9">
               <property name="sizeConstraint">
@@ -307,6 +317,20 @@
                </layout>
               </item>
               <item>
+               <widget class="Line" name="line_7">
+                <property name="orientation">
+                 <enum>Qt::Orientation::Horizontal</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="config">
+                <property name="text">
+                 <string>Initialize!</string>
+                </property>
+               </widget>
+              </item>
+              <item>
                <widget class="Line" name="line_34">
                 <property name="orientation">
                  <enum>Qt::Orientation::Horizontal</enum>
@@ -325,36 +349,6 @@
            <enum>Qt::Orientation::Horizontal</enum>
           </property>
          </widget>
-        </item>
-        <item>
-         <layout class="QVBoxLayout" name="verticalLayout_30">
-          <item>
-           <widget class="QLabel" name="label_15">
-            <property name="font">
-             <font>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Program State</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="Line" name="line_39">
-            <property name="orientation">
-             <enum>Qt::Orientation::Horizontal</enum>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="cycles_label">
-            <property name="text">
-             <string>Clock Cycles</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
         </item>
        </layout>
       </item>
@@ -610,24 +604,65 @@
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_6">
           <item>
-           <widget class="QSlider" name="step_slider">
-            <property name="minimum">
-             <number>0</number>
-            </property>
-            <property name="maximum">
-             <number>6</number>
-            </property>
-            <property name="pageStep">
-             <number>1</number>
-            </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_11">
+            <item>
+             <widget class="QSlider" name="step_slider">
+              <property name="minimum">
+               <number>0</number>
+              </property>
+              <property name="maximum">
+               <number>6</number>
+              </property>
+              <property name="pageStep">
+               <number>1</number>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Orientation::Horizontal</enum>
+              </property>
+              <property name="tickPosition">
+               <enum>QSlider::TickPosition::NoTicks</enum>
+              </property>
+              <property name="tickInterval">
+               <number>1</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="Line" name="line_9">
+              <property name="orientation">
+               <enum>Qt::Orientation::Vertical</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_10">
+              <item>
+               <widget class="QLabel" name="label_15">
+                <property name="font">
+                 <font>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Program State</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="cycles_label">
+                <property name="text">
+                 <string>Clock Cycles</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="Line" name="line_10">
             <property name="orientation">
              <enum>Qt::Orientation::Horizontal</enum>
-            </property>
-            <property name="tickPosition">
-             <enum>QSlider::TickPosition::NoTicks</enum>
-            </property>
-            <property name="tickInterval">
-             <number>1</number>
             </property>
            </widget>
           </item>
