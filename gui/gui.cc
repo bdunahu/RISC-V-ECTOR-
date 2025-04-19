@@ -254,6 +254,7 @@ void GUI::on_upload_intructions_btn_clicked()
 		return;
 	}
 
+	this->p.clear();
 	while (!file.atEnd()) {
 		char bytes[4];
 		if (file.read(bytes, 4) == 4) {
@@ -304,5 +305,5 @@ void GUI::on_save_program_state_btn_clicked()
 
 QString GUI::make_status(const std::function<std::string()> &func)
 {
-	return "CONSENSUS: " + QString::fromStdString(func());
+	return "CPU SAYS: \"" + QString::fromStdString(func()) + "\"";
 }
