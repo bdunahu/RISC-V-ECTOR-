@@ -18,9 +18,6 @@ GUI::GUI(QWidget *parent) : QMainWindow(parent), ui(new Ui::GUI)
 	worker = new Worker();
 	worker->moveToThread(&workerThread);
 
-	// Connect worker thread lifecycle
-	// connect(&workerThread, &QThread::started, worker, &Worker::doWork);
-
 	// display clock cycles and PC
 	connect(worker, &Worker::clock_cycles, this, &GUI::onWorkerClockCycles);
 
@@ -47,19 +44,6 @@ GUI::GUI(QWidget *parent) : QMainWindow(parent), ui(new Ui::GUI)
 	// Configure pipeline
 	connect(
 		this, &GUI::sendConfigure, worker, &Worker::configure,
-		Qt::QueuedConnection);
-
-	// // Refresh DRAM from worker thread
-	// connect(this, &GUI::sendRefreshDram, worker, &Worker::refreshDram,
-	// Qt::QueuedConnection);
-
-	// // Refresh Cache from worker thread
-	// connect(this, &GUI::sendRefreshCache, worker, &Worker::refreshCache,
-	// Qt::QueuedConnection);
-
-	// Refresh Registers from worker thread
-	connect(
-		this, &GUI::sendRefreshRegisters, worker, &Worker::refreshRegisters,
 		Qt::QueuedConnection);
 
 	// Advance controller by some steps
@@ -303,10 +287,17 @@ void GUI::on_enable_pipeline_checkbox_checkStateChanged(
 void GUI::on_step_btn_clicked()
 {
 	qDebug() << "Run step button clicked.";
+	// try to configure first
 	if (!this->ready)
-		return this->on_config_clicked();
+		this->on_config_clicked();
+	// try again
+	if (!this->ready)
+		return;
+
+	this->set_status(get_running);
 	int steps = step_values[ui->step_slider->value()];
 	emit sendRunSteps(steps);
+	this->set_status(get_waiting);
 }
 
 void GUI::on_save_program_state_btn_clicked()

@@ -9,14 +9,19 @@
 #define RANDOM_MESSAGE(v) (v[std::rand() % v.size()])
 
 const std::vector<std::string> waiting = {
-	"WAITING FOR USER", "FRIENDS MISSING", "BORED", "SLEEPING"};
+	"WAITING FOR USER", "BORED", "SLEEPING", "TIRED", "IDLE", "EXCITED"};
+const std::vector<std::string> running = {
+	"CALCULATING", "COMPUTING",
+	"EXTERMINATE"
+	"WORKING",
+	"BUSY"};
 const std::vector<std::string> load_file = {
 	"FILE LOADED", "FINISHED READING DATA. EAGERLY WAITING"};
 const std::vector<std::string> no_instructions = {
 	"NO PROGRAM PROVIDED", "INSTRUCTIONS NOT INCLUDED",
 	"NOTHING TO DO, GIVING UP"};
 const std::vector<std::string> bad_cache = {
-	"INVALID NUMBER OF WAYS", "WAYS CANNOT BE BELOW 0 OR ABOVE 5"};
+	"WAYS CANNOT BE BELOW 0 OR ABOVE 5"};
 const std::vector<std::string> no_pipeline = {
 	"PIPELINE--HUMANS PROBABLY WORKED HARD ON THAT",
 	"I WOULD PREFER YOU LEAVE THE PIPE ON", "SLOW MODE ENABLED",
@@ -26,9 +31,10 @@ const std::vector<std::string> no_cache = {
 const std::vector<std::string> initialize = {"SIMULATION READY"};
 
 /**
- * @return an unsolicited waiting message
+ * @return an unsolicited status messages
  */
 std::string get_waiting() { return RANDOM_MESSAGE(waiting); }
+std::string get_running() { return RANDOM_MESSAGE(running); }
 
 /**
  * @return confirmation of file upload

@@ -2,7 +2,8 @@
     font-family: "BigBlueTermPlusNerdFontMono", "monospace";
     font-size: 20pt;
     color: "#00cc00";
-    background-color: "#000004";
+    background-color: "#000200";
+    border: 0px solid "#000200";
 }
 
 /* main window */
@@ -12,7 +13,6 @@ QWidget {
 QGroupBox {
     text-decoration: underline "#00cc00";
     font-size: 17pt;
-    background-color: "#000004";
     border: 4px solid ;
     border-radius: 0px;
     margin-top: 1ex; /* leave space at the top for the title */
@@ -38,11 +38,10 @@ QLineEdit {
 
 QTextEdit, QListView {
     font-size: 10pt;
-    background-color: "#000004";
 }
 
 QPushButton {
-    color: "#000004";
+    color: "#000200";
     background-color: "#00cc00";
     border-radius: 0px;
     padding: 1px;
@@ -51,7 +50,7 @@ QPushButton {
 
 QPushButton:pressed {
     color: "#00cc00";
-    background-color: "#000004";
+    background-color: "#000200";
 }
 
 QPushButton:flat {

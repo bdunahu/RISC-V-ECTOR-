@@ -12,6 +12,7 @@
 #include <QDebug>
 #include <QObject>
 #include <QThread>
+#include <QMutex>
 #include <deque>
 
 class Worker : public QObject
@@ -28,7 +29,10 @@ class Worker : public QObject
 	EX *ex_stage;
 	MM *mm_stage;
 	WB *wb_stage;
-	Controller *ct;
+
+	Controller *ct = nullptr;
+	QMutex ct_mutex;
+
 	/**
 	 * The size each progressive cache level increases by.
 	 */
@@ -37,11 +41,9 @@ class Worker : public QObject
   public:
 	explicit Worker(QObject *parent = nullptr);
 	~Worker();
+	QMutex& get_ct_mutex() { return ct_mutex; }
 
   public slots:
-	void refreshDram();
-	void refreshCache();
-	void refreshRegisters();
 	void runSteps(int steps);
 	void configure(
 		std::vector<unsigned int> ways,

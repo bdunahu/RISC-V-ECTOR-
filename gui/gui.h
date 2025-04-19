@@ -38,9 +38,6 @@ class GUI : public QMainWindow
 	void set_status(const std::function<std::string()> &func);
 
   signals:
-	void sendRefreshDram();
-	void sendRefreshCache();
-	void sendRefreshRegisters();
 	void sendRunSteps(int steps);
 	void sendConfigure(
 		std::vector<unsigned int> ways,
@@ -110,7 +107,7 @@ class GUI : public QMainWindow
 	/**
 	 * If this stage is pipelined or not.
 	 */
-	bool is_pipelined = false;
+	bool is_pipelined = true;
 
 	/**
 	 * The possible step slider values.
