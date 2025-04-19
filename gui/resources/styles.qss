@@ -14,16 +14,14 @@ QGroupBox {
     background-color: "#000004";
     border: 4px solid ;
     border-radius: 0px;
-    margin-bottom: 1ex; /* leave space at the bottom for the title */
+    margin-top: 1ex; /* leave space at the top for the title */
 }
 
 QGroupBox::title {
     subcontrol-origin: margin;
-    subcontrol-position: bottom left;
+    subcontrol-position: top left;
     border-radius: 0px;
     padding: 0 2px;
-    background-color: "#00cc00";
-    color: "#000000";
 }
 
 QLabel {
@@ -43,12 +41,16 @@ QTextEdit, QListView {
 }
 
 QPushButton {
-    border: 4px solid "#00cc00";
-}
-
-QPushButton:pressed {
     color: "#000004";
     background-color: "#00cc00";
+    border-radius: 0px;
+    padding: 1px;
+}
+
+
+QPushButton:pressed {
+    color: "#00cc00";
+    background-color: "#000004";
 }
 
 QPushButton:flat {
@@ -68,14 +70,6 @@ QMenuBar::item {
     padding: 1px 4px;
     background: transparent;
     border-radius: 4px;
-}
-
-QMenuBar::item:selected { /* when selected using mouse or keyboard */
-    background: #a8a8a8;
-}
-
-QMenuBar::item:pressed {
-    background: #888888;
 }
 
 QCheckBox {
@@ -100,15 +94,15 @@ QCheckBox::indicator:checked {
 }
 
 QSlider::groove:horizontal {
-    height: 5px; /* the groove expands to the size of the slider by default. by giving it a height, it has a fixed size */
+    height: 10px; /* the groove expands to the size of the slider by default. by giving it a height, it has a fixed size */
     background: "#00cc00";
-    margin: 2px 0;
+    margin: 50px 0;
 }
 
 QSlider::handle:horizontal {
     background: "#00cc00";
-    width: 10px;
-    margin: -30px 0; /* handle is placed by default on the contents rect of the groove. Expand outside the groove */
+    width: 20px;
+    margin: -50px 0; /* handle is placed by default on the contents rect of the groove. Expand outside the groove */
     border-radius: 3px;
 }
 
