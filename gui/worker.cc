@@ -50,6 +50,7 @@ void Worker::configure(
 		delete old;
 	this->ct_mutex.unlock();
 
+	std::cout << this->ct->get_clock_cycle() << ":" << this->ct->get_pc() << std::endl;
 	emit clock_cycles(this->ct->get_clock_cycle(), this->ct->get_pc());
 }
 

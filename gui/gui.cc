@@ -19,7 +19,7 @@ GUI::GUI(QWidget *parent) : QMainWindow(parent), ui(new Ui::GUI)
 	worker->moveToThread(&workerThread);
 
 	// display clock cycles and PC
-	connect(worker, &Worker::clock_cycles, this, &GUI::onWorkerClockCycles);
+	connect(worker, &Worker::clock_cycles, this, &GUI::on_worker_refresh_gui);
 
 	connect(worker, &Worker::if_info, this, &GUI::onWorkerFetchInfo);
 
@@ -129,23 +129,17 @@ void displayTableHTML(
 	textEdit->setReadOnly(true);
 }
 
-void GUI::onWorkerClockCycles(int cycles, int pc)
+void GUI::on_worker_refresh_gui(int cycles, int pc)
 {
-	QFont font = ui->cycles_label->font();
-	font.setBold(true);
-	font.setItalic(true);
-	font.setPointSize(14);
-	ui->cycles_label->setFont(font);
-	ui->cycles_label->setText(
-		"Clock Cycles: " + QString::number(cycles) + "\t\t" +
-		"PC: " + QString::number(pc));
+	ui->p_counter->set_value(pc);
+	ui->cycle_counter->set_value(cycles);
 }
 
 void GUI::onWorkerFetchInfo(const std::vector<int> info)
 {
 	if (!info.empty()) {
 		ui->fetch_squashed->setText(QString::number(info[0]));
-		ui->fetch_bits->setText(QString::asprintf("%04X", info[1]));
+		ui->fetch_bits->set_value(info[1]);
 	} else {
 		ui->fetch_squashed->clear();
 		ui->fetch_bits->clear();
@@ -156,7 +150,7 @@ void GUI::onWorkerDecodeInfo(const std::vector<int> info)
 {
 	if (!info.empty()) {
 		ui->decode_squashed->setText(QString::number(info[0]));
-		ui->decode_bits->setText(QString::asprintf("%04X", info[1]));
+		ui->decode_bits->set_value(info[1]);
 	} else {
 		ui->decode_squashed->clear();
 		ui->decode_bits->clear();
@@ -168,9 +162,9 @@ void GUI::onWorkerExecuteInfo(const std::vector<int> info)
 	if (!info.empty()) {
 		ui->execute_mnemonic->setText(mnemonicToString((Mnemonic)info[0]));
 		ui->execute_squashed->setText(QString::number(info[1]));
-		ui->execute_s1->setText(QString::asprintf("%04X", info[2]));
-		ui->execute_s2->setText(QString::asprintf("%04X", info[3]));
-		ui->execute_s3->setText(QString::asprintf("%04X", info[4]));
+		ui->execute_s1->set_value(info[2]);
+		ui->execute_s2->set_value(info[3]);
+		ui->execute_s3->set_value(info[4]);
 	} else {
 		ui->execute_mnemonic->clear();
 		ui->execute_squashed->clear();
@@ -185,9 +179,9 @@ void GUI::onWorkerMemoryInfo(const std::vector<int> info)
 	if (!info.empty()) {
 		ui->memory_mnemonic->setText(mnemonicToString((Mnemonic)info[0]));
 		ui->memory_squashed->setText(QString::number(info[1]));
-		ui->memory_s1->setText(QString::asprintf("%04X", info[2]));
-		ui->memory_s2->setText(QString::asprintf("%04X", info[3]));
-		ui->memory_s3->setText(QString::asprintf("%04X", info[4]));
+		ui->memory_s1->set_value(info[2]);
+		ui->memory_s2->set_value(info[3]);
+		ui->memory_s3->set_value(info[4]);
 	} else {
 		ui->memory_mnemonic->clear();
 		ui->memory_squashed->clear();
@@ -201,9 +195,9 @@ void GUI::onWorkerWriteBackInfo(const std::vector<int> info)
 {
 	if (!info.empty()) {
 		ui->write_mnemonic->setText(mnemonicToString((Mnemonic)info[0]));
-		ui->write_s1->setText(QString::asprintf("%04X", info[2]));
-		ui->write_s2->setText(QString::asprintf("%04X", info[3]));
-		ui->write_s3->setText(QString::asprintf("%04X", info[4]));
+		ui->write_s1->set_value(info[2]);
+		ui->write_s2->set_value(info[3]);
+		ui->write_s3->set_value(info[4]);
 	} else {
 		ui->write_mnemonic->clear();
 		ui->write_s1->clear();

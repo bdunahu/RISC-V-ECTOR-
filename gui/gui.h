@@ -45,7 +45,7 @@ class GUI : public QMainWindow
 		bool is_pipelined);
 
   private slots:
-	void onWorkerClockCycles(int value, int pc);
+	void on_worker_refresh_gui(int value, int pc);
 
 	void onWorkerFetchInfo(const std::vector<int> info);
 

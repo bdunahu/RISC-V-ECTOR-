@@ -384,7 +384,7 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout">
            <item>
-            <widget class="QLabel" name="fetch_bits">
+            <widget class="DigitLabel" name="fetch_bits">
              <property name="text">
               <string/>
              </property>
@@ -423,7 +423,7 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_2">
            <item>
-            <widget class="QLabel" name="decode_bits">
+            <widget class="DigitLabel" name="decode_bits">
              <property name="text">
               <string/>
              </property>
@@ -462,21 +462,21 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_3">
            <item>
-            <widget class="QLabel" name="execute_s1">
+            <widget class="DigitLabel" name="execute_s1">
              <property name="text">
               <string/>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="execute_s2">
+            <widget class="DigitLabel" name="execute_s2">
              <property name="text">
               <string/>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="execute_s3">
+            <widget class="DigitLabel" name="execute_s3">
              <property name="text">
               <string/>
              </property>
@@ -525,21 +525,21 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_4">
            <item>
-            <widget class="QLabel" name="memory_s1">
+            <widget class="DigitLabel" name="memory_s1">
              <property name="text">
               <string/>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="memory_s2">
+            <widget class="DigitLabel" name="memory_s2">
              <property name="text">
               <string/>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="memory_s3">
+            <widget class="DigitLabel" name="memory_s3">
              <property name="text">
               <string/>
              </property>
@@ -585,21 +585,21 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_5">
            <item>
-            <widget class="QLabel" name="write_s1">
+            <widget class="DigitLabel" name="write_s1">
              <property name="text">
               <string/>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="write_s2">
+            <widget class="DigitLabel" name="write_s2">
              <property name="text">
               <string/>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="write_s3">
+            <widget class="DigitLabel" name="write_s3">
              <property name="text">
               <string/>
              </property>
@@ -618,23 +618,59 @@
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_6">
           <item>
-           <widget class="QLabel" name="label_15">
-            <property name="font">
-             <font>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Program State</string>
-            </property>
-           </widget>
+           <layout class="QHBoxLayout" name="horizontalLayout_13">
+            <item>
+             <widget class="QLabel" name="state_header">
+              <property name="font">
+               <font>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>State</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="checkBox">
+              <property name="text">
+               <string>Decimal</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item>
-           <widget class="QLabel" name="cycles_label">
-            <property name="text">
-             <string>Clock Cycles</string>
-            </property>
-           </widget>
+           <layout class="QHBoxLayout" name="horizontalLayout_11">
+            <item>
+             <widget class="QLabel" name="pc">
+              <property name="text">
+               <string>PC</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="DigitLabel" name="p_counter">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="cycles">
+              <property name="text">
+               <string>Cycle</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="DigitLabel" name="cycle_counter">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item>
            <widget class="Line" name="line_10">
@@ -706,8 +742,13 @@
   <customwidget>
    <class>DynamicWaysEntry</class>
    <extends>QWidget</extends>
-   <header location="global">dynamicwaysentry.h</header>
+   <header>dynamicwaysentry.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>DigitLabel</class>
+   <extends>QLabel</extends>
+   <header location="global">digitlabel.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
