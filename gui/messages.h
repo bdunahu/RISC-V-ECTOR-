@@ -9,25 +9,19 @@
 #define RANDOM_MESSAGE(v) (v[std::rand() % v.size()])
 
 const std::vector<std::string> waiting = {
-	"WAITING FOR USER", "BORED", "SLEEPING", "TIRED", "IDLE", "EXCITED"};
+	"WAITING FOR USER", "READY", "BORED", "SLEEPING"};
 const std::vector<std::string> running = {
-	"CALCULATING", "COMPUTING",
-	"EXTERMINATE"
-	"WORKING",
-	"BUSY"};
-const std::vector<std::string> load_file = {
-	"FILE LOADED", "FINISHED READING DATA. EAGERLY WAITING"};
+	"COMPUTING", "WORKING", "BUSY"};
+const std::vector<std::string> load_file = {"FILE LOADED"};
 const std::vector<std::string> no_instructions = {
 	"NO PROGRAM PROVIDED", "INSTRUCTIONS NOT INCLUDED",
 	"NOTHING TO DO, GIVING UP"};
 const std::vector<std::string> bad_cache = {
 	"WAYS CANNOT BE BELOW 0 OR ABOVE 5"};
 const std::vector<std::string> no_pipeline = {
-	"PIPELINE--HUMANS PROBABLY WORKED HARD ON THAT",
-	"I WOULD PREFER YOU LEAVE THE PIPE ON", "SLOW MODE ENABLED",
-	"SIMULATION READY"};
+	"SIMULATION READY: NO PIPE :(",	"SIMULATION READY"};
 const std::vector<std::string> no_cache = {
-	"NO CACHE HAS NO WAY TO GO", "SLOW MODE ENABLED", "SIMULATION READY"};
+	"SIMULATION READY: NO WAYS", "SIMULATION READY"};
 const std::vector<std::string> initialize = {"SIMULATION READY"};
 
 /**

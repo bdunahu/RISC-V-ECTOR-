@@ -107,25 +107,37 @@ QSlider::handle:horizontal {
 }
 
 QScrollBar:horizontal {
-    border: 2px solid "#00cc00";
-    height: 4px;
-    margin: 0px 20px 0 20px;
+    border: 4px solid "#00cc00";
 }
+
 QScrollBar::handle:horizontal {
-    min-width: 20px;
+    height: 16px;
+    background-color: "#00cc00";
 }
+
 QScrollBar::add-line:horizontal {
-    border: 2px solid "#00cc00";
-    width: 4px;
-    subcontrol-position: right;
-    subcontrol-origin: margin;
+    border: 4px solid "#00cc00";
 }
 
 QScrollBar::sub-line:horizontal {
-    border: 2px solid "#00cc00";
-    width: 4px;
-    subcontrol-position: left;
-    subcontrol-origin: margin;
+    border: 4px solid "#00cc00";
+}
+
+QScrollBar:vertical {
+    border: 4px solid "#00cc00";
+}
+
+QScrollBar::handle:vertical {
+    width: 16px;
+    background-color: "#00cc00";
+}
+
+QScrollBar::add-line:vertical {
+    border: 4px solid "#00cc00";
+}
+
+QScrollBar::sub-line:vertical {
+    border: 4px solid "#00cc00";
 }
 
 /* Local Variables: */
