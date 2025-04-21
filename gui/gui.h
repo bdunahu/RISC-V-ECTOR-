@@ -18,124 +18,163 @@
 #ifndef GUI_H
 #define GUI_H
 
-#include <QMainWindow>
-#include <QThread>
-#include <QFileDialog>
-#include <QFile>
-#include <QTextStream>
-#include <QTextEdit>
-#include <QMessageBox>
 #include "worker.h"
+#include <QFile>
+#include <QFileDialog>
+#include <QInputDialog>
+#include <QLabel>
+#include <QMainWindow>
+#include <QTextEdit>
+#include <QTextStream>
+#include <QThread>
+#include <functional>
 
 QT_BEGIN_NAMESPACE
-namespace Ui {
+namespace Ui
+{
 class GUI;
 }
 QT_END_NAMESPACE
 
 class GUI : public QMainWindow
 {
-    Q_OBJECT
+	Q_OBJECT
 
-public:
-    GUI(QWidget *parent = nullptr);
-    ~GUI();
+  public:
+	/**
+	 * Constructor.
+	 * @return A newly allocated GUI object.
+	 */
+	GUI(QWidget *parent = nullptr);
+	~GUI();
 
-signals:
-    void sendRefreshDram();
-    void sendRefreshCache();
-    void sendRefreshRegisters();
-    void sendRunSteps(int steps);
-    void sendRunStep();
-    void sendLoadProgram(std::vector<signed int> program);
+	/**
+	 * Uses `func' to set the current status.
+	 * @param a function which returns a string.
+	 * @param a path to the desired avatar
+	 */
+	void set_status(
+		const std::function<std::string()> &func,
+		const QString &img = "idle.png");
 
-private slots:
-    void onWorkerClockCycles(int value, int pc);
+  signals:
+	void hex_toggled(bool is_hex);
+	void sendRunSteps(int steps);
+	void sendConfigure(
+		std::vector<unsigned int> ways, vector<int> program, bool is_pipelined);
 
-    void onWorkerFetchInfo(const std::vector<int> info);
+  private slots:
+	void on_worker_refresh_gui(int value, int pc);
 
-    void onWorkerDecodeInfo(const std::vector<int> info);
+	void onWorkerFetchInfo(const std::vector<int> info);
 
-    void onWorkerExecuteInfo(const std::vector<int> info);
+	void onWorkerDecodeInfo(const std::vector<int> info);
 
-    void onWorkerMemoryInfo(const std::vector<int> info);
+	void onWorkerExecuteInfo(const std::vector<int> info);
 
-    void onWorkerWriteBackInfo(const std::vector<int> info);
+	void onWorkerMemoryInfo(const std::vector<int> info);
 
-    void onWorkerShowDram(const std::vector<std::array<signed int, LINE_SIZE>> data);
+	void onWorkerWriteBackInfo(const std::vector<int> info);
 
-    void onWorkerShowCache(const std::vector<std::array<signed int, LINE_SIZE>> data);
+	void
+	onWorkerShowDram(const std::vector<std::array<signed int, LINE_SIZE>> data);
 
-    void onWorkerShowRegisters(const std::array<int, GPR_NUM> &data);
+	void onWorkerShowCache(
+		const std::vector<std::array<signed int, LINE_SIZE>> data);
 
-    void onWorkerFinished();
+	void onWorkerShowRegisters(const std::array<int, GPR_NUM> &data);
 
-    void on_upload_intructions_btn_clicked();
+	void onWorkerFinished();
 
-    void on_upload_program_state_btn_clicked();
+	void on_upload_intructions_btn_clicked();
 
-    void on_refresh_dram_btn_clicked();
+	void on_upload_program_state_btn_clicked();
 
-    void on_refresh_cache_btn_clicked();
+	void
+	on_enable_pipeline_checkbox_checkStateChanged(const Qt::CheckState &arg1);
 
-    void on_refresh_registers_btn_clicked();
+	void
+	on_base_toggle_checkbox_checkStateChanged(const Qt::CheckState &state);
 
-    void on_enable_pipeline_checkbox_checkStateChanged(const Qt::CheckState &arg1);
+	void on_step_btn_clicked();
 
-    void on_enabl_cache_checkbox_checkStateChanged(const Qt::CheckState &arg1);
+	void on_save_program_state_btn_clicked();
 
-    void on_run_steps_btn_clicked();
+	/**
+	 * Validates that the user has provided a valid program and cache.
+	 * If so, `this->ready' is set and the user options are passed to the
+	 * worker.
+	 * If not, rudely complains.
+	 */
+	void on_config_clicked();
 
-    void on_step_btn_clicked();
+  private:
+	Ui::GUI *ui;
 
-    void on_save_program_state_btn_clicked();
+	/**
+	 * Indicates if the program has been initialized.
+	 */
+	bool ready;
 
-private:
-    Ui::GUI *ui;
-    QThread workerThread;
-    Worker *worker;
-    const std::map<Mnemonic, QString> mnemonicNameMap = {
-        {Mnemonic::ADD, "ADD"},
-        {Mnemonic::SUB, "SUB"},
-        {Mnemonic::MUL, "MUL"},
-        {Mnemonic::QUOT, "QUOT"},
-        {Mnemonic::SFTR, "SFTR"},
-        {Mnemonic::SFTL, "SFTL"},
-        {Mnemonic::AND, "AND"},
-        {Mnemonic::OR, "OR"},
-        {Mnemonic::NOT, "NOT"},
-        {Mnemonic::XOR, "XOR"},
-        {Mnemonic::ADDV, "ADDV"},
-        {Mnemonic::SUBV, "SUBV"},
-        {Mnemonic::MULV, "MULV"},
-        {Mnemonic::DIVV, "DIVV"},
-        {Mnemonic::CMP, "CMP"},
-        {Mnemonic::CEV, "CEV"},
-        {Mnemonic::LOAD, "LOAD"},
-        {Mnemonic::LOADV, "LOADV"},
-        {Mnemonic::ADDI, "ADDI"},
-        {Mnemonic::SUBI, "SUBI"},
-        {Mnemonic::SFTRI, "SFTRI"},
-        {Mnemonic::SFTLI, "SFTLI"},
-        {Mnemonic::ANDI, "ANDI"},
-        {Mnemonic::ORI, "ORI"},
-        {Mnemonic::XORI, "XORI"},
-        {Mnemonic::STORE, "STORE"},
-        {Mnemonic::STOREV, "STOREV"},
-        {Mnemonic::JMP, "JMP"},
-        {Mnemonic::JRL, "JRL"},
-        {Mnemonic::JAL, "JAL"},
-        {Mnemonic::BEQ, "BEQ"},
-        {Mnemonic::BGT, "BGT"},
-        {Mnemonic::BUF, "BUF"},
-        {Mnemonic::BOF, "BOF"},
-        {Mnemonic::PUSH, "PUSH"},
-        {Mnemonic::POP, "POP"},
-        {Mnemonic::NOP, "NOP"},
-    };
-    QString mnemonicToString(Mnemonic mnemonic) {
-        auto it = mnemonicNameMap.find(mnemonic);
-        return (it != mnemonicNameMap.end()) ? it->second : "Unknown";
-    }
+	/**
+	 * Whether or not numerical values are currently displaying in hex.
+	 */
+	bool is_hex = true;
+
+	/**
+	 * The message displayed on the status bar.
+	 */
+	QLabel *status_label;
+
+	/**
+	 * The robot image displayed on the status bar.
+	 */
+	QLabel *avatar;
+
+	/**
+	 * The currently loaded program.
+	 */
+	std::vector<signed int> p;
+
+	/**
+	 * If this stage is pipelined or not.
+	 */
+	bool is_pipelined = true;
+
+	/**
+	 * The possible step slider values.
+	 */
+	QVector<int> step_values = {1, 5, 20, 50, 250, 1000, 10000};
+
+	QThread workerThread;
+
+	Worker *worker;
+
+	const std::map<Mnemonic, QString> mnemonicNameMap = {
+		{Mnemonic::ADD, "ADD"},		  {Mnemonic::SUB, "SUB"},
+		{Mnemonic::MUL, "MUL"},		  {Mnemonic::QUOT, "QUOT"},
+		{Mnemonic::SFTR, "SFTR"},	  {Mnemonic::SFTL, "SFTL"},
+		{Mnemonic::AND, "AND"},		  {Mnemonic::OR, "OR"},
+		{Mnemonic::NOT, "NOT"},		  {Mnemonic::XOR, "XOR"},
+		{Mnemonic::ADDV, "ADDV"},	  {Mnemonic::SUBV, "SUBV"},
+		{Mnemonic::MULV, "MULV"},	  {Mnemonic::DIVV, "DIVV"},
+		{Mnemonic::CMP, "CMP"},		  {Mnemonic::CEV, "CEV"},
+		{Mnemonic::LOAD, "LOAD"},	  {Mnemonic::LOADV, "LOADV"},
+		{Mnemonic::ADDI, "ADDI"},	  {Mnemonic::SUBI, "SUBI"},
+		{Mnemonic::SFTRI, "SFTRI"},	  {Mnemonic::SFTLI, "SFTLI"},
+		{Mnemonic::ANDI, "ANDI"},	  {Mnemonic::ORI, "ORI"},
+		{Mnemonic::XORI, "XORI"},	  {Mnemonic::STORE, "STORE"},
+		{Mnemonic::STOREV, "STOREV"}, {Mnemonic::JMP, "JMP"},
+		{Mnemonic::JRL, "JRL"},		  {Mnemonic::JAL, "JAL"},
+		{Mnemonic::BEQ, "BEQ"},		  {Mnemonic::BGT, "BGT"},
+		{Mnemonic::BUF, "BUF"},		  {Mnemonic::BOF, "BOF"},
+		{Mnemonic::PUSH, "PUSH"},	  {Mnemonic::POP, "POP"},
+		{Mnemonic::NOP, "NOP"},
+	};
+	QString mnemonicToString(Mnemonic mnemonic)
+	{
+		auto it = mnemonicNameMap.find(mnemonic);
+		return (it != mnemonicNameMap.end()) ? it->second : "Unknown";
+	}
 };
 #endif // GUI_H

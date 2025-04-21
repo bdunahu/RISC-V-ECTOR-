@@ -1,6 +1,11 @@
 <!DOCTYPE RCC>
 <RCC version="1.0">
-    <qresource prefix="/resources">
-        <file alias="input.txt">resources/input.txt</file>
+    <qresource>
+      <file>resources/styles.qss</file>
+      <file>resources/idle.png</file>
+      <file>resources/angry.png</file>
+      <file>resources/happy.png</file>
+      <file>resources/busy.png</file>
+      <file>resources/BigBlueTermPlusNerdFontMono-Regular.ttf</file>
     </qresource>
 </RCC>
