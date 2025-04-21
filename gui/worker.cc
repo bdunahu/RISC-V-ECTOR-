@@ -38,6 +38,8 @@ void Worker::configure(
 	Stage *old;
 	int i;
 
+	this->s.clear();
+
 	this->ct_mutex.lock();
 	if (ways.size() != 0) {
 		// TODO optimal proper sizes
