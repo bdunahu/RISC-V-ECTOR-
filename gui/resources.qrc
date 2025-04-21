@@ -2,6 +2,10 @@
 <RCC version="1.0">
     <qresource>
       <file>resources/styles.qss</file>
+      <file>resources/idle.png</file>
+      <file>resources/angry.png</file>
+      <file>resources/happy.png</file>
+      <file>resources/busy.png</file>
       <file>resources/BigBlueTermPlusNerdFontMono-Regular.ttf</file>
     </qresource>
 </RCC>

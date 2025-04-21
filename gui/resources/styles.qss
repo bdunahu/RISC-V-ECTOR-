@@ -6,6 +6,28 @@
     border: 0px solid "#000200";
 }
 
+QStatusBar {
+    font-size: 12pt;
+    color: "#000200";
+    background-color: "#00cc00";
+}
+
+QLabel#msg_label {
+    font-size: 12pt;
+    color: "#000200";
+    background-color: "#00cc00";
+}
+
+QLabel#info_label {
+    font-size: 12pt;
+    color: "#000200";
+    background-color: "#00cc00";
+}
+
+QLabel#avatar_label {
+    background-color: "#00cc00";
+}
+
 /* main window */
 QWidget {
 }

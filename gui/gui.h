@@ -51,15 +51,16 @@ class GUI : public QMainWindow
 	/**
 	 * Uses `func' to set the current status.
 	 * @param a function which returns a string.
+	 * @param a path to the desired avatar
 	 */
-	void set_status(const std::function<std::string()> &func);
+	void set_status(
+		const std::function<std::string()> &func,
+		const QString &img = "idle.png");
 
   signals:
 	void sendRunSteps(int steps);
 	void sendConfigure(
-		std::vector<unsigned int> ways,
-		vector<int> program,
-		bool is_pipelined);
+		std::vector<unsigned int> ways, vector<int> program, bool is_pipelined);
 
   private slots:
 	void on_worker_refresh_gui(int value, int pc);
@@ -115,6 +116,11 @@ class GUI : public QMainWindow
 	 * The message displayed on the status bar.
 	 */
 	QLabel *status_label;
+
+	/**
+	 * The robot image displayed on the status bar.
+	 */
+	QLabel *avatar;
 
 	/**
 	 * The currently loaded program.

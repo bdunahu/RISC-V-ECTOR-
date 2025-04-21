@@ -9,19 +9,15 @@
 #define RANDOM_MESSAGE(v) (v[std::rand() % v.size()])
 
 const std::vector<std::string> waiting = {
-	"WAITING FOR USER", "READY", "BORED", "SLEEPING"};
-const std::vector<std::string> running = {
-	"COMPUTING", "WORKING", "BUSY"};
+	"WAITING FOR USER", "IDLE", "BORED", "SLEEPING"};
+const std::vector<std::string> running = {"COMPUTING", "WORKING", "BUSY"};
 const std::vector<std::string> load_file = {"FILE LOADED"};
 const std::vector<std::string> no_instructions = {
-	"NO PROGRAM PROVIDED", "INSTRUCTIONS NOT INCLUDED",
-	"NOTHING TO DO, GIVING UP"};
+	"NO PROGRAM PROVIDED", "NOTHING TO DO, GIVING UP"};
 const std::vector<std::string> bad_cache = {
 	"WAYS CANNOT BE BELOW 0 OR ABOVE 5"};
-const std::vector<std::string> no_pipeline = {
-	"SIMULATION READY: NO PIPE :(",	"SIMULATION READY"};
-const std::vector<std::string> no_cache = {
-	"SIMULATION READY: NO WAYS", "SIMULATION READY"};
+const std::vector<std::string> no_pipeline = {"SIMULATION READY: NO PIPE"};
+const std::vector<std::string> no_cache = {"SIMULATION READY: NO CACHE"};
 const std::vector<std::string> initialize = {"SIMULATION READY"};
 
 /**

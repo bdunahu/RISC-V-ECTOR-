@@ -19,16 +19,29 @@
 #include "./ui_gui.h"
 #include "dynamicwaysentry.h"
 #include "messages.h"
+#include <QPixmap>
+#include <QString>
 
 GUI::GUI(QWidget *parent) : QMainWindow(parent), ui(new Ui::GUI)
 {
 	ui->setupUi(this);
 
+	/* setup the status bar */
+	ui->statusBar->setFixedHeight(20);
+
+	this->avatar = new QLabel(this);
 	this->status_label = new QLabel("", this);
-	this->set_status(get_waiting);
 	QLabel *risc_vector =
 		new QLabel("RISC V[ECTOR], CS535 UMASS AMHERST", this);
-	status_label->setMinimumWidth(1200);
+
+	avatar->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+	avatar->setObjectName("avatar_label");
+	status_label->setObjectName("msg_label");
+	risc_vector->setObjectName("info_label");
+	ui->statusBar->setSizeGripEnabled(false);
+
+	this->set_status(get_waiting, "idle.png");
+	ui->statusBar->addWidget(avatar);
 	ui->statusBar->addWidget(status_label);
 	ui->statusBar->addPermanentWidget(risc_vector);
 
@@ -252,7 +265,7 @@ void GUI::on_upload_intructions_btn_clicked()
 		"Binary Files (*.bin *.rv);;All Files (*.*)");
 	QFile file(filePath);
 	if (filePath.isEmpty() || !file.open(QIODevice::ReadOnly)) {
-		this->set_status(get_no_instructions);
+		this->set_status(get_no_instructions, "angry");
 		return;
 	}
 
@@ -270,9 +283,9 @@ void GUI::on_upload_intructions_btn_clicked()
 	}
 
 	if (this->p.empty())
-		this->set_status(get_no_instructions);
+		this->set_status(get_no_instructions, "angry");
 	else
-		this->set_status(get_load_file);
+		this->set_status(get_load_file, "happy");
 
 	file.close();
 }
@@ -305,10 +318,10 @@ void GUI::on_step_btn_clicked()
 	if (!this->ready)
 		return;
 
-	this->set_status(get_running);
+	this->set_status(get_running, "busy");
 	int steps = step_values[ui->step_slider->value()];
 	emit sendRunSteps(steps);
-	this->set_status(get_waiting);
+	this->set_status(get_waiting, "idle");
 }
 
 void GUI::on_save_program_state_btn_clicked()
@@ -333,13 +346,13 @@ void GUI::on_config_clicked()
 		if (i != -1) {
 			ways.push_back((unsigned int)i);
 		} else {
-			this->set_status(get_bad_cache);
+			this->set_status(get_bad_cache, "angry");
 			return;
 		}
 	}
 
 	if (this->p.empty()) {
-		this->set_status(get_no_instructions);
+		this->set_status(get_no_instructions, "angry");
 		return;
 	}
 
@@ -347,17 +360,28 @@ void GUI::on_config_clicked()
 
 	// say something snarky
 	if (!is_pipelined)
-		this->set_status(get_no_pipeline);
+		this->set_status(get_no_pipeline, "angry");
 	else if (ways.size() == 0)
-		this->set_status(get_no_cache);
+		this->set_status(get_no_cache, "angry");
 	else
-		this->set_status(get_initialize);
+		this->set_status(get_initialize, "happy");
 
 	emit sendConfigure(ways, this->p, is_pipelined);
 }
 
-void GUI::set_status(const std::function<std::string()> &func)
+void GUI::set_status(
+	const std::function<std::string()> &func, const QString &img)
 {
 	this->status_label->setText(
-		"COMPUTER SAYS: \"" + QString::fromStdString(func()) + "\"");
+		"-> \"" + QString::fromStdString(func()) + "\"");
+
+	QString img_path = ":resources/" + img;
+	QPixmap pixmap(img_path);
+
+	if (!pixmap) {
+		return;
+	}
+
+	this->avatar->setPixmap(pixmap);
+	this->avatar->show();
 }
