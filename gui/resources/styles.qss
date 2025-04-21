@@ -59,7 +59,6 @@ QLineEdit {
 }
 
 QTextEdit, QListView {
-    font-size: 10pt;
 }
 
 QPushButton {
@@ -91,7 +90,6 @@ QMenuBar {
 QMenuBar::item {
     padding: 1px 4px;
     background: transparent;
-    border-radius: 4px;
 }
 
 QCheckBox {
@@ -113,11 +111,19 @@ QCheckBox::indicator:checked {
 
 QTabWidget::tab-bar {
     alignment: center;
+    border: 0px;
 }
 
 QTabBar::tab:selected {
     color: "#000200";
     background-color: "#00cc00";
+    border: 0px;
+    padding: 2px;
+}
+
+QTabBar::tab:!selected {
+    border: 0px;
+    padding: 2px;
 }
 
 QSlider::groove:horizontal {
