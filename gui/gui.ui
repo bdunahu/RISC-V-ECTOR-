@@ -35,52 +35,8 @@
                </size>
               </property>
               <property name="currentIndex">
-               <number>0</number>
+               <number>-1</number>
               </property>
-              <widget class="QWidget" name="Registers">
-               <attribute name="title">
-                <string>Registers</string>
-               </attribute>
-               <layout class="QGridLayout" name="gridLayout_4">
-                <item row="0" column="0">
-                 <widget class="QTextEdit" name="register_table"/>
-                </item>
-               </layout>
-              </widget>
-              <widget class="QWidget" name="tab">
-               <attribute name="title">
-                <string>DRAM</string>
-               </attribute>
-               <layout class="QGridLayout" name="gridLayout_3">
-                <item row="0" column="0">
-                 <widget class="QTextEdit" name="dram_table">
-                  <property name="minimumSize">
-                   <size>
-                    <width>500</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-              <widget class="QWidget" name="tab_2">
-               <attribute name="title">
-                <string>Level 1</string>
-               </attribute>
-               <layout class="QGridLayout" name="gridLayout">
-                <item row="0" column="0">
-                 <widget class="QTextEdit" name="cache_table">
-                  <property name="minimumSize">
-                   <size>
-                    <width>500</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
              </widget>
             </item>
             <item>
