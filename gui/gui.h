@@ -1,3 +1,20 @@
+// Simulator for the RISC-V[ECTOR] mini-ISA
+// Copyright (C) 2025 Siddarth Suresh
+// Copyright (C) 2025 bdunahu
+
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 #ifndef GUI_H
 #define GUI_H
 
@@ -48,29 +65,29 @@ private slots:
     void onWorkerShowDram(const std::vector<std::array<signed int, LINE_SIZE>> data);
 
     void onWorkerShowCache(const std::vector<std::array<signed int, LINE_SIZE>> data);
-    
+
     void onWorkerShowRegisters(const std::array<int, GPR_NUM> &data);
-    
+
     void onWorkerFinished();
-    
+
     void on_upload_intructions_btn_clicked();
-    
+
     void on_upload_program_state_btn_clicked();
-    
+
     void on_refresh_dram_btn_clicked();
-    
+
     void on_refresh_cache_btn_clicked();
-    
+
     void on_refresh_registers_btn_clicked();
-    
+
     void on_enable_pipeline_checkbox_checkStateChanged(const Qt::CheckState &arg1);
-    
+
     void on_enabl_cache_checkbox_checkStateChanged(const Qt::CheckState &arg1);
-    
+
     void on_run_steps_btn_clicked();
-    
+
     void on_step_btn_clicked();
-    
+
     void on_save_program_state_btn_clicked();
 
 private:
