@@ -22,30 +22,17 @@
         <item>
          <layout class="QVBoxLayout" name="storage_pipe_separator">
           <item>
-           <layout class="QHBoxLayout" name="storage_view">
-            <item>
-             <layout class="QVBoxLayout" name="registers"/>
-            </item>
-            <item>
-             <widget class="QTabWidget" name="storage">
-              <property name="minimumSize">
-               <size>
-                <width>700</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="currentIndex">
-               <number>-1</number>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <layout class="QVBoxLayout" name="dram"/>
-            </item>
-            <item>
-             <layout class="QVBoxLayout" name="cache"/>
-            </item>
-           </layout>
+           <widget class="QTabWidget" name="storage">
+            <property name="minimumSize">
+             <size>
+              <width>700</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="currentIndex">
+             <number>-1</number>
+            </property>
+           </widget>
           </item>
           <item>
            <layout class="QHBoxLayout" name="pipe_view">
