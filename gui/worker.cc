@@ -38,6 +38,8 @@ void Worker::configure(
 	Stage *old;
 	int i;
 
+	this->s.clear();
+
 	this->ct_mutex.lock();
 	if (ways.size() != 0) {
 		// TODO optimal proper sizes
@@ -67,21 +69,25 @@ void Worker::configure(
 		delete old;
 	this->ct_mutex.unlock();
 
-	std::cout << this->ct->get_clock_cycle() << ":" << this->ct->get_pc() << std::endl;
 	emit clock_cycles(this->ct->get_clock_cycle(), this->ct->get_pc());
 }
 
 void Worker::runSteps(int steps)
 {
+	unsigned long i;
+
 	this->ct_mutex.lock();
 	qDebug() << "Running for " << steps << "steps";
 	this->ct->run_for(steps);
+
 	// TODO move these to separate functions
-	emit dram_storage(this->s.back()->view(0, 255));
-	if (this->s.size() > 1) {
-		emit cache_storage(this->s.at(0)->view(0, 1 << this->size_inc));
-	}
 	emit register_storage(this->ct->get_gprs());
+
+	emit storage(this->s.at(0)->view(0, 255), 1);
+
+	for (i = 1; i < s.size(); ++i)
+		emit storage(this->s.at(i - 1)->view(0, 1 << this->size_inc * i), i + 1);
+
 	emit clock_cycles(this->ct->get_clock_cycle(), this->ct->get_pc());
 	emit if_info(this->if_stage->stage_info());
 	emit id_info(this->id_stage->stage_info());

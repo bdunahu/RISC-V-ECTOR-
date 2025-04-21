@@ -48,15 +48,6 @@ class GUI : public QMainWindow
 	GUI(QWidget *parent = nullptr);
 	~GUI();
 
-	/**
-	 * Uses `func' to set the current status.
-	 * @param a function which returns a string.
-	 * @param a path to the desired avatar
-	 */
-	void set_status(
-		const std::function<std::string()> &func,
-		const QString &img = "idle.png");
-
   signals:
 	void hex_toggled(bool is_hex);
 	void sendRunSteps(int steps);
@@ -76,11 +67,8 @@ class GUI : public QMainWindow
 
 	void onWorkerWriteBackInfo(const std::vector<int> info);
 
-	void
-	onWorkerShowDram(const std::vector<std::array<signed int, LINE_SIZE>> data);
-
-	void onWorkerShowCache(
-		const std::vector<std::array<signed int, LINE_SIZE>> data);
+	void onWorkerShowStorage(
+		const std::vector<std::array<signed int, LINE_SIZE>> data, int i);
 
 	void onWorkerShowRegisters(const std::array<int, GPR_NUM> &data);
 
@@ -93,8 +81,7 @@ class GUI : public QMainWindow
 	void
 	on_enable_pipeline_checkbox_checkStateChanged(const Qt::CheckState &arg1);
 
-	void
-	on_base_toggle_checkbox_checkStateChanged(const Qt::CheckState &state);
+	void on_base_toggle_checkbox_checkStateChanged(const Qt::CheckState &state);
 
 	void on_step_btn_clicked();
 
@@ -117,6 +104,11 @@ class GUI : public QMainWindow
 	bool ready;
 
 	/**
+	 * The list of storage displays.
+	 */
+	std::vector<QTextEdit *> tab_text_boxes;
+
+	/**
 	 * Whether or not numerical values are currently displaying in hex.
 	 */
 	bool is_hex = true;
@@ -132,12 +124,11 @@ class GUI : public QMainWindow
 	QLabel *avatar;
 
 	/**
-	 * The currently loaded program.
+	 * The next simulation's program.
 	 */
 	std::vector<signed int> p;
-
 	/**
-	 * If this stage is pipelined or not.
+	 * If the next initialized simulation is pipelined or not.
 	 */
 	bool is_pipelined = true;
 
@@ -176,5 +167,21 @@ class GUI : public QMainWindow
 		auto it = mnemonicNameMap.find(mnemonic);
 		return (it != mnemonicNameMap.end()) ? it->second : "Unknown";
 	}
+
+	/**
+	 * Helper for 'on_config_clicked'.
+	 * Initialized the tab component with enough views for the simulation's
+	 * storage devices.
+	 * @param the number of tabs required to show registers, DRAM, and cache.
+	 */
+	void make_tabs(int num);
+	/**
+	 * Uses `func' to set the current status.
+	 * @param a function which returns a string.
+	 * @param a path to the desired avatar
+	 */
+	void set_status(
+		const std::function<std::string()> &func,
+		const QString &img = "idle.png");
 };
 #endif // GUI_H

@@ -49,8 +49,8 @@ GUI::GUI(QWidget *parent) : QMainWindow(parent), ui(new Ui::GUI)
 	worker->moveToThread(&workerThread);
 
 	// find all the labels
-	QList<DigitLabel*> labels = this->findChildren<DigitLabel*>();
-	for (DigitLabel* label : labels) {
+	QList<DigitLabel *> labels = this->findChildren<DigitLabel *>();
+	for (DigitLabel *label : labels) {
 		connect(this, &GUI::hex_toggled, label, &DigitLabel::on_hex_toggle);
 	}
 	emit this->hex_toggled(this->is_hex);
@@ -68,11 +68,8 @@ GUI::GUI(QWidget *parent) : QMainWindow(parent), ui(new Ui::GUI)
 
 	connect(worker, &Worker::wb_info, this, &GUI::onWorkerWriteBackInfo);
 
-	// Display dram
-	connect(worker, &Worker::dram_storage, this, &GUI::onWorkerShowDram);
-
 	// Display cache
-	connect(worker, &Worker::cache_storage, this, &GUI::onWorkerShowCache);
+	connect(worker, &Worker::storage, this, &GUI::onWorkerShowStorage);
 
 	// Display registers
 	connect(
@@ -233,32 +230,29 @@ void GUI::onWorkerWriteBackInfo(const std::vector<int> info)
 {
 	if (!info.empty()) {
 		ui->write_mnemonic->setText(mnemonicToString((Mnemonic)info[0]));
+		ui->write_squashed->setText(QString::number(info[1]));
 		ui->write_s1->set_value(info[2]);
 		ui->write_s2->set_value(info[3]);
 		ui->write_s3->set_value(info[4]);
 	} else {
 		ui->write_mnemonic->clear();
+		ui->write_squashed->clear();
 		ui->write_s1->clear();
 		ui->write_s2->clear();
 		ui->write_s3->clear();
 	}
 }
 
-void GUI::onWorkerShowDram(
-	const std::vector<std::array<signed int, LINE_SIZE>> data)
+void GUI::onWorkerShowStorage(
+	const std::vector<std::array<signed int, LINE_SIZE>> data, int i)
 {
-	displayTableHTML(ui->dram_table, data);
-}
-
-void GUI::onWorkerShowCache(
-	const std::vector<std::array<signed int, LINE_SIZE>> data)
-{
-	displayTableHTML(ui->cache_table, data);
+	std::cout << this->tab_text_boxes.size() << std::endl;
+	displayTableHTML(this->tab_text_boxes.at(i), data);
 }
 
 void GUI::onWorkerShowRegisters(const std::array<int, GPR_NUM> &data)
 {
-	displayArrayHTML(ui->register_table, data);
+	displayArrayHTML(this->tab_text_boxes.at(0), data);
 }
 
 void GUI::onWorkerFinished() { qDebug() << "Worker has finished processing."; }
@@ -267,9 +261,9 @@ void GUI::on_upload_intructions_btn_clicked()
 {
 	qDebug() << "Upload intructions button clicked.";
 
-	// why register_table?
+	// why ui->register_table, or now ui->storage
 	QString filePath = QFileDialog::getOpenFileName(
-		ui->register_table, "Open Binary File", QDir::homePath(),
+		ui->storage, "Open Binary File", QDir::homePath(),
 		"Binary Files (*.bin *.rv);;All Files (*.*)");
 	QFile file(filePath);
 	if (filePath.isEmpty() || !file.open(QIODevice::ReadOnly)) {
@@ -351,7 +345,7 @@ void GUI::on_config_clicked()
 			continue;
 
 		i = dwe->parse_valid_way(s);
-		if (i != -1) {
+		if (i >= 0) {
 			ways.push_back((unsigned int)i);
 		} else {
 			this->set_status(get_bad_cache, "angry");
@@ -375,6 +369,34 @@ void GUI::on_config_clicked()
 		this->set_status(get_initialize, "happy");
 
 	emit sendConfigure(ways, this->p, is_pipelined);
+	make_tabs(2 + ways.size());
+}
+
+void GUI::make_tabs(int num)
+{
+	int i;
+	QStringList names;
+	QTextEdit *e;
+	QString n;
+
+	names = {"Registers", "DRAM"};
+
+	ui->storage->clear();
+	this->tab_text_boxes.clear();
+
+	for (i = 0; i < num; ++i) {
+		e = new QTextEdit();
+		e->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+		// make the name
+		if (i < names.size())
+			n = names[i];
+		else
+			n = QString("Level %1").arg(i - 1);
+
+		ui->storage->addTab(e, n);
+		this->tab_text_boxes.push_back(e);
+	}
 }
 
 void GUI::set_status(

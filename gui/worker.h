@@ -70,9 +70,7 @@ class Worker : public QObject
   signals:
 	void clock_cycles(int value, int pc);
 	void
-	dram_storage(const std::vector<std::array<signed int, LINE_SIZE>> data);
-	void
-	cache_storage(const std::vector<std::array<signed int, LINE_SIZE>> data);
+	storage(const std::vector<std::array<signed int, LINE_SIZE>> data, int i);
 	void register_storage(const std::array<int, GPR_NUM> data);
 	void if_info(const std::vector<int> info);
 	void id_info(const std::vector<int> info);

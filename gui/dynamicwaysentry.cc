@@ -55,7 +55,7 @@ void DynamicWaysEntry::on_number_enter(const QString &t)
 	entries[i] = t;
 
 	if (i == this->fields.size() - 1 && !t.isEmpty() &&
-		(this->parse_valid_way(t) > 0) && fields.size() < 4)
+		(this->parse_valid_way(t) >= 0) && fields.size() < 4)
 		add_field();
 
 	// TODO, unlink, don't trash everything after
