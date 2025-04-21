@@ -1,58 +1,24 @@
+// Simulator for the RISC-V[ECTOR] mini-ISA
+// Copyright (C) 2025 Siddarth Suresh
+// Copyright (C) 2025 bdunahu
+
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 #include "worker.h"
+#include "storage.h"
 
 Worker::Worker(QObject *parent) : QObject(parent) {}
-
-void Worker::configure(std::vector<int> ways, std::vector<int> size, bool is_pipelined, bool is_cache_enabled) {
-	this->d = new Dram(ways.size()+10);
-	setWays(ways);
-	setSize(size);
-	qDebug() << "is cache enabled:" << is_cache_enabled;
-	qDebug() << "is pipelined:" << is_pipelined;
-	this->cache_enabled = is_cache_enabled;	
-	if (!is_cache_enabled || ways.size() == 0) {
-		this->ct = new Controller(wb_stage, this->d, is_pipelined);
-	} else {
-		// 0th index cache has largest delay
-		for(int i=0;i<ways.size();i++) {
-			if(i==0){
-				Cache* cache = new Cache(this->d, size[i], ways[i], ways.size());
-				this->c.push_back(cache);
-			} else {
-				Cache* cache = new Cache(this->c[i-1], size[i], ways[i], ways.size()-i);
-				this->c.push_back(cache);
-			}
-		}
-		this->ct = new Controller(wb_stage, this->c.at(ways.size()-1), is_pipelined);
-	}
-	emit clock_cycles(this->ct->get_clock_cycle(), this->ct->get_pc());
-}
-
-void Worker::setWays(std::vector<int> ways) {
-	this->cache_ways = ways;
-}
-
-void Worker::setSize(std::vector<int> size) {
-	this->cache_size = size;
-}
-
-std::vector<int> Worker::getWays() {
-	return this->cache_ways;
-}
-
-std::vector<int> Worker::getSize() {
-	return this->cache_size;
-}
-
-void Worker::doWork()
-{
-	qDebug() << "Initializing...";
-	
-	this->if_stage = new IF(nullptr);
-	this->id_stage = new ID(if_stage);
-	this->ex_stage = new EX(id_stage);
-	this->mm_stage = new MM(ex_stage);
-	this->wb_stage = new WB(mm_stage);
-}
 
 Worker::~Worker()
 {
@@ -60,44 +26,60 @@ Worker::~Worker()
 	qDebug() << "Worker destructor called in thread:"
 			 << QThread::currentThread();
 	delete this->ct;
-	for(Cache *cache: this->c) {
-		delete cache;
+}
+
+void Worker::configure(
+	std::vector<unsigned int> ways,
+	std::vector<signed int> program,
+	bool is_pipelined)
+{
+	Dram *d;
+	Storage *s;
+	Stage *old;
+	int i;
+
+	this->ct_mutex.lock();
+	if (ways.size() != 0) {
+		// TODO optimal proper sizes
+		this->size_inc = ((MEM_LINE_SPEC * 0.75) / ways.size());
 	}
-}
+	d = new Dram(DRAM_DELAY);
+	s = static_cast<Storage *>(d);
 
-void Worker::loadProgram(std::vector<signed int> p) {
-	this->d->load(p);
-}
+	this->s.push_front(s);
+	d->load(program);
 
-void Worker::refreshDram()
-{
-	qDebug() << "Refreshing Dram";
-	emit dram_storage(this->d->view(0, 255));
-}
-
-void Worker::refreshCache()
-{
-	qDebug() << "Refreshing Cache";
-	if(getWays().size() > 0) {
-		unsigned int size = this->c.at(getWays().size()-1)->get_size();
-		emit cache_storage(this->c.at(getWays().size()-1)->view(0, 1<<size));
+	for (i = ways.size(); i > 0; --i) {
+		s = static_cast<Storage *>(new Cache(
+			s, this->size_inc * (i), ways.at(i - 1), CACHE_DELAY + i));
+		this->s.push_front(s);
 	}
-}
 
-void Worker::refreshRegisters()
-{
-	qDebug() << "Refreshing Registers";
-	emit register_storage(this->ct->get_gprs());
+	this->if_stage = new IF(nullptr);
+	this->id_stage = new ID(if_stage);
+	this->ex_stage = new EX(id_stage);
+	this->mm_stage = new MM(ex_stage);
+	this->wb_stage = new WB(mm_stage);
+
+	old = static_cast<Stage *>(this->ct);
+	this->ct = new Controller(wb_stage, s, is_pipelined);
+	if (old)
+		delete old;
+	this->ct_mutex.unlock();
+
+	std::cout << this->ct->get_clock_cycle() << ":" << this->ct->get_pc() << std::endl;
+	emit clock_cycles(this->ct->get_clock_cycle(), this->ct->get_pc());
 }
 
 void Worker::runSteps(int steps)
 {
-	qDebug() << "Running for steps: " << steps;
+	this->ct_mutex.lock();
+	qDebug() << "Running for " << steps << "steps";
 	this->ct->run_for(steps);
-	emit dram_storage(this->d->view(0, 255));
-	if(this->cache_enabled && getWays().size() > 0) {
-		unsigned int size = this->c.at(getWays().size()-1)->get_size();
-		emit cache_storage(this->c.at(getWays().size()-1)->view(0, 1<<size));
+	// TODO move these to separate functions
+	emit dram_storage(this->s.back()->view(0, 255));
+	if (this->s.size() > 1) {
+		emit cache_storage(this->s.at(0)->view(0, 1 << this->size_inc));
 	}
 	emit register_storage(this->ct->get_gprs());
 	emit clock_cycles(this->ct->get_clock_cycle(), this->ct->get_pc());
@@ -106,22 +88,5 @@ void Worker::runSteps(int steps)
 	emit ex_info(this->ex_stage->stage_info());
 	emit mm_info(this->mm_stage->stage_info());
 	emit wb_info(this->wb_stage->stage_info());
-}
-
-void Worker::runStep()
-{
-	qDebug() << "Running for 1 step ";
-	this->ct->advance(WAIT);
-	emit dram_storage(this->d->view(0, 255));
-	if(this->cache_enabled && getWays().size() > 0) {
-		unsigned int size = this->c.at(getWays().size()-1)->get_size();
-		emit cache_storage(this->c.at(getWays().size()-1)->view(0, 1<<size));
-	}
-	emit register_storage(this->ct->get_gprs());
-	emit clock_cycles(this->ct->get_clock_cycle(), this->ct->get_pc());
-	emit if_info(this->if_stage->stage_info());
-	emit id_info(this->id_stage->stage_info());
-	emit ex_info(this->ex_stage->stage_info());
-	emit mm_info(this->mm_stage->stage_info());
-	emit wb_info(this->wb_stage->stage_info());
+	this->ct_mutex.unlock();
 }

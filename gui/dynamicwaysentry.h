@@ -15,31 +15,37 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef DUM_H
-#define DUM_H
-#include "instrDTO.h"
-#include "response.h"
-#include "stage.h"
+#ifndef DYNAMICWAYSENTRY_H
+#define DYNAMICWAYSENTRY_H
 
-/**
- * Don't underestimate mocks (the DUM pipe stage).
- */
-class DUM : public Stage
+
+#include <QLineEdit>
+#include <QStringList>
+#include <QVBoxLayout>
+#include <QVector>
+#include <QWidget>
+
+class DynamicWaysEntry : public QWidget
 {
   public:
+	DynamicWaysEntry(QWidget *parent = nullptr);
+	QStringList get_entries() const;
 	/**
-	 * Constructor.
-	 * @param The next stage in the pipeline.
-	 * @return A newly allocated DUM object.
+	 * Parses a string from this entry field, if it is valid.
+	 * @param a string
+	 * @param -1 if the string is not suitable as a way, an integer compatible
+	 * with the cache constructor otherwise.
 	 */
-	DUM(Stage *next);
-
-	InstrDTO *advance(Response p) override;
-
-	void set_curr_instr(InstrDTO *);
+	int parse_valid_way(QString t);
+  private slots:
+	void on_number_enter(const QString &t);
 
   private:
-	void advance_helper() override;
+	QVBoxLayout *l;
+	QVector<QLineEdit *> fields;
+	QStringList entries;
+	void add_field();
+	void remove_last_field();
 };
 
-#endif /* DUM_H_INCLUDED */
+#endif // DYNAMICWAYSENTRY_H

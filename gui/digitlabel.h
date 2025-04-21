@@ -15,31 +15,55 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef DUM_H
-#define DUM_H
-#include "instrDTO.h"
-#include "response.h"
-#include "stage.h"
+#ifndef DIGITLABEL_H
+#define DIGITLABEL_H
 
-/**
- * Don't underestimate mocks (the DUM pipe stage).
- */
-class DUM : public Stage
+#include <QLabel>
+
+class DigitLabel : public QLabel
 {
+	Q_OBJECT
+
   public:
 	/**
 	 * Constructor.
-	 * @param The next stage in the pipeline.
-	 * @return A newly allocated DUM object.
+	 * @return a newly allocated DigitLabel.
 	 */
-	DUM(Stage *next);
+	explicit DigitLabel(QWidget *parent);
 
-	InstrDTO *advance(Response p) override;
+	/**
+	 * Sets the empty flag.
+	 */
+	void clear();
+	/**
+	 * @param the value to set `this->v' with.
+	 */
+	void set_value(int v);
 
-	void set_curr_instr(InstrDTO *);
+  public slots:
+	/**
+	 * Toggles the base this label displays in, by setting `this->is_hex'.
+	 */
+	void on_hex_toggle(bool is_hex);
 
   private:
-	void advance_helper() override;
+	/**
+	 * Refreshes the display of this label, taking base into consideration..
+	 */
+	void update_display();
+
+	/**
+	 * The decimal value associated with this label.
+	 */
+	int v;
+	/**
+	 * If this digit should display in hexidecinmal.
+	 */
+	int is_hex;
+	/**
+	 * If this digit should not display.
+	 */
+	bool is_cleared = true;
 };
 
-#endif /* DUM_H_INCLUDED */
+#endif // DIGITLABEL_H

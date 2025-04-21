@@ -1,7 +1,26 @@
-#include "pipe_spec.h"
+// Simulator for the RISC-V[ECTOR] mini-ISA
+// Copyright (C) 2025 Siddarth Suresh
+// Copyright (C) 2025 bdunahu
+
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 #include "gui.h"
 #include "logger.h"
+#include "pipe_spec.h"
 #include <QApplication>
+#include <QFile>
+#include <QFontDatabase>
 #include <getopt.h>
 #include <iostream>
 
@@ -67,6 +86,16 @@ int main(int argc, char **argv)
 
 	global_log->log(INFO, "Starting QT...");
 	QApplication a(argc, argv);
+
+	int fId = QFontDatabase::addApplicationFont(
+		":/resources/BigBlueTermPlusNerdFontMono-Regular.ttf");
+	QFile ssf(":/resources/styles.qss");
+	QString f = QFontDatabase::applicationFontFamilies(fId).at(0);
+
+	ssf.open(QFile::ReadOnly);
+	QString ss = QLatin1String(ssf.readAll());
+	a.setStyleSheet(ss);
+
 	GUI w;
 	w.show();
 	return a.exec();

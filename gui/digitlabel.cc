@@ -15,31 +15,38 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef DUM_H
-#define DUM_H
-#include "instrDTO.h"
-#include "response.h"
-#include "stage.h"
+#include "digitlabel.h"
+#include "gui.h"
 
-/**
- * Don't underestimate mocks (the DUM pipe stage).
- */
-class DUM : public Stage
+DigitLabel::DigitLabel(QWidget *parent) : QLabel(parent) { setText(QString()); }
+
+void DigitLabel::clear()
 {
-  public:
-	/**
-	 * Constructor.
-	 * @param The next stage in the pipeline.
-	 * @return A newly allocated DUM object.
-	 */
-	DUM(Stage *next);
+	this->is_cleared = true;
+	setText(QString());
+}
 
-	InstrDTO *advance(Response p) override;
+void DigitLabel::set_value(int v)
+{
+	this->is_cleared = false;
+	this->v = v;
+	update_display();
+}
 
-	void set_curr_instr(InstrDTO *);
+void DigitLabel::on_hex_toggle(bool is_hex)
+{
+	this->is_hex = is_hex;
+	update_display();
+}
 
-  private:
-	void advance_helper() override;
-};
-
-#endif /* DUM_H_INCLUDED */
+void DigitLabel::update_display()
+{
+	QString t;
+	if (this->is_cleared) {
+		setText(QString());
+	} else {
+		t = (this->is_hex) ? QString::number(this->v, 16).toUpper()
+						   : QString::number(this->v);
+		setText(t);
+	}
+}

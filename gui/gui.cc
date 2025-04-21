@@ -1,361 +1,395 @@
+// Simulator for the RISC-V[ECTOR] mini-ISA
+// Copyright (C) 2025 Siddarth Suresh
+// Copyright (C) 2025 bdunahu
+
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 #include "gui.h"
 #include "./ui_gui.h"
-// #include "byteswap.h"
+#include "dynamicwaysentry.h"
+#include "messages.h"
+#include <QPixmap>
+#include <QString>
 
-GUI::GUI(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::GUI)
+GUI::GUI(QWidget *parent) : QMainWindow(parent), ui(new Ui::GUI)
 {
-    ui->setupUi(this);
+	ui->setupUi(this);
 
-    ui->enabl_cache_checkbox->setChecked(true);
-    ui->enable_pipeline_checkbox->setChecked(true);
+	/* setup the status bar */
+	ui->statusBar->setFixedHeight(20);
 
-    worker = new Worker();
-    worker->moveToThread(&workerThread);
+	this->avatar = new QLabel(this);
+	this->status_label = new QLabel("", this);
+	QLabel *risc_vector =
+		new QLabel("RISC V[ECTOR], CS535 UMASS AMHERST", this);
 
-    // Connect worker thread lifecycle
-    connect(&workerThread, &QThread::started, worker, &Worker::doWork);
+	avatar->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+	avatar->setObjectName("avatar_label");
+	status_label->setObjectName("msg_label");
+	risc_vector->setObjectName("info_label");
+	ui->statusBar->setSizeGripEnabled(false);
 
-    // Display clock cycles and PC
-    connect(worker, &Worker::clock_cycles, this, &GUI::onWorkerClockCycles);
+	this->set_status(get_waiting, "idle.png");
+	ui->statusBar->addWidget(avatar);
+	ui->statusBar->addWidget(status_label);
+	ui->statusBar->addPermanentWidget(risc_vector);
 
-    connect(worker, &Worker::if_info, this, &GUI::onWorkerFetchInfo);
+	worker = new Worker();
+	worker->moveToThread(&workerThread);
 
-    connect(worker, &Worker::id_info, this, &GUI::onWorkerDecodeInfo);
+	// find all the labels
+	QList<DigitLabel*> labels = this->findChildren<DigitLabel*>();
+	for (DigitLabel* label : labels) {
+		connect(this, &GUI::hex_toggled, label, &DigitLabel::on_hex_toggle);
+	}
+	emit this->hex_toggled(this->is_hex);
 
-    connect(worker, &Worker::ex_info, this, &GUI::onWorkerExecuteInfo);
+	// display clock cycles and PC
+	connect(worker, &Worker::clock_cycles, this, &GUI::on_worker_refresh_gui);
 
-    connect(worker, &Worker::mm_info, this, &GUI::onWorkerMemoryInfo);
+	connect(worker, &Worker::if_info, this, &GUI::onWorkerFetchInfo);
 
-    connect(worker, &Worker::wb_info, this, &GUI::onWorkerWriteBackInfo);
+	connect(worker, &Worker::id_info, this, &GUI::onWorkerDecodeInfo);
 
-    // Display dram
-    connect(worker, &Worker::dram_storage, this, &GUI::onWorkerShowDram);
+	connect(worker, &Worker::ex_info, this, &GUI::onWorkerExecuteInfo);
 
-    // Display cache
-    connect(worker, &Worker::cache_storage, this, &GUI::onWorkerShowCache);
+	connect(worker, &Worker::mm_info, this, &GUI::onWorkerMemoryInfo);
 
-    // Display registers
-    connect(worker, &Worker::register_storage, this, &GUI::onWorkerShowRegisters);
+	connect(worker, &Worker::wb_info, this, &GUI::onWorkerWriteBackInfo);
 
-    // Refresh DRAM from worker thread
-    connect(this, &GUI::sendRefreshDram, worker, &Worker::refreshDram, Qt::QueuedConnection);
+	// Display dram
+	connect(worker, &Worker::dram_storage, this, &GUI::onWorkerShowDram);
 
-    // Load program from worker thread
-    connect(this, &GUI::sendLoadProgram, worker, &Worker::loadProgram, Qt::QueuedConnection);
+	// Display cache
+	connect(worker, &Worker::cache_storage, this, &GUI::onWorkerShowCache);
 
-    // Configure pipeline
-    connect(this, &GUI::sendConfigure, worker, &Worker::configure, Qt::QueuedConnection);
+	// Display registers
+	connect(
+		worker, &Worker::register_storage, this, &GUI::onWorkerShowRegisters);
 
-    // Refresh Cache from worker thread
-    connect(this, &GUI::sendRefreshCache, worker, &Worker::refreshCache, Qt::QueuedConnection);
+	// Configure pipeline
+	connect(
+		this, &GUI::sendConfigure, worker, &Worker::configure,
+		Qt::QueuedConnection);
 
-    // Refresh Registers from worker thread
-    connect(this, &GUI::sendRefreshRegisters, worker, &Worker::refreshRegisters, Qt::QueuedConnection);
+	// Advance controller by some steps
+	connect(
+		this, &GUI::sendRunSteps, worker, &Worker::runSteps,
+		Qt::QueuedConnection);
 
-    // Advance controller by #steps
-    connect(this, &GUI::sendRunSteps, worker, &Worker::runSteps, Qt::QueuedConnection);
+	// Update the step button with step amount
+	connect(ui->step_slider, &QSlider::valueChanged, this, [=](int index) {
+		int value = step_values[index];
+		ui->step_btn->setText(QString("Step %1").arg(value));
+	});
 
-    // Advance controller by 1 step
-    connect(this, &GUI::sendRunStep, worker, &Worker::runStep, Qt::QueuedConnection);
+	// Proper cleanup when worker finishes
+	connect(worker, &Worker::finished, this, &GUI::onWorkerFinished);
+	connect(worker, &Worker::finished, &workerThread, &QThread::quit);
+	connect(&workerThread, &QThread::finished, worker, &QObject::deleteLater);
 
-    // Proper cleanup when worker finishes
-    connect(worker, &Worker::finished, this, &GUI::onWorkerFinished);
-    connect(worker, &Worker::finished, &workerThread, &QThread::quit);
-    connect(&workerThread, &QThread::finished, worker, &QObject::deleteLater);
-
-    workerThread.start(); // Start the worker thread
+	workerThread.start(); // Start the worker thread
 }
 
 GUI::~GUI()
 {
-    workerThread.quit();
-    workerThread.wait();  // Ensure proper cleanup
-    delete ui;
+	workerThread.quit();
+	workerThread.wait(); // Ensure proper cleanup
+	delete ui;
 }
 
-void displayArrayHTML(QTextEdit *textEdit, const std::array<int, GPR_NUM> &data) {
-    textEdit->setReadOnly(false);
-    QString tableText = "<table border='1' cellspacing='0' cellpadding='8' style='border-collapse: collapse; width: 100%; border: 2px solid black;'>";
+void displayArrayHTML(QTextEdit *textEdit, const std::array<int, GPR_NUM> &data)
+{
+	textEdit->setReadOnly(false);
+	QString tableText = "<table border='1' cellspacing='0' cellpadding='8' "
+						"style='border-collapse: collapse; width: 100%; "
+						"border: 2px solid black;'>";
 
-    tableText += "<tr>";
-    int index = 0;
-    for (int value : data) {
-        tableText += QString("<td align='center' style='border: 2px solid black; min-width: 60px; padding: 10px;'>"
-                             "%1 <sup style='font-size: 10px; font-weight: bold; color: black;'>%2</sup>"
-                             "</td>")
-                     .arg(QString::asprintf("%04X", value))
-                     .arg(index);
-        index++;
-    }
-    tableText += "</tr>";
-    tableText += "</table>";
+	tableText += "<tr>";
+	int index = 0;
+	for (int value : data) {
+		tableText += QString("<td align='center' style='border: 2px solid "
+							 "black; min-width: 60px; padding: 10px;'>"
+							 "%1 <sup style='font-size: 10px; font-weight: "
+							 "bold; color: black;'>%2</sup>"
+							 "</td>")
+						 .arg(QString::asprintf("%04X", value))
+						 .arg(index);
+		index++;
+	}
+	tableText += "</tr>";
+	tableText += "</table>";
 
-    textEdit->setHtml(tableText);
-    textEdit->setReadOnly(true);
+	textEdit->setHtml(tableText);
+	textEdit->setReadOnly(true);
 }
 
-void displayTableHTML(QTextEdit *textEdit, const std::vector<std::array<signed int, LINE_SIZE>> &data) {
-    textEdit->setReadOnly(false);
-    QString tableText = "<table border='1' cellspacing='0' cellpadding='8' style='border-collapse: collapse; width: 100%; border: 2px solid black;'>";
+void displayTableHTML(
+	QTextEdit *textEdit,
+	const std::vector<std::array<signed int, LINE_SIZE>> &data)
+{
+	textEdit->setReadOnly(false);
+	QString tableText = "<table border='1' cellspacing='0' cellpadding='8' "
+						"style='border-collapse: collapse; width: 100%; "
+						"border: 2px solid black;'>";
 
-    int index = 0;
-    for (const auto &row : data) {
-        tableText += "<tr>";
-        for (signed int value : row) {
-            tableText += QString("<td align='center' style='border: 2px solid black; min-width: 60px; padding: 10px;'>"
-                                 "%1 <sup style='font-size: 10px; font-weight: bold; color: black;'>%2</sup>"
-                                 "</td>")
-                         .arg(QString::asprintf("%04X", value))
-                         .arg(index);
-            index++;
-        }
-        tableText += "</tr>";
-    }
+	int index = 0;
+	for (const auto &row : data) {
+		tableText += "<tr>";
+		for (signed int value : row) {
+			tableText += QString("<td align='center' style='border: 2px solid "
+								 "black; min-width: 60px; padding: 10px;'>"
+								 "%1 <sup style='font-size: 10px; font-weight: "
+								 "bold; color: black;'>%2</sup>"
+								 "</td>")
+							 .arg(QString::asprintf("%04X", value))
+							 .arg(index);
+			index++;
+		}
+		tableText += "</tr>";
+	}
 
-    tableText += "</table>";
+	tableText += "</table>";
 
-    textEdit->setHtml(tableText);
-    textEdit->setReadOnly(true);
+	textEdit->setHtml(tableText);
+	textEdit->setReadOnly(true);
 }
 
-std::vector<signed int> browseAndRetrieveFile(QWidget* parent) {
-    QString filePath = QFileDialog::getOpenFileName(parent, "Open Binary File", QDir::homePath(), "Binary Files (*.bin *.rv);;All Files (*.*)");
-    std::vector<signed int> program;
-
-
-    if (filePath.isEmpty()) return program;
-
-    QFile file(filePath);
-    if (!file.open(QIODevice::ReadOnly)) {
-        QMessageBox::critical(parent, "File Upload", "Unable to open file!");
-        return program;
-    }
-
-    while (!file.atEnd()) {
-        char bytes[4];
-        if (file.read(bytes, 4) == 4) {
-            uint32_t word =
-                (static_cast<uint8_t>(bytes[0]) << 24) |
-                (static_cast<uint8_t>(bytes[1]) << 16) |
-                (static_cast<uint8_t>(bytes[2]) << 8)  |
-                (static_cast<uint8_t>(bytes[3]));
-
-            program.push_back(static_cast<signed int>(word));
-        }
-    }
-
-    file.close();
-    return program;
+void GUI::on_worker_refresh_gui(int cycles, int pc)
+{
+	ui->p_counter->set_value(pc);
+	ui->cycle_counter->set_value(cycles);
 }
 
-void GUI::onWorkerClockCycles(int cycles, int pc) {
-    QFont font = ui->cycles_label->font();
-    font.setBold(true);
-    font.setItalic(true);
-    font.setPointSize(14);
-    ui->cycles_label->setFont(font);
-    ui->cycles_label->setText("Clock Cycles: " + QString::number(cycles) + "\t\t" + "PC: " + QString::number(pc));
+void GUI::onWorkerFetchInfo(const std::vector<int> info)
+{
+	if (!info.empty()) {
+		ui->fetch_squashed->setText(QString::number(info[0]));
+		ui->fetch_bits->set_value(info[1]);
+	} else {
+		ui->fetch_squashed->clear();
+		ui->fetch_bits->clear();
+	}
 }
 
-void GUI::onWorkerFetchInfo(const std::vector<int> info) {
-    //QString::asprintf("%04X", value)
-    if(!info.empty()) {
-        ui->fetch_pc->setText(QString::number(info[0]));
-        ui->fetch_instruction_bits->setText(QString::asprintf("%04X", info[1]));
-    } else {
-        ui->fetch_pc->clear();
-        ui->fetch_instruction_bits->clear();
-    }
+void GUI::onWorkerDecodeInfo(const std::vector<int> info)
+{
+	if (!info.empty()) {
+		ui->decode_squashed->setText(QString::number(info[0]));
+		ui->decode_bits->set_value(info[1]);
+	} else {
+		ui->decode_squashed->clear();
+		ui->decode_bits->clear();
+	}
 }
 
-void GUI::onWorkerDecodeInfo(const std::vector<int> info) {
-    if(!info.empty()) {
-        // ui->decode_mnemonic->setText(mnemonicToString((Mnemonic)info[0]));
-        ui->decode_pc->setText(QString::number(info[0]));
-        ui->decode_s1->setText(QString::asprintf("%04X", info[1]));
-        // ui->decode_s2->setText(QString::asprintf("%04X", info[3]));
-        // ui->decode_s3->setText(QString::asprintf("%04X", info[4]));
-    } else {
-        // ui->decode_mnemonic->clear();
-        ui->decode_pc->clear();
-        ui->decode_s1->clear();
-        // ui->decode_s2->clear();
-        // ui->decode_s3->clear();
-    }
+void GUI::onWorkerExecuteInfo(const std::vector<int> info)
+{
+	if (!info.empty()) {
+		ui->execute_mnemonic->setText(mnemonicToString((Mnemonic)info[0]));
+		ui->execute_squashed->setText(QString::number(info[1]));
+		ui->execute_s1->set_value(info[2]);
+		ui->execute_s2->set_value(info[3]);
+		ui->execute_s3->set_value(info[4]);
+	} else {
+		ui->execute_mnemonic->clear();
+		ui->execute_squashed->clear();
+		ui->execute_s1->clear();
+		ui->execute_s2->clear();
+		ui->execute_s3->clear();
+	}
 }
 
-void GUI::onWorkerExecuteInfo(const std::vector<int> info) {
-    if(!info.empty()) {
-        ui->execute_mnemonic->setText(mnemonicToString((Mnemonic)info[0]));
-        ui->execute_pc->setText(QString::number(info[1]));
-        ui->execute_s1->setText(QString::asprintf("%04X", info[2]));
-        ui->execute_s2->setText(QString::asprintf("%04X", info[3]));
-        ui->execute_s3->setText(QString::asprintf("%04X", info[4]));
-    } else {
-        ui->execute_mnemonic->clear();
-        ui->execute_pc->clear();
-        ui->execute_s1->clear();
-        ui->execute_s2->clear();
-        ui->execute_s3->clear();
-    }
+void GUI::onWorkerMemoryInfo(const std::vector<int> info)
+{
+	if (!info.empty()) {
+		std::cout << "this " << info[3] << std::endl;
+		ui->memory_mnemonic->setText(mnemonicToString((Mnemonic)info[0]));
+		ui->memory_squashed->setText(QString::number(info[1]));
+		ui->memory_s1->set_value(info[2]);
+		ui->memory_s2->set_value(info[3]);
+		ui->memory_s3->set_value(info[4]);
+	} else {
+		ui->memory_mnemonic->clear();
+		ui->memory_squashed->clear();
+		ui->memory_s1->clear();
+		ui->memory_s2->clear();
+		ui->memory_s3->clear();
+	}
 }
 
-void GUI::onWorkerMemoryInfo(const std::vector<int> info) {
-    if(!info.empty()) {
-        ui->memory_mnemonic->setText(mnemonicToString((Mnemonic)info[0]));
-        ui->memory_pc->setText(QString::number(info[1]));
-        ui->memory_s1->setText(QString::asprintf("%04X", info[2]));
-        ui->memory_s2->setText(QString::asprintf("%04X", info[3]));
-        ui->memory_s3->setText(QString::asprintf("%04X", info[4]));
-    } else {
-        ui->memory_mnemonic->clear();
-        ui->memory_pc->clear();
-        ui->memory_s1->clear();
-        ui->memory_s2->clear();
-        ui->memory_s3->clear();
-    }
+void GUI::onWorkerWriteBackInfo(const std::vector<int> info)
+{
+	if (!info.empty()) {
+		ui->write_mnemonic->setText(mnemonicToString((Mnemonic)info[0]));
+		ui->write_s1->set_value(info[2]);
+		ui->write_s2->set_value(info[3]);
+		ui->write_s3->set_value(info[4]);
+	} else {
+		ui->write_mnemonic->clear();
+		ui->write_s1->clear();
+		ui->write_s2->clear();
+		ui->write_s3->clear();
+	}
 }
 
-void GUI::onWorkerWriteBackInfo(const std::vector<int> info) {
-    if(!info.empty()) {
-        ui->wb_mnemonic->setText(mnemonicToString((Mnemonic)info[0]));
-        ui->wb_pc->setText(QString::number(info[1]));
-        ui->wb_s1->setText(QString::asprintf("%04X", info[2]));
-        ui->wb_s2->setText(QString::asprintf("%04X", info[3]));
-        ui->wb_s3->setText(QString::asprintf("%04X", info[4]));
-    } else {
-        ui->wb_mnemonic->clear();
-        ui->wb_pc->clear();
-        ui->wb_s1->clear();
-        ui->wb_s2->clear();
-        ui->wb_s3->clear();
-    }
+void GUI::onWorkerShowDram(
+	const std::vector<std::array<signed int, LINE_SIZE>> data)
+{
+	displayTableHTML(ui->dram_table, data);
 }
 
-void GUI::onWorkerShowDram(const std::vector<std::array<signed int, LINE_SIZE>> data) {
-    displayTableHTML(ui->dram_table, data);
+void GUI::onWorkerShowCache(
+	const std::vector<std::array<signed int, LINE_SIZE>> data)
+{
+	displayTableHTML(ui->cache_table, data);
 }
 
-void GUI::onWorkerShowCache(const std::vector<std::array<signed int, LINE_SIZE>> data) {
-    displayTableHTML(ui->cache_table, data);
+void GUI::onWorkerShowRegisters(const std::array<int, GPR_NUM> &data)
+{
+	displayArrayHTML(ui->register_table, data);
 }
 
-void GUI::onWorkerShowRegisters(const std::array<int, GPR_NUM> &data) {
-    displayArrayHTML(ui->register_table, data);
-}
-
-void GUI::onWorkerFinished() {
-    qDebug() << "Worker has finished processing.";
-}
+void GUI::onWorkerFinished() { qDebug() << "Worker has finished processing."; }
 
 void GUI::on_upload_intructions_btn_clicked()
 {
-    qDebug() << "Upload intructions button clicked.";
-    std::vector<signed int> program;
-    program = browseAndRetrieveFile(ui->register_table);
-    if(program.empty()){
-        QMessageBox::critical(ui->register_table, "File Upload", "Invalid Program File!");
-    }
-    emit sendLoadProgram(program);
-    emit sendRefreshDram();
-    QMessageBox::information(ui->register_table, "File Upload", "Instructions loaded successfully!");
-}
+	qDebug() << "Upload intructions button clicked.";
 
+	// why register_table?
+	QString filePath = QFileDialog::getOpenFileName(
+		ui->register_table, "Open Binary File", QDir::homePath(),
+		"Binary Files (*.bin *.rv);;All Files (*.*)");
+	QFile file(filePath);
+	if (filePath.isEmpty() || !file.open(QIODevice::ReadOnly)) {
+		this->set_status(get_no_instructions, "angry");
+		return;
+	}
+
+	this->p.clear();
+	while (!file.atEnd()) {
+		char bytes[4];
+		if (file.read(bytes, 4) == 4) {
+			uint32_t word = (static_cast<uint8_t>(bytes[0]) << 24) |
+							(static_cast<uint8_t>(bytes[1]) << 16) |
+							(static_cast<uint8_t>(bytes[2]) << 8) |
+							(static_cast<uint8_t>(bytes[3]));
+
+			this->p.push_back(static_cast<signed int>(word));
+		}
+	}
+
+	if (this->p.empty())
+		this->set_status(get_no_instructions, "angry");
+	else
+		this->set_status(get_load_file, "happy");
+
+	file.close();
+}
 
 void GUI::on_upload_program_state_btn_clicked()
 {
-    //TODO:Upload and set program state ( have to decide how to use this)
-    qDebug() << "upload program state button is clicked.";
+	// TODO:Upload and set program state ( have to decide how to use this)
+	qDebug() << "upload program state button is clicked.";
 }
 
-void GUI::on_set_levels_btn_clicked()
+void GUI::on_enable_pipeline_checkbox_checkStateChanged(
+	const Qt::CheckState &arg1)
 {
-    qDebug() << "Set levels button clicked.";
-    bool ok;
-    int value = QInputDialog::getInt(this, "Enter Value", "Enter value:", 
-                                     0,
-                                     0, 10, 1, &ok);
-    if (ok) {
-        cache_levels = value;
-        ui->cache_levels_dropdwn->clear();  // Clear previous entries
-        for (int i = 0; i < cache_levels; ++i) {
-            ui->cache_levels_dropdwn->addItem(QString::number(i));
-            ways.push_back(2);
-            size.push_back(5);
-        }   
-    } else {
-        qDebug() << "User cancelled input.";
-    }
+	this->is_pipelined = (arg1 == Qt::CheckState::Checked) ? true : false;
 }
 
-void GUI::on_set_cache_btn_clicked() {
-    int current_cache = ui->cache_levels_dropdwn->currentIndex();
-    // qDebug() << "current cache: " << current_cache;
-    int prevWays = ways[current_cache];
-    int prevSize = size[current_cache];
-    QString cache_ways = ui->cache_ways_inp->text();
-    QString cache_size = ui->cache_size_inp->text();
-    ways[current_cache] = cache_ways.isEmpty() ? prevWays : cache_ways.toInt();
-    size[current_cache] = cache_size.isEmpty() ? prevSize : cache_size.toInt();
-    QMessageBox::information(ui->register_table, "Cache Configuration", "Cache" + QString::number(current_cache) + " values set successfully! Please click on Configure button to configure the pipeline or configure other caches.");
-    // for(int i=0;i<ways.size();i++) {
-    //     qDebug() << "ways: " << ways[i] << " size: " << size[i];
-    // }
-}
-
-
-void GUI::on_enable_pipeline_checkbox_checkStateChanged(const Qt::CheckState &arg1)
+void GUI::on_base_toggle_checkbox_checkStateChanged(const Qt::CheckState &state)
 {
-    //TODO: handle pipeline enabling
-    if(arg1 == Qt::CheckState::Checked) {
-        qDebug() << "enable pipeline checkbox checked.";
-        is_pipelined = true;
-    } else {
-        qDebug() << "enable pipeline checkbox unchecked.";
-        is_pipelined = false;
-    }
+	this->is_hex = (state == Qt::CheckState::Checked) ? false : true;
+	emit this->hex_toggled(this->is_hex);
 }
-
-
-void GUI::on_enabl_cache_checkbox_checkStateChanged(const Qt::CheckState &arg1)
-{
-    //TODO: handle cache enabling
-    if(arg1 == Qt::CheckState::Checked) {
-        qDebug() << "enable cache checkbox checked.";
-        is_cache_enabled = true;
-    } else {
-        qDebug() << "enable cache checkbox unchecked.";  
-        is_cache_enabled = false; 
-    }
-
-}
-
-
-void GUI::on_run_steps_btn_clicked()
-{
-    qDebug() << "Run steps button clicked.";
-    emit sendRunSteps(ui->number_steps_inp->text().toInt());
-}
-
 
 void GUI::on_step_btn_clicked()
 {
-    qDebug() << "Run step button clicked.";
-    emit sendRunStep();
-}
+	qDebug() << "Run step button clicked.";
+	// try to configure first
+	if (!this->ready)
+		this->on_config_clicked();
+	// try again
+	if (!this->ready)
+		return;
 
+	this->set_status(get_running, "busy");
+	int steps = step_values[ui->step_slider->value()];
+	emit sendRunSteps(steps);
+	this->set_status(get_waiting, "idle");
+}
 
 void GUI::on_save_program_state_btn_clicked()
 {
-    //TODO: save program state
-    qDebug() << "save program state button is clicked.";
+	// TODO: save program state
+	qDebug() << "save program state button is clicked.";
 }
 
-void GUI::on_Configure_Btn_clicked()
+void GUI::on_config_clicked()
 {
-    emit sendConfigure(ways, size, is_pipelined, is_cache_enabled);
-    QMessageBox::information(ui->register_table, "Pipeline Configuration", "Pipeline and memory subsystem configured successfully!");
+	std::vector<unsigned int> ways;
+	QStringList entries;
+	signed int i;
+	DynamicWaysEntry *dwe = ui->cache_way_selector;
+
+	for (const QString &s : dwe->get_entries()) {
+
+		if (s.isEmpty())
+			continue;
+
+		i = dwe->parse_valid_way(s);
+		if (i != -1) {
+			ways.push_back((unsigned int)i);
+		} else {
+			this->set_status(get_bad_cache, "angry");
+			return;
+		}
+	}
+
+	if (this->p.empty()) {
+		this->set_status(get_no_instructions, "angry");
+		return;
+	}
+
+	this->ready = true;
+
+	// say something snarky
+	if (!is_pipelined)
+		this->set_status(get_no_pipeline, "angry");
+	else if (ways.size() == 0)
+		this->set_status(get_no_cache, "angry");
+	else
+		this->set_status(get_initialize, "happy");
+
+	emit sendConfigure(ways, this->p, is_pipelined);
 }
 
+void GUI::set_status(
+	const std::function<std::string()> &func, const QString &img)
+{
+	this->status_label->setText(
+		"-> \"" + QString::fromStdString(func()) + "\"");
+
+	QString img_path = ":resources/" + img;
+	QPixmap pixmap(img_path);
+
+	if (!pixmap) {
+		return;
+	}
+
+	this->avatar->setPixmap(pixmap);
+	this->avatar->show();
+}
