@@ -107,12 +107,17 @@ QCheckBox::indicator {
 QCheckBox::indicator:unchecked {
 }
 
-/* QCheckBox::indicator:unchecked:pressed { */
-/*     image: url(:/images/checkbox_unchecked_pressed.png); */
-/* } */
-
 QCheckBox::indicator:checked {
     background: "#00cc00";
+}
+
+QTabWidget::tab-bar {
+    alignment: center;
+}
+
+QTabBar::tab:selected {
+    color: "#000200";
+    background-color: "#00cc00";
 }
 
 QSlider::groove:horizontal {

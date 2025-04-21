@@ -233,11 +233,13 @@ void GUI::onWorkerWriteBackInfo(const std::vector<int> info)
 {
 	if (!info.empty()) {
 		ui->write_mnemonic->setText(mnemonicToString((Mnemonic)info[0]));
+		ui->write_squashed->setText(QString::number(info[1]));
 		ui->write_s1->set_value(info[2]);
 		ui->write_s2->set_value(info[3]);
 		ui->write_s3->set_value(info[4]);
 	} else {
 		ui->write_mnemonic->clear();
+		ui->write_squashed->clear();
 		ui->write_s1->clear();
 		ui->write_s2->clear();
 		ui->write_s3->clear();
