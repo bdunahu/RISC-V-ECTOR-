@@ -58,6 +58,7 @@ class GUI : public QMainWindow
 		const QString &img = "idle.png");
 
   signals:
+	void hex_toggled(bool is_hex);
 	void sendRunSteps(int steps);
 	void sendConfigure(
 		std::vector<unsigned int> ways, vector<int> program, bool is_pipelined);
@@ -92,6 +93,9 @@ class GUI : public QMainWindow
 	void
 	on_enable_pipeline_checkbox_checkStateChanged(const Qt::CheckState &arg1);
 
+	void
+	on_base_toggle_checkbox_checkStateChanged(const Qt::CheckState &state);
+
 	void on_step_btn_clicked();
 
 	void on_save_program_state_btn_clicked();
@@ -111,6 +115,11 @@ class GUI : public QMainWindow
 	 * Indicates if the program has been initialized.
 	 */
 	bool ready;
+
+	/**
+	 * Whether or not numerical values are currently displaying in hex.
+	 */
+	bool is_hex = true;
 
 	/**
 	 * The message displayed on the status bar.

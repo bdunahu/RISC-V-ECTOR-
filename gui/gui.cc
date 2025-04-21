@@ -48,6 +48,13 @@ GUI::GUI(QWidget *parent) : QMainWindow(parent), ui(new Ui::GUI)
 	worker = new Worker();
 	worker->moveToThread(&workerThread);
 
+	// find all the labels
+	QList<DigitLabel*> labels = this->findChildren<DigitLabel*>();
+	for (DigitLabel* label : labels) {
+		connect(this, &GUI::hex_toggled, label, &DigitLabel::on_hex_toggle);
+	}
+	emit this->hex_toggled(this->is_hex);
+
 	// display clock cycles and PC
 	connect(worker, &Worker::clock_cycles, this, &GUI::on_worker_refresh_gui);
 
@@ -207,6 +214,7 @@ void GUI::onWorkerExecuteInfo(const std::vector<int> info)
 void GUI::onWorkerMemoryInfo(const std::vector<int> info)
 {
 	if (!info.empty()) {
+		std::cout << "this " << info[3] << std::endl;
 		ui->memory_mnemonic->setText(mnemonicToString((Mnemonic)info[0]));
 		ui->memory_squashed->setText(QString::number(info[1]));
 		ui->memory_s1->set_value(info[2]);
@@ -299,13 +307,13 @@ void GUI::on_upload_program_state_btn_clicked()
 void GUI::on_enable_pipeline_checkbox_checkStateChanged(
 	const Qt::CheckState &arg1)
 {
-	if (arg1 == Qt::CheckState::Checked) {
-		qDebug() << "enable pipeline checkbox checked.";
-		this->is_pipelined = true;
-	} else {
-		qDebug() << "enable pipeline checkbox unchecked.";
-		this->is_pipelined = false;
-	}
+	this->is_pipelined = (arg1 == Qt::CheckState::Checked) ? true : false;
+}
+
+void GUI::on_base_toggle_checkbox_checkStateChanged(const Qt::CheckState &state)
+{
+	this->is_hex = (state == Qt::CheckState::Checked) ? false : true;
+	emit this->hex_toggled(this->is_hex);
 }
 
 void GUI::on_step_btn_clicked()

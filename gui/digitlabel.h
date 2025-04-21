@@ -29,7 +29,7 @@ class DigitLabel : public QLabel
 	 * Constructor.
 	 * @return a newly allocated DigitLabel.
 	 */
-	explicit DigitLabel(QWidget *parent = nullptr);
+	explicit DigitLabel(QWidget *parent);
 
 	/**
 	 * Sets the empty flag.
@@ -44,7 +44,7 @@ class DigitLabel : public QLabel
 	/**
 	 * Toggles the base this label displays in, by setting `this->is_hex'.
 	 */
-	void toggle_mode();
+	void on_hex_toggle(bool is_hex);
 
   private:
 	/**
@@ -55,13 +55,13 @@ class DigitLabel : public QLabel
 	/**
 	 * The decimal value associated with this label.
 	 */
-	int v = 0;
+	int v;
 	/**
-	 * To display in hexidecimal or not.
+	 * If this digit should display in hexidecinmal.
 	 */
-	bool is_hex = true;
+	int is_hex;
 	/**
-	 * To display in hexidecimal or not.
+	 * If this digit should not display.
 	 */
 	bool is_cleared = true;
 };
