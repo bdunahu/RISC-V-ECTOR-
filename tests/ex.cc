@@ -64,13 +64,39 @@ TEST_CASE_METHOD(EXFixture, "ADD within bounds", "[ex]")
 	delete i;
 }
 
-// TEST_CASE_METHOD(EXFixture, "ADD overflow", "[ex]")
-// {
-// }
+TEST_CASE_METHOD(EXFixture, "ADD overflow", "[ex]")
+{
+	signed int s1, s2, s3;
+	Mnemonic m;
+	InstrDTO *i;
 
-// TEST_CASE_METHOD(EXFixture, "ADD underflow", "[ex]")
-// {
-// }
+	m = ADD;
+	s1 = MAX_INT, s2 = 1, s3 = 0;
+	i = execute_instr(s1, s2, s3, m);
+
+	CHECK(i->get_s1() == -(MAX_INT)-1);
+	CHECK(ct->get_condition(OF));
+	CHECK(!ct->get_condition(UF));
+
+	delete i;
+}
+
+TEST_CASE_METHOD(EXFixture, "ADD underflow", "[ex]")
+{
+	signed int s1, s2, s3;
+	Mnemonic m;
+	InstrDTO *i;
+
+	m = ADD;
+	s1 = -(MAX_INT)-1, s2 = -1, s3 = 0;
+	i = execute_instr(s1, s2, s3, m);
+
+	CHECK(i->get_s1() == MAX_INT);
+	CHECK(!ct->get_condition(OF));
+	CHECK(ct->get_condition(UF));
+
+	delete i;
+}
 
 TEST_CASE_METHOD(EXFixture, "SUB within bounds", "[ex]")
 {
@@ -89,13 +115,39 @@ TEST_CASE_METHOD(EXFixture, "SUB within bounds", "[ex]")
 	delete i;
 }
 
-// TEST_CASE_METHOD(EXFixture, "SUB overflow", "[ex]")
-// {
-// }
+TEST_CASE_METHOD(EXFixture, "SUB overflow", "[ex]")
+{
+	signed int s1, s2, s3;
+	Mnemonic m;
+	InstrDTO *i;
 
-// TEST_CASE_METHOD(EXFixture, "SUB underflow", "[ex]")
-// {
-// }
+	m = SUB;
+	s1 = MAX_INT, s2 = -1, s3 = 0;
+	i = execute_instr(s1, s2, s3, m);
+
+	CHECK(i->get_s1() == -(MAX_INT)-1);
+	CHECK(ct->get_condition(OF));
+	CHECK(!ct->get_condition(UF));
+
+	delete i;
+}
+
+TEST_CASE_METHOD(EXFixture, "SUB underflow", "[ex]")
+{
+	signed int s1, s2, s3;
+	Mnemonic m;
+	InstrDTO *i;
+
+	m = SUB;
+	s1 = -(MAX_INT)-1, s2 = 1, s3 = 0;
+	i = execute_instr(s1, s2, s3, m);
+
+	CHECK(i->get_s1() == MAX_INT);
+	CHECK(!ct->get_condition(OF));
+	CHECK(ct->get_condition(UF));
+
+	delete i;
+}
 
 TEST_CASE_METHOD(EXFixture, "MUL within bounds", "[ex]")
 {
@@ -114,13 +166,39 @@ TEST_CASE_METHOD(EXFixture, "MUL within bounds", "[ex]")
 	delete i;
 }
 
-// TEST_CASE_METHOD(EXFixture, "MUL overflow", "[ex]")
-// {
-// }
+TEST_CASE_METHOD(EXFixture, "MUL overflow", "[ex]")
+{
+	signed int s1, s2, s3;
+	Mnemonic m;
+	InstrDTO *i;
 
-// TEST_CASE_METHOD(EXFixture, "MUL underflow", "[ex]")
-// {
-// }
+	m = MUL;
+	s1 = MAX_INT, s2 = MAX_INT, s3 = 0;
+	i = execute_instr(s1, s2, s3, m);
+
+	CHECK(i->get_s1() == 1);
+	CHECK(ct->get_condition(OF));
+	CHECK(!ct->get_condition(UF));
+
+	delete i;
+}
+
+TEST_CASE_METHOD(EXFixture, "MUL underflow", "[ex]")
+{
+	signed int s1, s2, s3;
+	Mnemonic m;
+	InstrDTO *i;
+
+	m = MUL;
+	s1 = MAX_INT, s2 = -MAX_INT, s3 = 0;
+	i = execute_instr(s1, s2, s3, m);
+
+	CHECK(i->get_s1() == -1);
+	CHECK(!ct->get_condition(OF));
+	CHECK(ct->get_condition(UF));
+
+	delete i;
+}
 
 TEST_CASE_METHOD(EXFixture, "QUOT within bounds", "[ex]")
 {
@@ -139,17 +217,36 @@ TEST_CASE_METHOD(EXFixture, "QUOT within bounds", "[ex]")
 	delete i;
 }
 
-// TEST_CASE_METHOD(EXFixture, "QUOT overflow", "[ex]")
-// {
-// }
+TEST_CASE_METHOD(EXFixture, "QUOT overflow", "[ex]")
+{
+	signed int s1, s2, s3;
+	Mnemonic m;
+	InstrDTO *i;
 
-// TEST_CASE_METHOD(EXFixture, "QUOT underflow", "[ex]")
-// {
-// }
+	m = QUOT;
+	s1 = -(MAX_INT)-1, s2 = -1, s3 = 0;
+	i = execute_instr(s1, s2, s3, m);
 
-// TEST_CASE_METHOD(EXFixture, "QUOT halt", "[ex]")
-// {
-// }
+	CHECK(i->get_s1() == -(MAX_INT)-1);
+	CHECK(ct->get_condition(OF));
+	CHECK(!ct->get_condition(UF));
+
+	delete i;
+}
+
+TEST_CASE_METHOD(EXFixture, "QUOT halt", "[ex]")
+{
+	try {
+		signed int s1, s2, s3;
+		Mnemonic m;
+
+		m = QUOT;
+		s1 = 1, s2 = 0, s3 = 0;
+		execute_instr(s1, s2, s3, m);
+		FAIL(true);
+	} catch (HaltException &e) {
+	}
+}
 
 TEST_CASE_METHOD(EXFixture, "REM within bounds", "[ex]")
 {
@@ -168,17 +265,19 @@ TEST_CASE_METHOD(EXFixture, "REM within bounds", "[ex]")
 	delete i;
 }
 
-// TEST_CASE_METHOD(EXFixture, "REM overflow", "[ex]")
-// {
-// }
+TEST_CASE_METHOD(EXFixture, "REM halt", "[ex]")
+{
+	try {
+		signed int s1, s2, s3;
+		Mnemonic m;
 
-// TEST_CASE_METHOD(EXFixture, "REM underflow", "[ex]")
-// {
-// }
-
-// TEST_CASE_METHOD(EXFixture, "REM halt", "[ex]")
-// {
-// }
+		m = REM;
+		s1 = 1, s2 = 0, s3 = 0;
+		execute_instr(s1, s2, s3, m);
+		FAIL(true);
+	} catch (HaltException &e) {
+	}
+}
 
 TEST_CASE_METHOD(EXFixture, "SFTR within bounds", "[ex]")
 {
@@ -461,13 +560,39 @@ TEST_CASE_METHOD(EXFixture, "ADDI within bounds", "[ex]")
 	delete i;
 }
 
-// TEST_CASE_METHOD(EXFixture, "ADDI overflow", "[ex]")
-// {
-// }
+TEST_CASE_METHOD(EXFixture, "ADDI overflow", "[ex]")
+{
+	signed int s1, s2, s3;
+	Mnemonic m;
+	InstrDTO *i;
 
-// TEST_CASE_METHOD(EXFixture, "ADDI underflow", "[ex]")
-// {
-// }
+	m = ADDI;
+	s1 = MAX_INT, s2 = 0, s3 = 1;
+	i = execute_instr(s1, s2, s3, m);
+
+	CHECK(i->get_s1() == -(MAX_INT)-1);
+	CHECK(ct->get_condition(OF));
+	CHECK(!ct->get_condition(UF));
+
+	delete i;
+}
+
+TEST_CASE_METHOD(EXFixture, "ADDI underflow", "[ex]")
+{
+	signed int s1, s2, s3;
+	Mnemonic m;
+	InstrDTO *i;
+
+	m = ADDI;
+	s1 = -(MAX_INT)-1, s2 = 0, s3 = -1;
+	i = execute_instr(s1, s2, s3, m);
+
+	CHECK(i->get_s1() == MAX_INT);
+	CHECK(!ct->get_condition(OF));
+	CHECK(ct->get_condition(UF));
+
+	delete i;
+}
 
 TEST_CASE_METHOD(EXFixture, "SUBI within bounds", "[ex]")
 {
@@ -486,13 +611,39 @@ TEST_CASE_METHOD(EXFixture, "SUBI within bounds", "[ex]")
 	delete i;
 }
 
-// TEST_CASE_METHOD(EXFixture, "SUBI overflow", "[ex]")
-// {
-// }
+TEST_CASE_METHOD(EXFixture, "SUBI overflow", "[ex]")
+{
+	signed int s1, s2, s3;
+	Mnemonic m;
+	InstrDTO *i;
 
-// TEST_CASE_METHOD(EXFixture, "SUBI underflow", "[ex]")
-// {
-// }
+	m = SUBI;
+	s1 = -(MAX_INT)-1, s2 = 0, s3 = 1;
+	i = execute_instr(s1, s2, s3, m);
+
+	CHECK(i->get_s1() == MAX_INT);
+	CHECK(!ct->get_condition(OF));
+	CHECK(ct->get_condition(UF));
+
+	delete i;
+}
+
+TEST_CASE_METHOD(EXFixture, "SUBI underflow", "[ex]")
+{
+	signed int s1, s2, s3;
+	Mnemonic m;
+	InstrDTO *i;
+
+	m = SUBI;
+	s1 = MAX_INT, s2 = 0, s3 = -1;
+	i = execute_instr(s1, s2, s3, m);
+
+	CHECK(i->get_s1() == -(MAX_INT)-1);
+	CHECK(ct->get_condition(OF));
+	CHECK(!ct->get_condition(UF));
+
+	delete i;
+}
 
 TEST_CASE_METHOD(EXFixture, "SFTRI within bounds", "[ex]")
 {

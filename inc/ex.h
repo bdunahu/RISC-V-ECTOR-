@@ -23,6 +23,31 @@
 #include <exception>
 #include <unordered_map>
 
+#define ADDITION_OF_GUARD(a, b) \
+	(b >= 0) && (a > MAX_INT - b)
+
+#define ADDITION_UF_GUARD(a, b) \
+	(b < 0) && (a < (-(MAX_INT)-1) - b)
+
+#define SUBTRACTION_OF_GUARD(a, b) \
+	(b < 0) && (a > MAX_INT + b)
+
+#define SUBTRACTION_UF_GUARD(a, b) \
+	(b >= 0) && (a < (-(MAX_INT)-1) + b)
+
+#define MULTIPLICATION_OF_GUARD(a, b) \
+	(b != 0) && \
+	(((b > 0) && (a > 0) && (a > MAX_INT / b)) || \
+	 ((b < 0) && (a < 0) && (a < MAX_INT / b)))
+
+#define MULTIPLICATION_UF_GUARD(a, b) \
+	(b != 0) && \
+	(((b > 0) && (a < 0) && (a < (-(MAX_INT)-1) / b)) || \
+	 ((b < 0) && (a > 0) && (a > (-(MAX_INT)-1) / b)))
+
+#define DIVISION_OF_GUARD(a, b) \
+	((a == -(MAX_INT) - 1) && (b == -1)) || (b == 0)
+
 class HaltException : public std::exception
 {
 	const char *what() const noexcept override {
