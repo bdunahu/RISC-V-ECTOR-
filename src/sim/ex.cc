@@ -372,6 +372,16 @@ EX::EX(Stage *stage) : Stage(stage)
 				(void)this;
 			}),
 
+		INIT_INSTRUCTION(
+			RET,
+			{
+				(void)pc;
+				(void)s3;
+				(void)s2;
+				(void)s1;
+				(void)this;
+			}),
+
 		/* NOP */
 		INIT_INSTRUCTION(
 			NOP,

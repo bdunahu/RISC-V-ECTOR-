@@ -160,7 +160,7 @@ class GUI : public QMainWindow
 		{Mnemonic::BEQ, "BEQ"},		  {Mnemonic::BGT, "BGT"},
 		{Mnemonic::BUF, "BUF"},		  {Mnemonic::BOF, "BOF"},
 		{Mnemonic::PUSH, "PUSH"},	  {Mnemonic::POP, "POP"},
-		{Mnemonic::NOP, "NOP"},
+		{Mnemonic::NOP, "NOP"},		  {Mnemonic::RET, "RET"},
 	};
 	QString mnemonicToString(Mnemonic mnemonic)
 	{

@@ -35,6 +35,6 @@ const std::unordered_map<unsigned int, Mnemonic> mnemonic_map = {
 	{0b0101101, STOREV}, {0b0000110, JMP},	 {0b0001010, JRL},
 	{0b0001110, JAL},	 {0b0010010, BEQ},	 {0b0010110, BGT},
 	{0b0011010, BUF},	 {0b0011110, BOF},	 {0b0100010, PUSH},
-	{0b0100110, POP},
+	{0b0100110, POP},	 {0b0101010, RET},
 };
 } // namespace instr

@@ -62,7 +62,7 @@ void WB::jump_handler()
 {
 	if (this->curr_instr->get_s1() > 0) {
 		if (this->curr_instr->get_mnemonic() == JAL)
-			this->gprs[1] = this->pc + 1;
+			this->gprs[1] = this->curr_instr->get_pc() + 1;;
 		this->pc = this->curr_instr->get_s1();
 		this->checked_out = {};
 		this->next->squash();

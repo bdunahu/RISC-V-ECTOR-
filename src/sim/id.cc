@@ -211,8 +211,11 @@ void ID::decode_J_type(
 		}
 		this->status = r1;
 		break;
+	case RET:
+		s1 = 1; // link register
+		[[fallthrough]];
 	default:
-		this->status = this->read_guard(*&s1);
+		this->status = this->read_guard(s1);
 	}
 
 }

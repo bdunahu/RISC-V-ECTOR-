@@ -58,6 +58,7 @@ enum Mnemonic {
 	BOF,
 	PUSH,
 	POP,
+	RET,
 	NOP,
 };
 
