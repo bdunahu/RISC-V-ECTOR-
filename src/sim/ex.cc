@@ -39,6 +39,8 @@ EX::EX(Stage *stage) : Stage(stage)
 		INIT_INSTRUCTION(
 			ADD,
 			{
+				this->set_condition(OF, ADDITION_OF_GUARD(s1, s2));
+				this->set_condition(UF, ADDITION_UF_GUARD(s1, s2));
 				s1 = s1 + s2;
 				(void)pc;
 				(void)s3;
@@ -48,6 +50,8 @@ EX::EX(Stage *stage) : Stage(stage)
 		INIT_INSTRUCTION(
 			SUB,
 			{
+				this->set_condition(OF, SUBTRACTION_OF_GUARD(s1, s2));
+				this->set_condition(UF, SUBTRACTION_UF_GUARD(s1, s2));
 				s1 = s1 - s2;
 				(void)pc;
 				(void)s3;
@@ -57,6 +61,8 @@ EX::EX(Stage *stage) : Stage(stage)
 		INIT_INSTRUCTION(
 			MUL,
 			{
+				this->set_condition(OF, MULTIPLICATION_OF_GUARD(s1, s2));
+				this->set_condition(UF, MULTIPLICATION_UF_GUARD(s1, s2));
 				s1 = s1 * s2;
 				(void)pc;
 				(void)s3;
@@ -75,7 +81,6 @@ EX::EX(Stage *stage) : Stage(stage)
 			REM,
 			{
 				this->handle_divide(s1, s2, true);
-				s1 = s1 % s2;
 				(void)pc;
 				(void)s3;
 				(void)this;
@@ -102,6 +107,8 @@ EX::EX(Stage *stage) : Stage(stage)
 		INIT_INSTRUCTION(
 			AND,
 			{
+				this->set_condition(OF, false);
+				this->set_condition(UF, false);
 				s1 = s1 & s2;
 				(void)pc;
 				(void)s3;
@@ -111,6 +118,8 @@ EX::EX(Stage *stage) : Stage(stage)
 		INIT_INSTRUCTION(
 			OR,
 			{
+				this->set_condition(OF, false);
+				this->set_condition(UF, false);
 				s1 = s1 | s2;
 				(void)pc;
 				(void)s3;
@@ -120,6 +129,8 @@ EX::EX(Stage *stage) : Stage(stage)
 		INIT_INSTRUCTION(
 			NOT,
 			{
+				this->set_condition(OF, false);
+				this->set_condition(UF, false);
 				s1 = ~s1;
 				(void)pc;
 				(void)s3;
@@ -130,6 +141,8 @@ EX::EX(Stage *stage) : Stage(stage)
 		INIT_INSTRUCTION(
 			XOR,
 			{
+				this->set_condition(OF, false);
+				this->set_condition(UF, false);
 				s1 = s1 ^ s2;
 				(void)pc;
 				(void)s3;
@@ -220,6 +233,8 @@ EX::EX(Stage *stage) : Stage(stage)
 		INIT_INSTRUCTION(
 			ADDI,
 			{
+				this->set_condition(OF, ADDITION_OF_GUARD(s1, s3));
+				this->set_condition(UF, ADDITION_UF_GUARD(s1, s3));
 				s1 = s1 + s3;
 				(void)pc;
 				(void)s2;
@@ -229,6 +244,8 @@ EX::EX(Stage *stage) : Stage(stage)
 		INIT_INSTRUCTION(
 			SUBI,
 			{
+				this->set_condition(OF, SUBTRACTION_OF_GUARD(s1, s3));
+				this->set_condition(UF, SUBTRACTION_UF_GUARD(s1, s3));
 				s1 = s1 - s3;
 				(void)pc;
 				(void)s2;
@@ -256,6 +273,8 @@ EX::EX(Stage *stage) : Stage(stage)
 		INIT_INSTRUCTION(
 			ANDI,
 			{
+				this->set_condition(OF, false);
+				this->set_condition(UF, false);
 				s1 = s1 & s3;
 				(void)pc;
 				(void)s2;
@@ -265,6 +284,8 @@ EX::EX(Stage *stage) : Stage(stage)
 		INIT_INSTRUCTION(
 			ORI,
 			{
+				this->set_condition(OF, false);
+				this->set_condition(UF, false);
 				s1 = s1 | s3;
 				(void)pc;
 				(void)s2;
@@ -274,6 +295,8 @@ EX::EX(Stage *stage) : Stage(stage)
 		INIT_INSTRUCTION(
 			XORI,
 			{
+				this->set_condition(OF, false);
+				this->set_condition(UF, false);
 				s1 = s1 ^ s3;
 				(void)pc;
 				(void)s2;
@@ -415,12 +438,17 @@ void EX::advance_helper()
 
 void EX::handle_divide(signed int &s1, signed int s2, bool is_mod)
 {
+	this->set_condition(OF, DIVISION_OF_GUARD(s1, s2));
+	this->set_condition(UF, false);
 	if (s2 == 0) {
 		// handle everything here
 		this->curr_instr->set_s1(MAX_INT);
 		this->status = OK;
 		throw HaltException();
+	} else if ((s1 == -(MAX_INT)-1) && s2 == -1) {
+		// undefined in C++
+		s1 = -(MAX_INT)-1;
 	} else {
-		s1 = (is_mod) ? s1 % s2 : s1 / s2;
+		s1 = (is_mod) ? (s1 % s2) : (s1 / s2);
 	}
 }
