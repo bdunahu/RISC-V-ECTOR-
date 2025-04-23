@@ -422,15 +422,15 @@ void EX::advance_helper()
 	unsigned int pc;
 	Mnemonic m;
 
-	m = this->curr_instr->get_mnemonic();
-	s1 = this->curr_instr->get_s1();
-	s2 = this->curr_instr->get_s2();
-	s3 = this->curr_instr->get_s3();
-	pc = this->curr_instr->get_pc();
+	m = this->curr_instr->mnemonic;
+	s1 = this->curr_instr->operands.integer.slot_one;
+	s2 = this->curr_instr->operands.integer.slot_two;
+	s3 = this->curr_instr->operands.integer.slot_three;
+	pc = this->curr_instr->slot_B;
 
 	this->instr_map[m](s1, s2, s3, pc);
 
-	this->curr_instr->set_s1(s1);
+	this->curr_instr->operands.integer.slot_one = s1;
 	this->status = OK;
 }
 
@@ -440,7 +440,7 @@ void EX::handle_divide(signed int &s1, signed int s2, bool is_mod)
 	this->set_condition(UF, false);
 	if (s2 == 0) {
 		// handle everything here
-		this->curr_instr->set_s1(MAX_INT);
+		this->curr_instr->operands.integer.slot_one = MAX_INT;
 		this->status = OK;
 		throw HaltException();
 	} else if ((s1 == -(MAX_INT)-1) && s2 == -1) {

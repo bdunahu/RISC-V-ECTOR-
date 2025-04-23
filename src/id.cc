@@ -57,7 +57,7 @@ void ID::write_guard(signed int &v)
 		// keep track in the instrDTO for displaying to user and writeback
 		// keep track in checked_out so we can still access this information!
 		this->checked_out.push_back(v);
-		this->curr_instr->set_checked_out(v);
+		this->curr_instr->checked_out = v;
 	}
 	v = this->dereference_register(v);
 }
@@ -68,17 +68,17 @@ void ID::advance_helper()
 	Mnemonic m;
 	Type t;
 
-	if (curr_instr->get_mnemonic() == NOP)
+	if (curr_instr->mnemonic == NOP)
 		this->status = OK;
 	else {
-		s1 = curr_instr->get_instr_bits();
+		s1 = curr_instr->slot_A;
 		get_instr_fields(s1, s2, s3, m, t);
 		if (this->status == OK) {
-			curr_instr->set_s1(s1);
-			curr_instr->set_s2(s2);
-			curr_instr->set_s3(s3);
-			curr_instr->set_mnemonic(m);
-			curr_instr->set_type(t);
+			curr_instr->operands.integer.slot_one = s1;
+			curr_instr->operands.integer.slot_two = s2;
+			curr_instr->operands.integer.slot_three = s3;
+			curr_instr->mnemonic = m;
+			curr_instr->type = t;
 		}
 	}
 }
@@ -221,8 +221,8 @@ std::vector<int> ID::stage_info()
 {
 	std::vector<int> info;
 	if (this->curr_instr) {
-		info.push_back(this->curr_instr->is_squashed());
-		info.push_back(this->curr_instr->get_instr_bits());
+		info.push_back(this->curr_instr->is_squashed);
+		info.push_back(this->curr_instr->slot_A);
 	}
 	return info;
 }

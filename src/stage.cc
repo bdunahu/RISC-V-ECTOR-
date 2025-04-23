@@ -45,7 +45,7 @@ InstrDTO *Stage::advance(Response p)
 	InstrDTO *s = nullptr;
 	Response n;
 
-	if (this->curr_instr && this->curr_instr->is_squashed() == 1)
+	if (this->curr_instr && this->curr_instr->is_squashed == 1)
 		this->status = OK;
 	if (this->curr_instr && this->status != OK) {
 		this->advance_helper();
@@ -69,11 +69,11 @@ std::vector<int> Stage::stage_info()
 {
 	std::vector<int> info;
 	if (this->curr_instr) {
-		info.push_back(this->curr_instr->get_mnemonic());
-		info.push_back(this->curr_instr->is_squashed());
-		info.push_back(this->curr_instr->get_s1());
-		info.push_back(this->curr_instr->get_s2());
-		info.push_back(this->curr_instr->get_s3());
+		info.push_back(this->curr_instr->mnemonic);
+		info.push_back(this->curr_instr->is_squashed);
+		info.push_back(this->curr_instr->operands.integer.slot_one);
+		info.push_back(this->curr_instr->operands.integer.slot_two);
+		info.push_back(this->curr_instr->operands.integer.slot_three);
 	}
 	return info;
 }
@@ -121,7 +121,7 @@ bool Stage::is_checked_out(signed int r)
 void Stage::squash()
 {
 	if (curr_instr) {
-		this->curr_instr->squash();
+		this->curr_instr->is_squashed = 1;
 		this->status = OK;
 	}
 	if (this->next) {
