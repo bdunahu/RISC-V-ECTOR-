@@ -18,9 +18,6 @@
 #ifndef INSTRDTO_H
 #define INSTRDTO_H
 #include "instr.h"
-#include <functional>
-#include <string>
-#include <unordered_map>
 
 struct U_INT_TYPE {
 	signed int slot_one;
