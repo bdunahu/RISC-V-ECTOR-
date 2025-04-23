@@ -38,7 +38,7 @@ void Controller::run_for(int number)
 	int i;
 	for (i = 0; i < number; ++i) {
 		try {
-			this->advance(WAIT);
+			this->advance(READY);
 		} catch (HaltException &e) {
 			break;
 		}

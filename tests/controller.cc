@@ -37,7 +37,7 @@ class ControllerPipeFixture
 		InstrDTO *i = nullptr;
 		int j;
 		for (j = 0; j < this->stage_num + 1; ++j) {
-			i = this->ct->advance(WAIT);
+			i = this->ct->advance(READY);
 			REQUIRE(i == nullptr);
 		}
 	}

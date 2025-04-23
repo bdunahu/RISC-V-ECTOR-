@@ -25,7 +25,7 @@ InstrDTO *IF::advance(Response p)
 	InstrDTO *r = nullptr;
 
 	this->advance_helper();
-	if (this->curr_instr != nullptr && p == WAIT) {
+	if (this->curr_instr != nullptr && p == READY) {
 		// don't increment PC if the PC was just set by wb
 		if (this->curr_instr->is_squashed != 1)
 			++this->pc;

@@ -33,9 +33,9 @@ class EXFixture
 		i->mnemonic = m;
 		this->dum->set_curr_instr(i);
 
-		i = this->ct->advance(WAIT);
+		i = this->ct->advance(READY);
 		REQUIRE(i == nullptr);
-		i = this->ct->advance(WAIT);
+		i = this->ct->advance(READY);
 		REQUIRE(i != nullptr);
 
 		return i;

@@ -17,7 +17,7 @@ class DUM : public Stage
 	{
 		InstrDTO *r = nullptr;
 
-		if (this->curr_instr && p == WAIT) {
+		if (this->curr_instr && p == READY) {
 			r = new InstrDTO(*this->curr_instr);
 			delete this->curr_instr;
 			curr_instr = nullptr;

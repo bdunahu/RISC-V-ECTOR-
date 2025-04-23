@@ -50,7 +50,7 @@ class Stage
 	 * ready to accept a new instruction object next cycle.
 	 * @return a DTO object containing the next instruction to be processed.
 	 *
-	 * Must set the status to WAIT when the current instruction is evicted..
+	 * Must set the status to READY when the current instruction is evicted..
 	 */
 	virtual InstrDTO *advance(Response p);
 

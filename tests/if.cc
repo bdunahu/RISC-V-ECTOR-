@@ -36,7 +36,7 @@ class IFFixture
 		int i;
 
 		for (i = 0; i < this->m_delay + 1; ++i) {
-			r = this->ct->advance(WAIT);
+			r = this->ct->advance(READY);
 			// check response
 			CHECK(r == nullptr);
 		}
@@ -52,11 +52,11 @@ class IFFixture
 		int i;
 
 		for (i = 0; i < this->c_delay; ++i) {
-			r = this->ct->advance(WAIT);
+			r = this->ct->advance(READY);
 			// check response
 			REQUIRE(r == nullptr);
 		}
-		r = this->ct->advance(WAIT);
+		r = this->ct->advance(READY);
 		// check response
 		REQUIRE(r != nullptr);
 		return r;
@@ -122,7 +122,7 @@ TEST_CASE_METHOD(IFFixture, "fetch waits with old instruction", "[if_pipe]")
 		REQUIRE(i != nullptr);
 	}
 
-	i = this->ct->advance(WAIT);
+	i = this->ct->advance(READY);
 	REQUIRE(i != nullptr);
 	REQUIRE(i->slot_A == this->p[0]);
 

@@ -20,6 +20,6 @@
 
 std::ostream &operator<<(std::ostream &os, Response r)
 {
-	const std::string nameR[] = {"OK", "WAIT", "BLOCKED", "STALLED"};
+	const std::string nameR[] = {"OK", "READY", "STALLED"};
 	return os << nameR[r];
 }

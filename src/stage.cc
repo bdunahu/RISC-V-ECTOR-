@@ -23,7 +23,7 @@ Stage::Stage(Stage *next)
 {
 	this->next = next;
 	this->curr_instr = nullptr;
-	this->status = WAIT;
+	this->status = READY;
 }
 
 Stage::~Stage() { delete this->next; };
@@ -50,15 +50,15 @@ InstrDTO *Stage::advance(Response p)
 	if (this->curr_instr && this->status != OK) {
 		this->advance_helper();
 	}
-	if (this->status == OK && p == WAIT && this->curr_instr) {
+	if (this->status == OK && p == READY && this->curr_instr) {
 		// mutual consent
 		r = new InstrDTO(*this->curr_instr);
 		delete curr_instr;
 		curr_instr = nullptr;
-		this->status = WAIT;
+		this->status = READY;
 	}
 
-	n = (p != WAIT || this->status != WAIT) ? STALLED : WAIT;
+	n = (p != READY || this->status != READY) ? STALLED : READY;
 	s = this->next->advance(n);
 	if (s)
 		this->curr_instr = s;
