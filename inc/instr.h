@@ -62,8 +62,6 @@ enum Mnemonic {
 	NOP,
 };
 
-enum Type { R, I, J, INV };
-
 namespace instr
 {
 // clang-format off

@@ -59,7 +59,6 @@ void IF::advance_helper()
 			this->curr_instr = new InstrDTO();
 			this->curr_instr->slot_A = bits;
 			this->curr_instr->slot_B = this->pc;
-			this->curr_instr->type = INV;
 			this->curr_instr->is_squashed = 0;
 			this->curr_instr->checked_out = -1;
 			this->curr_instr->mnemonic = ADD;

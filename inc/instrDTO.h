@@ -48,11 +48,6 @@ struct InstrDTO {
 	 * The mnemonic of the instruction.
 	 */
 	Mnemonic mnemonic;
-	// TODO delete me
-	/**
-	 * Type of the instruction
-	 */
-	Type type;
 	/**
 	 * The register this instruction checks out.
 	 */
