@@ -27,12 +27,7 @@
 class DUM : public Stage
 {
   public:
-	/**
-	 * Constructor.
-	 * @param The next stage in the pipeline.
-	 * @return A newly allocated DUM object.
-	 */
-	DUM(Stage *next);
+	using Stage::Stage;
 
 	InstrDTO *advance(Response p) override;
 

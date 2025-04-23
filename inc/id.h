@@ -25,12 +25,8 @@
 class ID : public Stage
 {
   public:
-	/**
-	 * Constructor.
-	 * @param The next stage in the pipeline.
-	 * @return A newly allocated ID object.
-	 */
 	ID(Stage *next);
+	using Stage::Stage;
 	using Stage::advance;
 
 	/* The following methods are made public so that they may be tested, and are

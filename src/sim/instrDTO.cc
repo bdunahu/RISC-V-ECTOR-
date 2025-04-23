@@ -16,7 +16,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "instrDTO.h"
-#include "accessor.h"
 
 InstrDTO::InstrDTO()
 {

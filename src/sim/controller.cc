@@ -31,8 +31,6 @@ Controller::Controller(Stage *stage, Storage *storage, bool is_pipelined)
 	this->checked_out = {};
 	this->gprs = {0};
 	this->gprs.at(2) = MEM_WORDS; // set the stack pointer
-	// grant side-door access
-	this->id = SIDE;
 }
 
 void Controller::run_for(int number)

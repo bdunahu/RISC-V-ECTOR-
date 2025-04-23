@@ -16,7 +16,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "ex.h"
-#include "accessor.h"
 #include "instrDTO.h"
 #include "pipe_spec.h"
 #include "response.h"
@@ -32,7 +31,6 @@
 
 EX::EX(Stage *stage) : Stage(stage)
 {
-	this->id = EXEC;
 	instr_map = {
 
 		/* R type instructions */

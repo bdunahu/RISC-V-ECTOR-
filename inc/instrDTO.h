@@ -17,7 +17,6 @@
 
 #ifndef INSTRDTO_H
 #define INSTRDTO_H
-#include "accessor.h"
 #include "instr.h"
 #include <functional>
 #include <string>

@@ -17,7 +17,6 @@
 
 #ifndef STAGE_H
 #define STAGE_H
-#include "accessor.h"
 #include "instrDTO.h"
 #include "pipe_spec.h"
 #include "response.h"
@@ -111,10 +110,6 @@ class Stage
 	 * @return the value in the associated register.
 	 */
 	signed int dereference_register(signed int v);
-	/**
-	 * The name of the pipeline stage.
-	 */
-	Accessor id;
 	/**
 	 * The shared pool of general-purpose integer registers.
 	 */

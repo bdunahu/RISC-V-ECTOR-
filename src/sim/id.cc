@@ -16,14 +16,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "id.h"
-#include "accessor.h"
 #include "instr.h"
 #include "instrDTO.h"
 #include "logger.h"
 #include "response.h"
 #include "stage.h"
 
-ID::ID(Stage *stage) : Stage(stage) { this->id = DCDE; }
+ID::ID(Stage *stage) : Stage(stage) { }
 
 void ID::split_instr(signed int &raw, unsigned int &type, Mnemonic &m)
 {

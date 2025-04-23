@@ -16,14 +16,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "wb.h"
-#include "accessor.h"
 #include "instrDTO.h"
 #include "response.h"
 #include "stage.h"
 #include <array>
 #include <algorithm>
-
-WB::WB(Stage *stage) : Stage(stage) { this->id = WRITE; }
 
 void WB::advance_helper()
 {

@@ -16,12 +16,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "if.h"
-#include "accessor.h"
 #include "instrDTO.h"
 #include "response.h"
 #include "stage.h"
-
-IF::IF(Stage *stage) : Stage(stage) { this->id = FETCH; }
 
 InstrDTO *IF::advance(Response p)
 {
