@@ -25,7 +25,6 @@
 class ID : public Stage
 {
   public:
-	ID(Stage *next);
 	using Stage::Stage;
 	using Stage::advance;
 
