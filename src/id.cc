@@ -22,8 +22,6 @@
 #include "response.h"
 #include "stage.h"
 
-ID::ID(Stage *stage) : Stage(stage) { }
-
 void ID::split_instr(signed int &raw, unsigned int &type, Mnemonic &m)
 {
 	unsigned int opcode, opcode_size;
