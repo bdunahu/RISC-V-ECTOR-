@@ -98,6 +98,7 @@ void ID::get_instr_fields(
 		this->decode_J_type(s1, s2, s3, m);
 		break;
 	case 0b11:
+		m = NOP;
 		this->status = OK;
 	}
 }
