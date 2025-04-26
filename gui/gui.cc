@@ -17,6 +17,7 @@
 
 #include "gui.h"
 #include "./ui_gui.h"
+#include "digitlabeldelegate.h"
 #include "dynamicwaysentry.h"
 #include "messages.h"
 #include "storageview.h"
@@ -57,7 +58,6 @@ GUI::GUI(QWidget *parent) : QMainWindow(parent), ui(new Ui::GUI)
 	for (DigitLabel *label : labels) {
 		connect(this, &GUI::hex_toggled, label, &DigitLabel::on_hex_toggle);
 	}
-	emit this->hex_toggled(this->is_hex);
 
 	// display clock cycles and PC
 	connect(worker, &Worker::clock_cycles, this, &GUI::on_worker_refresh_gui);
@@ -345,6 +345,7 @@ void GUI::make_tabs(int num)
 	StorageView *e;
 	QTableView *t;
 	QString n;
+	DigitLabelDelegate *d;
 
 	ui->storage->clear();
 
@@ -361,11 +362,18 @@ void GUI::make_tabs(int num)
 			e = new StorageView(MEM_LINES, this);
 		} else {
 			n = QString("L%1").arg(i - 1);
-			e = new StorageView(cache_size_mapper(this->curr_cache_levels, i), this);
+			e = new StorageView(
+				cache_size_mapper(this->curr_cache_levels, i), this);
 		}
 
 		t = new QTableView;
 		t->setModel(e);
+		d = new DigitLabelDelegate(t);
+
+		connect(
+			this, &GUI::hex_toggled, d, &DigitLabelDelegate::set_hex_display);
+
+		t->setItemDelegate(d);
 		t->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
 		ui->storage->addTab(t, n);
