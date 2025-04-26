@@ -50,8 +50,6 @@ class ID : public Stage
 	 */
 	void write_guard(signed int &r);
 
-	std::vector<int> stage_info() override;
-
   private:
 	/**
 	 * Helper for `get_instr_fields`

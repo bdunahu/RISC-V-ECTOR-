@@ -28,8 +28,6 @@ class IF : public Stage
 
 	InstrDTO *advance(Response p) override;
 
-	std::vector<int> stage_info() override;
-
   private:
 	void advance_helper() override;
 };

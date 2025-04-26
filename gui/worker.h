@@ -72,11 +72,11 @@ class Worker : public QObject
 	void
 	storage(const std::vector<std::array<signed int, LINE_SIZE>> data, int i);
 	void register_storage(const std::array<int, GPR_NUM> data);
-	void if_info(const std::vector<int> info);
-	void id_info(const std::vector<int> info);
-	void ex_info(const std::vector<int> info);
-	void mm_info(const std::vector<int> info);
-	void wb_info(const std::vector<int> info);
+	void if_info(const InstrDTO *);
+	void id_info(const InstrDTO *);
+	void ex_info(const InstrDTO *);
+	void mm_info(const InstrDTO *);
+	void wb_info(const InstrDTO *);
 	void finished();
 };
 

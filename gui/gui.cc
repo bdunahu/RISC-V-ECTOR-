@@ -169,36 +169,36 @@ void GUI::on_worker_refresh_gui(int cycles, int pc)
 	ui->cycle_counter->set_value(cycles);
 }
 
-void GUI::onWorkerFetchInfo(const std::vector<int> info)
+void GUI::onWorkerFetchInfo(const InstrDTO *i)
 {
-	if (!info.empty()) {
-		ui->fetch_squashed->setText(QString::number(info[0]));
-		ui->fetch_bits->set_value(info[1]);
+	if (i) {
+		ui->fetch_squashed->setText(QString::number(i->is_squashed));
+		ui->fetch_bits->set_value(i->slot_A);
 	} else {
 		ui->fetch_squashed->clear();
 		ui->fetch_bits->clear();
 	}
 }
 
-void GUI::onWorkerDecodeInfo(const std::vector<int> info)
+void GUI::onWorkerDecodeInfo(const InstrDTO *i)
 {
-	if (!info.empty()) {
-		ui->decode_squashed->setText(QString::number(info[0]));
-		ui->decode_bits->set_value(info[1]);
+	if (i) {
+		ui->decode_squashed->setText(QString::number(i->is_squashed));
+		ui->decode_bits->set_value(i->slot_A);
 	} else {
 		ui->decode_squashed->clear();
 		ui->decode_bits->clear();
 	}
 }
 
-void GUI::onWorkerExecuteInfo(const std::vector<int> info)
+void GUI::onWorkerExecuteInfo(const InstrDTO *i)
 {
-	if (!info.empty()) {
-		ui->execute_mnemonic->setText(mnemonicToString((Mnemonic)info[0]));
-		ui->execute_squashed->setText(QString::number(info[1]));
-		ui->execute_s1->set_value(info[2]);
-		ui->execute_s2->set_value(info[3]);
-		ui->execute_s3->set_value(info[4]);
+	if (i) {
+		ui->execute_mnemonic->setText(mnemonicToString(i->mnemonic));
+		ui->execute_squashed->setText(QString::number(i->is_squashed));
+		ui->execute_s1->set_value(i->operands.integer.slot_one);
+		ui->execute_s2->set_value(i->operands.integer.slot_two);
+		ui->execute_s3->set_value(i->operands.integer.slot_three);
 	} else {
 		ui->execute_mnemonic->clear();
 		ui->execute_squashed->clear();
@@ -208,15 +208,14 @@ void GUI::onWorkerExecuteInfo(const std::vector<int> info)
 	}
 }
 
-void GUI::onWorkerMemoryInfo(const std::vector<int> info)
+void GUI::onWorkerMemoryInfo(const InstrDTO *i)
 {
-	if (!info.empty()) {
-		std::cout << "this " << info[3] << std::endl;
-		ui->memory_mnemonic->setText(mnemonicToString((Mnemonic)info[0]));
-		ui->memory_squashed->setText(QString::number(info[1]));
-		ui->memory_s1->set_value(info[2]);
-		ui->memory_s2->set_value(info[3]);
-		ui->memory_s3->set_value(info[4]);
+	if (i) {
+		ui->memory_mnemonic->setText(mnemonicToString(i->mnemonic));
+		ui->memory_squashed->setText(QString::number(i->is_squashed));
+		ui->memory_s1->set_value(i->operands.integer.slot_one);
+		ui->memory_s2->set_value(i->operands.integer.slot_two);
+		ui->memory_s3->set_value(i->operands.integer.slot_three);
 	} else {
 		ui->memory_mnemonic->clear();
 		ui->memory_squashed->clear();
@@ -226,14 +225,14 @@ void GUI::onWorkerMemoryInfo(const std::vector<int> info)
 	}
 }
 
-void GUI::onWorkerWriteBackInfo(const std::vector<int> info)
+void GUI::onWorkerWriteBackInfo(const InstrDTO *i)
 {
-	if (!info.empty()) {
-		ui->write_mnemonic->setText(mnemonicToString((Mnemonic)info[0]));
-		ui->write_squashed->setText(QString::number(info[1]));
-		ui->write_s1->set_value(info[2]);
-		ui->write_s2->set_value(info[3]);
-		ui->write_s3->set_value(info[4]);
+	if (i) {
+		ui->write_mnemonic->setText(mnemonicToString(i->mnemonic));
+		ui->write_squashed->setText(QString::number(i->is_squashed));
+		ui->write_s1->set_value(i->operands.integer.slot_one);
+		ui->write_s2->set_value(i->operands.integer.slot_two);
+		ui->write_s3->set_value(i->operands.integer.slot_three);
 	} else {
 		ui->write_mnemonic->clear();
 		ui->write_squashed->clear();

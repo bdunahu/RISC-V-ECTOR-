@@ -89,10 +89,10 @@ void Worker::runSteps(int steps)
 		emit storage(this->s.at(i - 1)->view(0, 1 << this->size_inc * i), i + 1);
 
 	emit clock_cycles(this->ct->get_clock_cycle(), this->ct->get_pc());
-	emit if_info(this->if_stage->stage_info());
-	emit id_info(this->id_stage->stage_info());
-	emit ex_info(this->ex_stage->stage_info());
-	emit mm_info(this->mm_stage->stage_info());
-	emit wb_info(this->wb_stage->stage_info());
+	emit if_info(this->if_stage->get_instr());
+	emit id_info(this->id_stage->get_instr());
+	emit ex_info(this->ex_stage->get_instr());
+	emit mm_info(this->mm_stage->get_instr());
+	emit wb_info(this->wb_stage->get_instr());
 	this->ct_mutex.unlock();
 }

@@ -57,15 +57,15 @@ class GUI : public QMainWindow
   private slots:
 	void on_worker_refresh_gui(int value, int pc);
 
-	void onWorkerFetchInfo(const std::vector<int> info);
+	void onWorkerFetchInfo(const InstrDTO *);
 
-	void onWorkerDecodeInfo(const std::vector<int> info);
+	void onWorkerDecodeInfo(const InstrDTO *);
 
-	void onWorkerExecuteInfo(const std::vector<int> info);
+	void onWorkerExecuteInfo(const InstrDTO *);
 
-	void onWorkerMemoryInfo(const std::vector<int> info);
+	void onWorkerMemoryInfo(const InstrDTO *);
 
-	void onWorkerWriteBackInfo(const std::vector<int> info);
+	void onWorkerWriteBackInfo(const InstrDTO *);
 
 	void onWorkerShowStorage(
 		const std::vector<std::array<signed int, LINE_SIZE>> data, int i);

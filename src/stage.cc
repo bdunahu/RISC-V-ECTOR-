@@ -65,18 +65,7 @@ InstrDTO *Stage::advance(Response p)
 	return r;
 }
 
-std::vector<int> Stage::stage_info()
-{
-	std::vector<int> info;
-	if (this->curr_instr) {
-		info.push_back(this->curr_instr->mnemonic);
-		info.push_back(this->curr_instr->is_squashed);
-		info.push_back(this->curr_instr->operands.integer.slot_one);
-		info.push_back(this->curr_instr->operands.integer.slot_two);
-		info.push_back(this->curr_instr->operands.integer.slot_three);
-	}
-	return info;
-}
+InstrDTO *Stage::get_instr() { return this->curr_instr; }
 
 void Stage::set_condition(CC c, bool v)
 {

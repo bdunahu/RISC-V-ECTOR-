@@ -37,15 +37,6 @@ InstrDTO *IF::advance(Response p)
 	return r;
 }
 
-std::vector<int> IF::stage_info() {
-	std::vector<int> info;
-	if(this->curr_instr){
-		info.push_back(this->curr_instr->is_squashed);
-		info.push_back(this->curr_instr->slot_A);
-	}
-	return info;
-}
-
 void IF::advance_helper()
 {
 	Response r;

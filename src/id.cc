@@ -211,13 +211,3 @@ void ID::decode_J_type(
 	}
 
 }
-
-std::vector<int> ID::stage_info()
-{
-	std::vector<int> info;
-	if (this->curr_instr) {
-		info.push_back(this->curr_instr->is_squashed);
-		info.push_back(this->curr_instr->slot_A);
-	}
-	return info;
-}
