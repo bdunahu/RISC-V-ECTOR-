@@ -349,28 +349,31 @@ void GUI::make_tabs(int num)
 
 	ui->storage->clear();
 
-	this->tab_boxes.clear();
 	qDeleteAll(this->tab_boxes);
+	this->tab_boxes.clear();
 
 	for (i = 0; i < num; ++i) {
 		if (i == 0) {
 			n = "Registers";
 			e = new StorageView(0, this);
-		} else if (i == 1) {
+		} else if (i == num - 1) {
 			n = "DRAM";
-			e = new StorageView(MEM_LINES, this);
+			e = new StorageView(4, this);
 		} else {
-			n = QString("L%1").arg(i - 1);
+			n = QString("L%1").arg(i);
 			e = new StorageView(
-				cache_size_mapper(this->curr_cache_levels, i), this);
+				// cache_size_mapper(this->curr_cache_levels-1, i-1)
+				4, this);
 		}
+		std::cout << "total levels: " << num << ":"
+				  << this->curr_cache_levels - 1 << " level: " << i
+				  << std::endl;
 
-		t = new QTableView;
+		t = new QTableView(ui->storage);
 		t->setModel(e);
 		d = new DigitLabelDelegate(t);
 
-		connect(
-			this, &GUI::hex_toggled, e, &StorageView::set_hex_display);
+		connect(this, &GUI::hex_toggled, e, &StorageView::set_hex_display);
 		connect(
 			this, &GUI::hex_toggled, d, &DigitLabelDelegate::set_hex_display);
 

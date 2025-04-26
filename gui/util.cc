@@ -1,16 +1,17 @@
 #include "util.h"
+#include "definitions.h"
 #include <QString>
 
 int cache_size_mapper(int total_levels, int level)
 {
 	const int y_min = 4;
-	const int y_max = 12;
+	const int y_max = MEM_LINES - 2;
 	double f, r;
 
 	if (total_levels <= 1)
 		return 8;
 
-	f = level / total_levels;
+	f = level / (double)total_levels;
 	r = y_min + f * (y_max - y_min);
 
 	return r;

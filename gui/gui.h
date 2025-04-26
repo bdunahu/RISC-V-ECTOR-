@@ -99,12 +99,12 @@ class GUI : public QMainWindow
 	/**
 	 * Indicates if the program has been initialized.
 	 */
-	bool ready;
+	bool ready = false;
 
 	/**
 	 * The current number of cache levels.
 	 */
-	int curr_cache_levels;
+	int curr_cache_levels = 0;
 
 	/**
 	 * The list of storage displays.
