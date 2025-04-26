@@ -50,11 +50,6 @@ class Worker : public QObject
 	Controller *ct = nullptr;
 	QMutex ct_mutex;
 
-	/**
-	 * The size each progressive cache level increases by.
-	 */
-	unsigned int size_inc;
-
   public:
 	explicit Worker(QObject *parent = nullptr);
 	~Worker();

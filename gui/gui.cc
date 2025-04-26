@@ -20,10 +20,11 @@
 #include "dynamicwaysentry.h"
 #include "messages.h"
 #include "storageview.h"
+#include "util.h"
+#include <QHeaderView>
 #include <QPixmap>
 #include <QString>
 #include <QTableView>
-#include <QHeaderView>
 
 GUI::GUI(QWidget *parent) : QMainWindow(parent), ui(new Ui::GUI)
 {
@@ -332,6 +333,8 @@ void GUI::on_config_clicked()
 	else
 		this->set_status(get_initialize, "happy");
 
+	this->curr_cache_levels = ways.size();
+
 	emit sendConfigure(ways, this->p, is_pipelined);
 	make_tabs(2 + ways.size());
 }
@@ -339,12 +342,9 @@ void GUI::on_config_clicked()
 void GUI::make_tabs(int num)
 {
 	int i;
-	QStringList xTra;
 	StorageView *e;
 	QTableView *t;
 	QString n;
-
-	xTra = {"Registers", "DRAM"};
 
 	ui->storage->clear();
 
@@ -352,17 +352,21 @@ void GUI::make_tabs(int num)
 	qDeleteAll(this->tab_boxes);
 
 	for (i = 0; i < num; ++i) {
-		e = new StorageView(10, this);
+		// make the name
+		if (i == 0) {
+			n = "Registers";
+			e = new StorageView(0, this);
+		} else if (i == 1) {
+			n = "DRAM";
+			e = new StorageView(MEM_LINES, this);
+		} else {
+			n = QString("L%1").arg(i - 1);
+			e = new StorageView(cache_size_mapper(this->curr_cache_levels, i), this);
+		}
 
 		t = new QTableView;
 		t->setModel(e);
 		t->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-
-		// make the name
-		if (i < xTra.size())
-			n = xTra[i];
-		else
-			n = QString("L%1").arg(i - 1);
 
 		ui->storage->addTab(t, n);
 		this->tab_boxes.push_back(e);

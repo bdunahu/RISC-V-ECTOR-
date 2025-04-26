@@ -102,6 +102,11 @@ class GUI : public QMainWindow
 	bool ready;
 
 	/**
+	 * The current number of cache levels.
+	 */
+	int curr_cache_levels;
+
+	/**
 	 * The list of storage displays.
 	 */
 	std::vector<StorageView *> tab_boxes;

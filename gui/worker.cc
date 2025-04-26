@@ -17,6 +17,7 @@
 
 #include "worker.h"
 #include "storage.h"
+#include "util.h"
 
 Worker::Worker(QObject *parent) : QObject(parent) {}
 
@@ -39,10 +40,6 @@ void Worker::configure(
 	this->s.clear();
 
 	this->ct_mutex.lock();
-	if (ways.size() != 0) {
-		// TODO optimal proper sizes
-		this->size_inc = ((MEM_LINE_SPEC * 0.75) / ways.size());
-	}
 	d = new Dram(DRAM_DELAY);
 	s = static_cast<Storage *>(d);
 
@@ -51,7 +48,8 @@ void Worker::configure(
 
 	for (i = ways.size(); i > 0; --i) {
 		s = static_cast<Storage *>(new Cache(
-			s, this->size_inc * (i), ways.at(i - 1), CACHE_DELAY + i));
+			s, cache_size_mapper(ways.size() - 1, i), ways.at(i - 1),
+			CACHE_DELAY + i));
 		this->s.push_front(s);
 	}
 
