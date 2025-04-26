@@ -1,4 +1,5 @@
 #include "util.h"
+#include <QString>
 
 int cache_size_mapper(int total_levels, int level)
 {
@@ -13,4 +14,11 @@ int cache_size_mapper(int total_levels, int level)
 	r = y_min + f * (y_max - y_min);
 
 	return r;
+}
+
+QString format_toggled_value(int value, bool is_hex, bool is_cleared)
+{
+	if (is_cleared)
+		return QString();
+	return is_hex ? QString::asprintf("%X", value) : QString::number(value);
 }

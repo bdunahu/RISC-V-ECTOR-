@@ -16,7 +16,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "digitlabeldelegate.h"
-#include "digitlabelhelper.h"
+#include "util.h"
 #include <QString>
 
 void DigitLabelDelegate::set_hex_display(bool hex)
@@ -39,7 +39,7 @@ void DigitLabelDelegate::paint(
 	QStyle *s;
 
 	v = index.data(Qt::DisplayRole).toInt();
-	t = DigitLabelHelper::format_value(v, this->is_hex);
+	t = format_toggled_value(v, this->is_hex);
 
 	o = option;
 	initStyleOption(&o, index);

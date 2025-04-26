@@ -17,7 +17,7 @@
 
 #include "storageview.h"
 #include "definitions.h"
-#include "digitlabelhelper.h"
+#include "util.h"
 #include <QAbstractTableModel>
 #include <QVector>
 
@@ -60,7 +60,7 @@ QVariant StorageView::headerData(int section, Qt::Orientation o, int role) const
 		return QVariant();
 
 	if (o == Qt::Vertical) {
-		return DigitLabelHelper::format_value(section * 4, this->is_hex);
+		return format_toggled_value(section * 4, this->is_hex);
 	}
 	return QVariant();
 }
