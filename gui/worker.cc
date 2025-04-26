@@ -23,8 +23,6 @@ Worker::Worker(QObject *parent) : QObject(parent) {}
 Worker::~Worker()
 {
 	emit finished();
-	qDebug() << "Worker destructor called in thread:"
-			 << QThread::currentThread();
 	delete this->ct;
 }
 
@@ -74,7 +72,6 @@ void Worker::configure(
 
 void Worker::runSteps(int steps)
 {
-	qDebug() << "Running for " << steps << "steps";
 	this->ct->run_for(steps);
 	this->update();
 }

@@ -92,7 +92,6 @@ GUI::GUI(QWidget *parent) : QMainWindow(parent), ui(new Ui::GUI)
 	});
 
 	// Proper cleanup when worker finishes
-	connect(worker, &Worker::finished, this, &GUI::onWorkerFinished);
 	connect(worker, &Worker::finished, &workerThread, &QThread::quit);
 	connect(&workerThread, &QThread::finished, worker, &QObject::deleteLater);
 
@@ -254,12 +253,8 @@ void GUI::onWorkerShowRegisters(const std::array<int, GPR_NUM> &data)
 	displayArrayHTML(this->tab_text_boxes.at(0), data);
 }
 
-void GUI::onWorkerFinished() { qDebug() << "Worker has finished processing."; }
-
 void GUI::on_upload_intructions_btn_clicked()
 {
-	qDebug() << "Upload intructions button clicked.";
-
 	// why ui->register_table, or now ui->storage
 	QString filePath = QFileDialog::getOpenFileName(
 		ui->storage, "Open Binary File", QDir::homePath(),
@@ -311,7 +306,6 @@ void GUI::on_base_toggle_checkbox_checkStateChanged(const Qt::CheckState &state)
 
 void GUI::on_step_btn_clicked()
 {
-	qDebug() << "Run step button clicked.";
 	// try to configure first
 	if (!this->ready)
 		this->on_config_clicked();

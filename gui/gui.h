@@ -72,8 +72,6 @@ class GUI : public QMainWindow
 
 	void onWorkerShowRegisters(const std::array<int, GPR_NUM> &data);
 
-	void onWorkerFinished();
-
 	void on_upload_intructions_btn_clicked();
 
 	void on_upload_program_state_btn_clicked();
