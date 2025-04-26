@@ -15,34 +15,29 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#include "digitlabel.h"
-#include "digitlabelhelper.h"
-#include "gui.h"
+#ifndef DIGITLABELHELPER_H
+#define DIGITLABELHELPER_H
 
-DigitLabel::DigitLabel(QWidget *parent) : QLabel(parent) { setText(QString()); }
+#include <QString>
 
-void DigitLabel::clear()
+class DigitLabelHelper
 {
-	this->is_cleared = true;
-	setText(QString());
-}
+  public:
+	/**
+	 * Contains the main formatting logic used to format integers.
+	 * @param the value to be formated
+	 * @param if the value should be displayed in hex. If false, displays in
+	 * decimal.
+	 * @param if the value should display.
+	 * @return a string respecting the above parameters.
+	 */
+	static QString format_value(int value, bool is_hex, bool is_cleared = false)
+	{
+		if (is_cleared)
+			return QString();
+		return is_hex ? QString::number(value, 16).toUpper()
+					  : QString::number(value);
+	}
+};
 
-void DigitLabel::set_value(int v)
-{
-	this->is_cleared = false;
-	this->v = v;
-	update_display();
-}
-
-void DigitLabel::on_hex_toggle(bool is_hex)
-{
-	this->is_hex = is_hex;
-	update_display();
-}
-
-void DigitLabel::update_display()
-{
-	QString t;
-	t = DigitLabelHelper::format_value(this->v, this->is_hex, this->is_cleared);
-	setText(t);
-}
+#endif // DIGITLABELHELPER_H
