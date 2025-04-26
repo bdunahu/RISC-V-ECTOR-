@@ -50,15 +50,27 @@ QGroupBox::title {
 QLabel {
 }
 
-/* text entry */
-QLineEdit {
-    font-size: 18pt;
-    border-radius: 0px;
-    padding: 0 4px;
-    selection-background-color: "#00cc00";
+QTableView {
+    border: 0px;
+    selection-background-color: transparent;
+    selection-color: black;
+    outline: none;
 }
 
-QTextEdit, QListView {
+QTableView::item {
+    border: none;
+    padding: 4px;
+}
+
+QHeaderView::section {
+    color: "#00cc00";
+    background-color: "#000200";
+    border: none;
+}
+
+QTableView QTableCornerButton::section {
+    background-color: "#000200";
+    border: none;
 }
 
 QPushButton {
@@ -71,8 +83,8 @@ QPushButton {
 
 QPushButton:pressed {
     color: "#00cc00";
-    background-color: "#000200";
-}
+    background-color: "#000200";}
+
 
 QPushButton:flat {
     border: none; /* no border for a flat push button */

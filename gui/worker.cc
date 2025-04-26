@@ -83,11 +83,10 @@ void Worker::update()
 	this->ct_mutex.lock();
 	emit register_storage(this->ct->get_gprs());
 
-	emit storage(this->s.at(0)->view(0, 255), 1);
+	emit storage(this->data_to_QT(this->s.at(0)->get_data()), 1);
 
 	for (i = 1; i < s.size(); ++i)
-		emit storage(
-			this->s.at(i - 1)->view(0, 1 << this->size_inc * i), i + 1);
+		emit storage(this->data_to_QT(this->s.at(i - 1)->get_data()), i + 1);
 
 	emit clock_cycles(this->ct->get_clock_cycle(), this->ct->get_pc());
 	emit if_info(this->if_stage->get_instr());
@@ -96,4 +95,19 @@ void Worker::update()
 	emit mm_info(this->mm_stage->get_instr());
 	emit wb_info(this->wb_stage->get_instr());
 	this->ct_mutex.unlock();
+}
+
+QVector<QVector<int>>
+Worker::data_to_QT(std::vector<std::array<signed int, LINE_SIZE>> data)
+{
+	QVector<QVector<int>> r;
+	QVector<int> tmp;
+
+	r.reserve(static_cast<int>(data.size()));
+
+	for (const auto &line : data) {
+		tmp = QVector<int>(line.begin(), line.end());
+		r.append(tmp);
+	}
+	return r;
 }

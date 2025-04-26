@@ -18,6 +18,7 @@
 #ifndef GUI_H
 #define GUI_H
 
+#include "storageview.h"
 #include "worker.h"
 #include <QFile>
 #include <QFileDialog>
@@ -67,8 +68,7 @@ class GUI : public QMainWindow
 
 	void onWorkerWriteBackInfo(const InstrDTO *);
 
-	void onWorkerShowStorage(
-		const std::vector<std::array<signed int, LINE_SIZE>> data, int i);
+	void onWorkerShowStorage(const QVector<QVector<int>> &data, int i);
 
 	void onWorkerShowRegisters(const std::array<int, GPR_NUM> &data);
 
@@ -104,7 +104,7 @@ class GUI : public QMainWindow
 	/**
 	 * The list of storage displays.
 	 */
-	std::vector<QTextEdit *> tab_text_boxes;
+	std::vector<StorageView *> tab_boxes;
 
 	/**
 	 * Whether or not numerical values are currently displaying in hex.

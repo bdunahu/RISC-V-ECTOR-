@@ -70,7 +70,7 @@ class Worker : public QObject
   signals:
 	void clock_cycles(int value, int pc);
 	void
-	storage(const std::vector<std::array<signed int, LINE_SIZE>> data, int i);
+	storage(QVector<QVector<int>> data, int i);
 	void register_storage(const std::array<int, GPR_NUM> data);
 	void if_info(const InstrDTO *);
 	void id_info(const InstrDTO *);
@@ -80,6 +80,13 @@ class Worker : public QObject
 	void finished();
 
   private:
+	/**
+	 * Converts a vector of arrays into a QVector of QVectors.
+	 * @param the original data
+	 * @return a less universal version of the same thing
+	 */
+	QVector<QVector<int>>
+	data_to_QT(std::vector<std::array<signed int, LINE_SIZE>> data);
 	/**
 	 * Sets the GUI signals to update the storage, clock cycle, and stage
 	 * displays.

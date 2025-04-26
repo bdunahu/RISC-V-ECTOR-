@@ -19,8 +19,11 @@
 #include "./ui_gui.h"
 #include "dynamicwaysentry.h"
 #include "messages.h"
+#include "storageview.h"
 #include <QPixmap>
 #include <QString>
+#include <QTableView>
+#include <QHeaderView>
 
 GUI::GUI(QWidget *parent) : QMainWindow(parent), ui(new Ui::GUI)
 {
@@ -131,37 +134,6 @@ void displayArrayHTML(QTextEdit *textEdit, const std::array<int, GPR_NUM> &data)
 	textEdit->setReadOnly(true);
 }
 
-void displayTableHTML(
-	QTextEdit *textEdit,
-	const std::vector<std::array<signed int, LINE_SIZE>> &data)
-{
-	textEdit->setReadOnly(false);
-	QString tableText = "<table border='1' cellspacing='0' cellpadding='8' "
-						"style='border-collapse: collapse; width: 100%; "
-						"border: 2px solid black;'>";
-
-	int index = 0;
-	for (const auto &row : data) {
-		tableText += "<tr>";
-		for (signed int value : row) {
-			tableText += QString("<td align='center' style='border: 2px solid "
-								 "black; min-width: 60px; padding: 10px;'>"
-								 "%1 <sup style='font-size: 10px; font-weight: "
-								 "bold; color: black;'>%2</sup>"
-								 "</td>")
-							 .arg(QString::asprintf("%04X", value))
-							 .arg(index);
-			index++;
-		}
-		tableText += "</tr>";
-	}
-
-	tableText += "</table>";
-
-	textEdit->setHtml(tableText);
-	textEdit->setReadOnly(true);
-}
-
 void GUI::on_worker_refresh_gui(int cycles, int pc)
 {
 	ui->p_counter->set_value(pc);
@@ -241,16 +213,15 @@ void GUI::onWorkerWriteBackInfo(const InstrDTO *i)
 	}
 }
 
-void GUI::onWorkerShowStorage(
-	const std::vector<std::array<signed int, LINE_SIZE>> data, int i)
+void GUI::onWorkerShowStorage(const QVector<QVector<int>> &data, int i)
 {
-	std::cout << this->tab_text_boxes.size() << std::endl;
-	displayTableHTML(this->tab_text_boxes.at(i), data);
+	this->tab_boxes.at(i)->set_data(data);
 }
 
 void GUI::onWorkerShowRegisters(const std::array<int, GPR_NUM> &data)
 {
-	displayArrayHTML(this->tab_text_boxes.at(0), data);
+	;
+	// displayArrayHTML(this->tab_boxes.at(0), data);
 }
 
 void GUI::on_upload_intructions_btn_clicked()
@@ -368,27 +339,33 @@ void GUI::on_config_clicked()
 void GUI::make_tabs(int num)
 {
 	int i;
-	QStringList names;
-	QTextEdit *e;
+	QStringList xTra;
+	StorageView *e;
+	QTableView *t;
 	QString n;
 
-	names = {"Registers", "DRAM"};
+	xTra = {"Registers", "DRAM"};
 
 	ui->storage->clear();
-	this->tab_text_boxes.clear();
+
+	this->tab_boxes.clear();
+	qDeleteAll(this->tab_boxes);
 
 	for (i = 0; i < num; ++i) {
-		e = new QTextEdit();
-		e->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+		e = new StorageView(10, this);
+
+		t = new QTableView;
+		t->setModel(e);
+		t->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
 		// make the name
-		if (i < names.size())
-			n = names[i];
+		if (i < xTra.size())
+			n = xTra[i];
 		else
-			n = QString("Level %1").arg(i - 1);
+			n = QString("L%1").arg(i - 1);
 
-		ui->storage->addTab(e, n);
-		this->tab_text_boxes.push_back(e);
+		ui->storage->addTab(t, n);
+		this->tab_boxes.push_back(e);
 	}
 }
 
