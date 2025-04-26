@@ -36,8 +36,7 @@ class DigitLabelHelper
 	{
 		if (is_cleared)
 			return QString();
-		return is_hex ? QString::asprintf("%X", value)
-					  : QString::number(value);
+		return is_hex ? QString::asprintf("%X", value) : QString::number(value);
 	}
 };
 

@@ -353,7 +353,6 @@ void GUI::make_tabs(int num)
 	qDeleteAll(this->tab_boxes);
 
 	for (i = 0; i < num; ++i) {
-		// make the name
 		if (i == 0) {
 			n = "Registers";
 			e = new StorageView(0, this);
@@ -370,6 +369,8 @@ void GUI::make_tabs(int num)
 		t->setModel(e);
 		d = new DigitLabelDelegate(t);
 
+		connect(
+			this, &GUI::hex_toggled, e, &StorageView::set_hex_display);
 		connect(
 			this, &GUI::hex_toggled, d, &DigitLabelDelegate::set_hex_display);
 

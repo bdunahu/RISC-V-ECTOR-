@@ -72,11 +72,18 @@ class StorageView : public QAbstractTableModel
 	 */
 	void set_data(const QVector<QVector<int>> &data);
 
+  public slots:
+	void set_hex_display(bool hex);
+
   private:
 	/**
 	 * The number of rows in this table.
 	 */
 	int r;
+	/**
+	 * Whether or not the headers should be displayed in hex.
+	 */
+	bool is_hex = true;
 	/**
 	 * The data this table displays.
 	 */

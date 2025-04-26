@@ -17,6 +17,7 @@
 
 #include "storageview.h"
 #include "definitions.h"
+#include "digitlabelhelper.h"
 #include <QAbstractTableModel>
 #include <QVector>
 
@@ -59,12 +60,13 @@ QVariant StorageView::headerData(int section, Qt::Orientation o, int role) const
 		return QVariant();
 
 	if (o == Qt::Vertical) {
-		return section * 4;
+		return DigitLabelHelper::format_value(section * 4, this->is_hex);
 	}
 	return QVariant();
 }
 
-Qt::ItemFlags StorageView::flags(const QModelIndex &i) const {
+Qt::ItemFlags StorageView::flags(const QModelIndex &i) const
+{
 	(void)i;
 	return Qt::ItemIsEnabled;
 }
@@ -74,4 +76,13 @@ void StorageView::set_data(const QVector<QVector<int>> &data)
 	beginResetModel();
 	this->d = data;
 	endResetModel();
+}
+
+void StorageView::set_hex_display(bool hex)
+{
+	if (this->is_hex != hex) {
+		beginResetModel();
+		this->is_hex = hex;
+		endResetModel();
+	}
 }
