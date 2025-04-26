@@ -28,9 +28,8 @@
 class DigitLabelDelegate : public QStyledItemDelegate
 {
 	Q_OBJECT
-
   public:
-	explicit DigitLabelDelegate(QObject *parent = nullptr);
+	using QStyledItemDelegate::QStyledItemDelegate;
 
   public slots:
 	void set_hex_display(bool hex);

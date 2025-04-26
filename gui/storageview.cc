@@ -48,6 +48,13 @@ QVariant StorageView::data(const QModelIndex &i, int role) const
 
 QVariant StorageView::headerData(int section, Qt::Orientation o, int role) const
 {
+	Qt::Alignment a;
+
+	if (role == Qt::TextAlignmentRole) {
+		a = Qt::AlignRight | Qt::AlignVCenter;
+		return QVariant(static_cast<int>(a));
+	}
+
 	if (role != Qt::DisplayRole)
 		return QVariant();
 

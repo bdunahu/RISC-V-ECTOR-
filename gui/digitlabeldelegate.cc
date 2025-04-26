@@ -19,12 +19,6 @@
 #include "digitlabelhelper.h"
 #include <QString>
 
-DigitLabelDelegate::DigitLabelDelegate(QObject *parent)
-	: QStyledItemDelegate(parent)
-{
-	;
-}
-
 void DigitLabelDelegate::set_hex_display(bool hex)
 {
 	if (this->is_hex != hex) {
