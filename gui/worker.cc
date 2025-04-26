@@ -69,24 +69,28 @@ void Worker::configure(
 		delete old;
 	this->ct_mutex.unlock();
 
-	emit clock_cycles(this->ct->get_clock_cycle(), this->ct->get_pc());
+	this->update();
 }
 
 void Worker::runSteps(int steps)
 {
+	qDebug() << "Running for " << steps << "steps";
+	this->ct->run_for(steps);
+	this->update();
+}
+
+void Worker::update()
+{
 	unsigned long i;
 
 	this->ct_mutex.lock();
-	qDebug() << "Running for " << steps << "steps";
-	this->ct->run_for(steps);
-
-	// TODO move these to separate functions
 	emit register_storage(this->ct->get_gprs());
 
 	emit storage(this->s.at(0)->view(0, 255), 1);
 
 	for (i = 1; i < s.size(); ++i)
-		emit storage(this->s.at(i - 1)->view(0, 1 << this->size_inc * i), i + 1);
+		emit storage(
+			this->s.at(i - 1)->view(0, 1 << this->size_inc * i), i + 1);
 
 	emit clock_cycles(this->ct->get_clock_cycle(), this->ct->get_pc());
 	emit if_info(this->if_stage->get_instr());

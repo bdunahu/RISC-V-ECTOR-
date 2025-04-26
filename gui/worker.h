@@ -78,6 +78,13 @@ class Worker : public QObject
 	void mm_info(const InstrDTO *);
 	void wb_info(const InstrDTO *);
 	void finished();
+
+  private:
+	/**
+	 * Sets the GUI signals to update the storage, clock cycle, and stage
+	 * displays.
+	 */
+	void update();
 };
 
 #endif // WORKER_H
