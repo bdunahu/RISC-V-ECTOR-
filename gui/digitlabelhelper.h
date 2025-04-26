@@ -24,7 +24,8 @@ class DigitLabelHelper
 {
   public:
 	/**
-	 * Contains the main formatting logic used to format integers.
+	 * Contains the main formatting logic used to format integers. Uses 2's
+	 * complement for hexadecimal numbers.
 	 * @param the value to be formated
 	 * @param if the value should be displayed in hex. If false, displays in
 	 * decimal.
@@ -35,7 +36,7 @@ class DigitLabelHelper
 	{
 		if (is_cleared)
 			return QString();
-		return is_hex ? QString::number(value, 16).toUpper()
+		return is_hex ? QString::asprintf("%04X", value)
 					  : QString::number(value);
 	}
 };
