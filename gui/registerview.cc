@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+#include "pipe_spec.h"
 #include "registerview.h"
-#include "definitions.h"
 #include "util.h"
 #include <QAbstractTableModel>
 #include <QVector>
@@ -29,12 +29,22 @@ QVariant RegisterView::data(const QModelIndex &i, int role) const
 		a = Qt::AlignRight | Qt::AlignVCenter;
 		return QVariant(static_cast<int>(a));
 	}
+
 	if (!i.isValid() || role != Qt::DisplayRole)
 		return QVariant();
-	return this->d[i.row()][i.column()];
+
+	if (i.row() < 16) {
+		if (i.column() < 1)
+			return this->gprs[i.row()];
+		else
+			return QVariant();
+	}
+
+	return this->vrs[i.row() - GPR_NUM][i.column() - GPR_NUM];
 }
 
-QVariant RegisterView::headerData(int section, Qt::Orientation o, int role) const
+QVariant
+RegisterView::headerData(int section, Qt::Orientation o, int role) const
 {
 	Qt::Alignment a;
 
@@ -47,7 +57,13 @@ QVariant RegisterView::headerData(int section, Qt::Orientation o, int role) cons
 		return QVariant();
 
 	if (o == Qt::Vertical) {
-		return format_toggled_value(section * 4, this->is_hex);
+		return format_toggled_value(section, this->is_hex);
 	}
 	return QVariant();
+}
+
+void RegisterView::set_data(const QVector<int> &gprs, const QVector<QVector<int>> &vrs)
+{
+	this->gprs = gprs;
+	this->vrs = vrs;
 }

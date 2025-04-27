@@ -49,7 +49,11 @@ class Controller : public Stage
 	/**
 	 * @return a copy of gprs.
 	 */
-	std::array<int, GPR_NUM> get_gprs();
+	std::array<signed int, GPR_NUM> get_gprs();
+	/**
+	 * @return a copy of vrs.
+	 */
+	std::array<std::array<signed int, V_R_LIMIT>, V_NUM> get_vrs();
 	/**
 	 * @return the pc.
 	 */

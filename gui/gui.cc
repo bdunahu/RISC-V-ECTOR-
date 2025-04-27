@@ -17,11 +17,11 @@
 
 #include "gui.h"
 #include "./ui_gui.h"
-#include "digitlabeldelegate.h"
 #include "cachewaysselector.h"
+#include "digitlabeldelegate.h"
 #include "messages.h"
-#include "storageview.h"
 #include "registerview.h"
+#include "storageview.h"
 #include "util.h"
 #include <QHeaderView>
 #include <QPixmap>
@@ -112,32 +112,6 @@ GUI::~GUI()
 	delete ui;
 }
 
-void displayArrayHTML(QTextEdit *textEdit, const std::array<int, GPR_NUM> &data)
-{
-	textEdit->setReadOnly(false);
-	QString tableText = "<table border='1' cellspacing='0' cellpadding='8' "
-						"style='border-collapse: collapse; width: 100%; "
-						"border: 2px solid black;'>";
-
-	tableText += "<tr>";
-	int index = 0;
-	for (int value : data) {
-		tableText += QString("<td align='center' style='border: 2px solid "
-							 "black; min-width: 60px; padding: 10px;'>"
-							 "%1 <sup style='font-size: 10px; font-weight: "
-							 "bold; color: black;'>%2</sup>"
-							 "</td>")
-						 .arg(QString::asprintf("%04X", value))
-						 .arg(index);
-		index++;
-	}
-	tableText += "</tr>";
-	tableText += "</table>";
-
-	textEdit->setHtml(tableText);
-	textEdit->setReadOnly(true);
-}
-
 void GUI::on_worker_refresh_gui(int cycles, int pc)
 {
 	ui->p_counter->set_value(pc);
@@ -224,10 +198,13 @@ void GUI::onWorkerShowStorage(const QVector<QVector<int>> &data, int i)
 	this->tab_boxes.at(i)->set_data(data);
 }
 
-void GUI::onWorkerShowRegisters(const std::array<int, GPR_NUM> &data)
+void GUI::onWorkerShowRegisters(
+	const QVector<signed int> &gprs, const QVector<QVector<signed int>> &vrs)
 {
-	;
-	// displayArrayHTML(this->tab_boxes.at(0), data);
+	RegisterView *rv;
+
+	rv = dynamic_cast<RegisterView *>(this->tab_boxes.at(0));
+	rv->set_data(gprs, vrs);
 }
 
 void GUI::on_upload_intructions_btn_clicked()
@@ -353,7 +330,7 @@ void GUI::make_tabs(int num)
 	for (i = 0; i < num; ++i) {
 		if (i == 0) {
 			n = "Registers";
-			e = new RegisterView(GPR_NUM+V_NUM, V_R_LIMIT, this);
+			e = new RegisterView(GPR_NUM + V_NUM, V_R_LIMIT, this);
 		} else if (i == num - 1) {
 			n = "DRAM";
 			e = new StorageView(MEM_LINES, LINE_SIZE, this);
@@ -361,8 +338,7 @@ void GUI::make_tabs(int num)
 			n = QString("L%1").arg(i);
 			e = new StorageView(
 				(1 << cache_size_mapper(this->curr_cache_levels - 1, i - 1)),
-				LINE_SIZE,
-				this);
+				LINE_SIZE, this);
 		}
 
 		t = new QTableView(ui->storage);

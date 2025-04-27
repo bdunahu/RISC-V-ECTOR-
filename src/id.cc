@@ -34,7 +34,8 @@ Response ID::read_guard(signed int &v)
 	return r;
 }
 
-Response ID::read_vec_guard(signed int v, std::array<signed int, V_R_LIMIT> &vrs)
+Response
+ID::read_vec_guard(signed int v, std::array<signed int, V_R_LIMIT> &vrs)
 {
 	Response r;
 	if (this->is_checked_out(v))
@@ -58,7 +59,8 @@ void ID::write_guard(signed int &v)
 	v = this->dereference_register<signed int>(v);
 }
 
-void ID::write_vec_guard(signed int v, std::array<signed int, V_R_LIMIT> &vrs){
+void ID::write_vec_guard(signed int v, std::array<signed int, V_R_LIMIT> &vrs)
+{
 
 	// zero register shouldn't be written.
 	if (v != 0) {
@@ -121,13 +123,14 @@ void ID::split_instr(signed int &raw, unsigned int &type, Mnemonic &m)
 	raw = (unsigned int)raw >> (TYPE_SIZE + opcode_size);
 }
 
-Response ID::set_vlen(){
+Response ID::set_vlen()
+{
 	signed int vlen_reg = 4;
 	Response r;
 	r = this->read_guard(vlen_reg);
 	vlen_reg = vlen_reg & 0xf;
-	if (r == OK){
-		if (vlen_reg > V_R_LIMIT){
+	if (r == OK) {
+		if (vlen_reg > V_R_LIMIT) {
 			this->curr_instr->slot_A = V_R_LIMIT;
 		} else {
 			this->curr_instr->slot_A = vlen_reg;
@@ -150,9 +153,11 @@ void ID::decode_R_type(signed int &s1)
 	s2 = GET_MID_BITS(s1, s0b, s1b);
 	s1 = GET_LS_BITS(s1, s0b);
 
-	if(this->is_vector_type(this->curr_instr->mnemonic)){
-		r1 = this->read_vec_guard(s1, this->curr_instr->operands.vector.slot_one);
-		r2 = this->read_vec_guard(s2, this->curr_instr->operands.vector.slot_two);
+	if (this->is_vector_type(this->curr_instr->mnemonic)) {
+		r1 = this->read_vec_guard(
+			s1, this->curr_instr->operands.vector.slot_one);
+		r2 = this->read_vec_guard(
+			s2, this->curr_instr->operands.vector.slot_two);
 		r3 = this->set_vlen();
 	} else {
 		r1 = this->read_guard(s1);
@@ -171,14 +176,16 @@ void ID::decode_R_type(signed int &s1)
 	case SUBV:
 	case MULV:
 	case DIVV:
-		if(this->status == OK){
-			this->write_vec_guard(s3, this->curr_instr->operands.vector.slot_three);
+		if (this->status == OK) {
+			this->write_vec_guard(
+				s3, this->curr_instr->operands.vector.slot_three);
 		}
 		break;
 	default:
-		if (this->status == OK)
+		if (this->status == OK) {
 			this->write_guard(s3);
 			this->curr_instr->operands.integer.slot_three = s3;
+		}
 	}
 }
 
@@ -219,7 +226,8 @@ void ID::decode_I_type(signed int &s1)
 		r1 = this->read_guard(s1);
 		this->curr_instr->operands.load_store_vector.base_addr = s1;
 		// vector value to be stored
-		r2 = this->read_vec_guard(s2,this->curr_instr->operands.load_store_vector.vector_register);
+		r2 = this->read_vec_guard(
+			s2, this->curr_instr->operands.load_store_vector.vector_register);
 		r3 = this->set_vlen();
 
 		this->status = (r1 == OK && r2 == OK && r3 == OK) ? OK : STALLED;
@@ -234,7 +242,9 @@ void ID::decode_I_type(signed int &s1)
 		r3 = this->set_vlen();
 		if (r1 == OK && r3 == OK)
 			// vector destination
-			this->write_vec_guard(s2, this->curr_instr->operands.load_store_vector.vector_register);
+			this->write_vec_guard(
+				s2,
+				this->curr_instr->operands.load_store_vector.vector_register);
 		this->status = (r1 == OK && r3 == OK) ? OK : STALLED;
 		return;
 	case LOAD:
@@ -249,7 +259,7 @@ void ID::decode_I_type(signed int &s1)
 
 	r1 = this->read_guard(s1);
 	this->curr_instr->operands.integer.slot_one = s1;
-	if (r1 == OK){
+	if (r1 == OK) {
 		this->write_guard(s2);
 		this->curr_instr->operands.integer.slot_two = s2;
 	}
@@ -259,7 +269,7 @@ void ID::decode_I_type(signed int &s1)
 void ID::decode_J_type(signed int &s1)
 {
 	Response r1, r2;
-	signed int s2,s3;
+	signed int s2, s3;
 	unsigned int s0b, s1b;
 
 	s0b = REG_SIZE;
@@ -271,11 +281,12 @@ void ID::decode_J_type(signed int &s1)
 	switch (this->curr_instr->mnemonic) {
 	case PUSH:
 		s2 = s1; // source
-		s3 = 2;  // stack pointer
+		s3 = 2;	 // stack pointer
 		s1 = -1; // increment amount
 		r1 = this->read_guard(s2);
 		this->curr_instr->operands.integer.slot_two = s2;
-		r2 = (this->is_checked_out(s3)) ? STALLED : OK; // we read the stack pointer
+		r2 = (this->is_checked_out(s3)) ? STALLED
+										: OK; // we read the stack pointer
 		if (r1 == OK && r2 == OK) {
 			this->write_guard(s3); // we write the stack pointer
 			this->curr_instr->operands.integer.slot_three = s3;
@@ -284,9 +295,10 @@ void ID::decode_J_type(signed int &s1)
 		break;
 	case POP:
 		s2 = s1; // destination
-		s3 = 2;  // stack pointer
-		s1 = 1;  // increment amount
-		r1 = (this->is_checked_out(s3)) ? STALLED : OK; // we read the stack pointer
+		s3 = 2;	 // stack pointer
+		s1 = 1;	 // increment amount
+		r1 = (this->is_checked_out(s3)) ? STALLED
+										: OK; // we read the stack pointer
 		if (r1 == OK) {
 			this->write_guard(s2);
 			this->curr_instr->operands.integer.slot_two = s2;
@@ -302,5 +314,4 @@ void ID::decode_J_type(signed int &s1)
 		this->status = this->read_guard(s1);
 		this->curr_instr->operands.integer.slot_one = s1;
 	}
-
 }

@@ -88,6 +88,8 @@ class StorageView : public QAbstractTableModel
 	 * Whether or not the headers should be displayed in hex.
 	 */
 	bool is_hex = true;
+
+  private:
 	/**
 	 * The data this table displays.
 	 */

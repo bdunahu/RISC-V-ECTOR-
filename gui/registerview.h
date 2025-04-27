@@ -18,8 +18,8 @@
 #ifndef REGISTERVIEW_H
 #define REGISTERVIEW_H
 
-#include <QAbstractTableModel>
 #include "storageview.h"
+#include <QAbstractTableModel>
 #include <QVector>
 
 // see https://doc.qt.io/qt-6/qabstracttablemodel.html
@@ -43,6 +43,22 @@ class RegisterView : public StorageView
 		int section,
 		Qt::Orientation o,
 		int role = Qt::DisplayRole) const override;
+
+	/**
+	 * @param field to assign to `this->gprs'.
+	 * @param field to assign to `this->vrs'.
+	 */
+	void set_data(const QVector<int> &gprs, const QVector<QVector<int>> &vrs);
+
+  private:
+	/**
+	 * The general purpose registers.
+	 */
+	QVector<int> gprs;
+	/**
+	 * The vector registers.
+	 */
+	QVector<QVector<int>> vrs;
 };
 
 #endif // REGISTERVIEW_H
