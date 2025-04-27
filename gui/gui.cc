@@ -358,16 +358,13 @@ void GUI::make_tabs(int num)
 			e = new StorageView(0, this);
 		} else if (i == num - 1) {
 			n = "DRAM";
-			e = new StorageView(4, this);
+			e = new StorageView(MEM_LINES, this);
 		} else {
 			n = QString("L%1").arg(i);
 			e = new StorageView(
-				// cache_size_mapper(this->curr_cache_levels-1, i-1)
-				4, this);
+				(1 << cache_size_mapper(this->curr_cache_levels - 1, i - 1)),
+				this);
 		}
-		std::cout << "total levels: " << num << ":"
-				  << this->curr_cache_levels - 1 << " level: " << i
-				  << std::endl;
 
 		t = new QTableView(ui->storage);
 		t->setModel(e);

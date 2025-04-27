@@ -5,7 +5,7 @@
 int cache_size_mapper(int total_levels, int level)
 {
 	const int y_min = 4;
-	const int y_max = MEM_LINES - 2;
+	const int y_max = MEM_LINE_SPEC - 2;
 	double f, r;
 
 	if (total_levels <= 1)

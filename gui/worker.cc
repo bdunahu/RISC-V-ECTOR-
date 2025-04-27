@@ -48,7 +48,7 @@ void Worker::configure(
 
 	for (i = ways.size(); i > 0; --i) {
 		s = static_cast<Storage *>(new Cache(
-			s, cache_size_mapper(ways.size() - 1, i), ways.at(i - 1),
+			s, cache_size_mapper(ways.size() - 1, i - 1), ways.at(i - 1),
 			CACHE_DELAY + i));
 		this->s.push_front(s);
 	}
