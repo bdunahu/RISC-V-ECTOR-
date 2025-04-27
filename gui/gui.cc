@@ -139,6 +139,7 @@ void GUI::on_worker_refresh_gui(int cycles, int pc)
 {
 	ui->p_counter->set_value(pc);
 	ui->cycle_counter->set_value(cycles);
+	this->set_status(get_waiting, "idle");
 }
 
 void GUI::onWorkerFetchInfo(const InstrDTO *i)
@@ -288,7 +289,6 @@ void GUI::on_step_btn_clicked()
 	this->set_status(get_running, "busy");
 	int steps = step_values[ui->step_slider->value()];
 	emit sendRunSteps(steps);
-	this->set_status(get_waiting, "idle");
 }
 
 void GUI::on_save_program_state_btn_clicked()
