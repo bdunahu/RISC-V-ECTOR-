@@ -36,7 +36,7 @@ class IFFixture
 		int i;
 
 		for (i = 0; i < this->m_delay + 1; ++i) {
-			r = this->ct->advance(WAIT);
+			r = this->ct->advance(READY);
 			// check response
 			CHECK(r == nullptr);
 		}
@@ -52,11 +52,11 @@ class IFFixture
 		int i;
 
 		for (i = 0; i < this->c_delay; ++i) {
-			r = this->ct->advance(WAIT);
+			r = this->ct->advance(READY);
 			// check response
 			REQUIRE(r == nullptr);
 		}
-		r = this->ct->advance(WAIT);
+		r = this->ct->advance(READY);
 		// check response
 		REQUIRE(r != nullptr);
 		return r;
@@ -75,7 +75,7 @@ TEST_CASE_METHOD(IFFixture, "fetch returns single instuction", "[if_pipe]")
 	InstrDTO *i;
 
 	i = this->fetch_through();
-	REQUIRE(i->get_instr_bits() == this->p[0]);
+	REQUIRE(i->slot_A == this->p[0]);
 
 	delete i;
 }
@@ -88,13 +88,13 @@ TEST_CASE_METHOD(IFFixture, "fetch returns two instuctions", "[if_pipe]")
 	expected_cycles = this->m_delay + this->c_delay + 2;
 	i = this->fetch_through();
 
-	REQUIRE(i->get_instr_bits() == this->p[0]);
+	REQUIRE(i->slot_A == this->p[0]);
 	delete i;
 
 	expected_cycles += this->c_delay + 1;
 	i = this->fetch_cache();
 
-	REQUIRE(i->get_instr_bits() == this->p[1]);
+	REQUIRE(i->slot_A == this->p[1]);
 	delete i;
 }
 
@@ -122,9 +122,9 @@ TEST_CASE_METHOD(IFFixture, "fetch waits with old instruction", "[if_pipe]")
 		REQUIRE(i != nullptr);
 	}
 
-	i = this->ct->advance(WAIT);
+	i = this->ct->advance(READY);
 	REQUIRE(i != nullptr);
-	REQUIRE(i->get_instr_bits() == this->p[0]);
+	REQUIRE(i->slot_A == this->p[0]);
 
 	delete i;
 }

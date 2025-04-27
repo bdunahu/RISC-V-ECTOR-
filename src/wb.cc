@@ -16,20 +16,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "wb.h"
-#include "accessor.h"
 #include "instrDTO.h"
 #include "response.h"
 #include "stage.h"
-#include <array>
 #include <algorithm>
-
-WB::WB(Stage *stage) : Stage(stage) { this->id = WRITE; }
+#include <array>
 
 void WB::advance_helper()
 {
-	if (this->curr_instr->get_mnemonic() != NOP &&
-		this->curr_instr->get_type() != INV) {
-		if (this->curr_instr->get_checked_out() > 0)
+	if (this->curr_instr->mnemonic != NOP) {
+		if (this->curr_instr->checked_out > 0)
 			this->write_handler();
 		else if (this->should_jump())
 			this->jump_handler();
@@ -45,34 +41,38 @@ void WB::write_handler()
 		throw std::runtime_error("instruction tried to pop a register out of "
 								 "an empty queue during writeback.");
 
-	if (this->curr_instr->get_mnemonic() == POP) {
+	if (this->curr_instr->mnemonic == POP) {
 		// POP performs a second register write
 		reg = this->checked_out.front();
 		this->checked_out.pop_front();
-		this->store_register(reg, this->curr_instr->get_s3());
+		this->store_register(
+			reg, this->curr_instr->operands.integer.slot_three);
 	}
 
 	this->checked_out.pop_front();
-	reg = this->curr_instr->get_checked_out();
-	this->store_register(reg, this->curr_instr->get_s1());
-
+	reg = this->curr_instr->checked_out;
+	this->store_register(reg, this->curr_instr->operands.integer.slot_one);
 }
 
 void WB::jump_handler()
 {
-	if (this->curr_instr->get_s1() > 0) {
-		if (this->curr_instr->get_mnemonic() == JAL)
-			this->gprs[1] = this->curr_instr->get_pc() + 1;;
-		this->pc = this->curr_instr->get_s1();
+	if (this->curr_instr->operands.integer.slot_one > 0) {
+		if (this->curr_instr->mnemonic == JAL)
+			this->gprs[1] = this->curr_instr->slot_B + 1;
+		;
+		this->pc = this->curr_instr->operands.integer.slot_one;
 		this->checked_out = {};
 		this->next->squash();
 	}
 }
 
+// TODO clean this up...
 bool WB::should_jump()
 {
-	Type t;
+	vector<Mnemonic> Js = {JMP, JRL, JAL, BEQ, BGT, BUF, BOF, PUSH, POP, RET};
 
-	t = this->curr_instr->get_type();
-	return t == J;
+	if (find(Js.begin(), Js.end(), this->curr_instr->mnemonic) != Js.end())
+		return true;
+	else
+		return false;
 }

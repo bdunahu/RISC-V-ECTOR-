@@ -59,7 +59,7 @@ class DigitLabel : public QLabel
 	/**
 	 * If this digit should display in hexidecinmal.
 	 */
-	int is_hex;
+	int is_hex = true;
 	/**
 	 * If this digit should not display.
 	 */

@@ -16,6 +16,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "digitlabel.h"
+#include "util.h"
 #include "gui.h"
 
 DigitLabel::DigitLabel(QWidget *parent) : QLabel(parent) { setText(QString()); }
@@ -42,11 +43,6 @@ void DigitLabel::on_hex_toggle(bool is_hex)
 void DigitLabel::update_display()
 {
 	QString t;
-	if (this->is_cleared) {
-		setText(QString());
-	} else {
-		t = (this->is_hex) ? QString::number(this->v, 16).toUpper()
-						   : QString::number(this->v);
-		setText(t);
-	}
+	t = format_toggled_value(this->v, this->is_hex, this->is_cleared);
+	setText(t);
 }

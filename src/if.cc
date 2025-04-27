@@ -15,30 +15,45 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#include "dum.h"
-#include "accessor.h"
+#include "if.h"
 #include "instrDTO.h"
 #include "response.h"
 #include "stage.h"
 
-DUM::DUM(Stage *stage) : Stage(stage) { this->id = IDLE; }
-
-InstrDTO *DUM::advance(Response p)
+InstrDTO *IF::advance(Response p)
 {
 	InstrDTO *r = nullptr;
 
-	if (this->curr_instr && p == WAIT) {
+	this->advance_helper();
+	if (this->curr_instr != nullptr && p == READY) {
+		// don't increment PC if the PC was just set by wb
+		if (this->curr_instr->is_squashed != 1)
+			++this->pc;
 		r = new InstrDTO(*this->curr_instr);
-		delete this->curr_instr;
+		delete curr_instr;
 		curr_instr = nullptr;
 	}
 
 	return r;
 }
 
-void DUM::advance_helper() {}
-
-void DUM::set_curr_instr(InstrDTO *d)
+void IF::advance_helper()
 {
-	this->curr_instr = d;
+	Response r;
+	int i;
+	signed int bits;
+
+	if (this->curr_instr == nullptr && (this->is_pipelined || this->is_empty)) {
+		i = this->storage->read_word(this, this->pc, bits);
+		r = i ? OK : STALLED;
+		if (r == OK) {
+			this->curr_instr = new InstrDTO();
+			this->curr_instr->slot_A = bits;
+			this->curr_instr->slot_B = this->pc;
+			this->curr_instr->is_squashed = 0;
+			this->curr_instr->checked_out = -1;
+			this->curr_instr->mnemonic = ADD;
+			this->is_empty = false;
+		}
+	}
 }

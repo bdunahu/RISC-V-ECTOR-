@@ -25,12 +25,7 @@
 class ID : public Stage
 {
   public:
-	/**
-	 * Constructor.
-	 * @param The next stage in the pipeline.
-	 * @return A newly allocated ID object.
-	 */
-	ID(Stage *next);
+	using Stage::Stage;
 	using Stage::advance;
 
 	/* The following methods are made public so that they may be tested, and are
@@ -54,8 +49,6 @@ class ID : public Stage
 	 * @param the registers number, to be dereferenced and checked out.
 	 */
 	void write_guard(signed int &r);
-
-	std::vector<int> stage_info() override;
 
   private:
 	/**
@@ -83,7 +76,7 @@ class ID : public Stage
 	 * @param the resulting third field, which varies per type.
 	 * @param the resulting mnemonic.
 	 */
-	void get_instr_fields(signed int &s1, signed int &s2, signed int &s3, Mnemonic &m, Type &t);
+	void get_instr_fields(signed int &s1, signed int &s2, signed int &s3, Mnemonic &m);
 	void decode_R_type(signed int &s1, signed int &s2, signed int &s3, Mnemonic &m);
 	void decode_I_type(signed int &s1, signed int &s2, signed int &s3, Mnemonic &m);
 	void decode_J_type(signed int &s1, signed int &s2, signed int &s3, Mnemonic &m);

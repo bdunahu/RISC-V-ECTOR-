@@ -41,7 +41,7 @@
 	 ((b < 0) && (a < 0) && (a < MAX_INT / b)))
 
 #define MULTIPLICATION_UF_GUARD(a, b) \
-	(b != 0) && \
+	(b != 0) && (b != -1) && \
 	(((b > 0) && (a < 0) && (a < (-(MAX_INT)-1) / b)) || \
 	 ((b < 0) && (a > 0) && (a > (-(MAX_INT)-1) / b)))
 

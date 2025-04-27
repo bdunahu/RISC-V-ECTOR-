@@ -17,10 +17,15 @@
 
 #include "gui.h"
 #include "./ui_gui.h"
+#include "digitlabeldelegate.h"
 #include "dynamicwaysentry.h"
 #include "messages.h"
+#include "storageview.h"
+#include "util.h"
+#include <QHeaderView>
 #include <QPixmap>
 #include <QString>
+#include <QTableView>
 
 GUI::GUI(QWidget *parent) : QMainWindow(parent), ui(new Ui::GUI)
 {
@@ -53,7 +58,6 @@ GUI::GUI(QWidget *parent) : QMainWindow(parent), ui(new Ui::GUI)
 	for (DigitLabel *label : labels) {
 		connect(this, &GUI::hex_toggled, label, &DigitLabel::on_hex_toggle);
 	}
-	emit this->hex_toggled(this->is_hex);
 
 	// display clock cycles and PC
 	connect(worker, &Worker::clock_cycles, this, &GUI::on_worker_refresh_gui);
@@ -92,7 +96,6 @@ GUI::GUI(QWidget *parent) : QMainWindow(parent), ui(new Ui::GUI)
 	});
 
 	// Proper cleanup when worker finishes
-	connect(worker, &Worker::finished, this, &GUI::onWorkerFinished);
 	connect(worker, &Worker::finished, &workerThread, &QThread::quit);
 	connect(&workerThread, &QThread::finished, worker, &QObject::deleteLater);
 
@@ -132,73 +135,43 @@ void displayArrayHTML(QTextEdit *textEdit, const std::array<int, GPR_NUM> &data)
 	textEdit->setReadOnly(true);
 }
 
-void displayTableHTML(
-	QTextEdit *textEdit,
-	const std::vector<std::array<signed int, LINE_SIZE>> &data)
-{
-	textEdit->setReadOnly(false);
-	QString tableText = "<table border='1' cellspacing='0' cellpadding='8' "
-						"style='border-collapse: collapse; width: 100%; "
-						"border: 2px solid black;'>";
-
-	int index = 0;
-	for (const auto &row : data) {
-		tableText += "<tr>";
-		for (signed int value : row) {
-			tableText += QString("<td align='center' style='border: 2px solid "
-								 "black; min-width: 60px; padding: 10px;'>"
-								 "%1 <sup style='font-size: 10px; font-weight: "
-								 "bold; color: black;'>%2</sup>"
-								 "</td>")
-							 .arg(QString::asprintf("%04X", value))
-							 .arg(index);
-			index++;
-		}
-		tableText += "</tr>";
-	}
-
-	tableText += "</table>";
-
-	textEdit->setHtml(tableText);
-	textEdit->setReadOnly(true);
-}
-
 void GUI::on_worker_refresh_gui(int cycles, int pc)
 {
 	ui->p_counter->set_value(pc);
 	ui->cycle_counter->set_value(cycles);
+	this->set_status(get_waiting, "idle");
 }
 
-void GUI::onWorkerFetchInfo(const std::vector<int> info)
+void GUI::onWorkerFetchInfo(const InstrDTO *i)
 {
-	if (!info.empty()) {
-		ui->fetch_squashed->setText(QString::number(info[0]));
-		ui->fetch_bits->set_value(info[1]);
+	if (i) {
+		ui->fetch_squashed->setText(QString::number(i->is_squashed));
+		ui->fetch_bits->set_value(i->slot_A);
 	} else {
 		ui->fetch_squashed->clear();
 		ui->fetch_bits->clear();
 	}
 }
 
-void GUI::onWorkerDecodeInfo(const std::vector<int> info)
+void GUI::onWorkerDecodeInfo(const InstrDTO *i)
 {
-	if (!info.empty()) {
-		ui->decode_squashed->setText(QString::number(info[0]));
-		ui->decode_bits->set_value(info[1]);
+	if (i) {
+		ui->decode_squashed->setText(QString::number(i->is_squashed));
+		ui->decode_bits->set_value(i->slot_A);
 	} else {
 		ui->decode_squashed->clear();
 		ui->decode_bits->clear();
 	}
 }
 
-void GUI::onWorkerExecuteInfo(const std::vector<int> info)
+void GUI::onWorkerExecuteInfo(const InstrDTO *i)
 {
-	if (!info.empty()) {
-		ui->execute_mnemonic->setText(mnemonicToString((Mnemonic)info[0]));
-		ui->execute_squashed->setText(QString::number(info[1]));
-		ui->execute_s1->set_value(info[2]);
-		ui->execute_s2->set_value(info[3]);
-		ui->execute_s3->set_value(info[4]);
+	if (i) {
+		ui->execute_mnemonic->setText(mnemonicToString(i->mnemonic));
+		ui->execute_squashed->setText(QString::number(i->is_squashed));
+		ui->execute_s1->set_value(i->operands.integer.slot_one);
+		ui->execute_s2->set_value(i->operands.integer.slot_two);
+		ui->execute_s3->set_value(i->operands.integer.slot_three);
 	} else {
 		ui->execute_mnemonic->clear();
 		ui->execute_squashed->clear();
@@ -208,15 +181,14 @@ void GUI::onWorkerExecuteInfo(const std::vector<int> info)
 	}
 }
 
-void GUI::onWorkerMemoryInfo(const std::vector<int> info)
+void GUI::onWorkerMemoryInfo(const InstrDTO *i)
 {
-	if (!info.empty()) {
-		std::cout << "this " << info[3] << std::endl;
-		ui->memory_mnemonic->setText(mnemonicToString((Mnemonic)info[0]));
-		ui->memory_squashed->setText(QString::number(info[1]));
-		ui->memory_s1->set_value(info[2]);
-		ui->memory_s2->set_value(info[3]);
-		ui->memory_s3->set_value(info[4]);
+	if (i) {
+		ui->memory_mnemonic->setText(mnemonicToString(i->mnemonic));
+		ui->memory_squashed->setText(QString::number(i->is_squashed));
+		ui->memory_s1->set_value(i->operands.integer.slot_one);
+		ui->memory_s2->set_value(i->operands.integer.slot_two);
+		ui->memory_s3->set_value(i->operands.integer.slot_three);
 	} else {
 		ui->memory_mnemonic->clear();
 		ui->memory_squashed->clear();
@@ -226,14 +198,14 @@ void GUI::onWorkerMemoryInfo(const std::vector<int> info)
 	}
 }
 
-void GUI::onWorkerWriteBackInfo(const std::vector<int> info)
+void GUI::onWorkerWriteBackInfo(const InstrDTO *i)
 {
-	if (!info.empty()) {
-		ui->write_mnemonic->setText(mnemonicToString((Mnemonic)info[0]));
-		ui->write_squashed->setText(QString::number(info[1]));
-		ui->write_s1->set_value(info[2]);
-		ui->write_s2->set_value(info[3]);
-		ui->write_s3->set_value(info[4]);
+	if (i) {
+		ui->write_mnemonic->setText(mnemonicToString(i->mnemonic));
+		ui->write_squashed->setText(QString::number(i->is_squashed));
+		ui->write_s1->set_value(i->operands.integer.slot_one);
+		ui->write_s2->set_value(i->operands.integer.slot_two);
+		ui->write_s3->set_value(i->operands.integer.slot_three);
 	} else {
 		ui->write_mnemonic->clear();
 		ui->write_squashed->clear();
@@ -243,24 +215,19 @@ void GUI::onWorkerWriteBackInfo(const std::vector<int> info)
 	}
 }
 
-void GUI::onWorkerShowStorage(
-	const std::vector<std::array<signed int, LINE_SIZE>> data, int i)
+void GUI::onWorkerShowStorage(const QVector<QVector<int>> &data, int i)
 {
-	std::cout << this->tab_text_boxes.size() << std::endl;
-	displayTableHTML(this->tab_text_boxes.at(i), data);
+	this->tab_boxes.at(i)->set_data(data);
 }
 
 void GUI::onWorkerShowRegisters(const std::array<int, GPR_NUM> &data)
 {
-	displayArrayHTML(this->tab_text_boxes.at(0), data);
+	;
+	// displayArrayHTML(this->tab_boxes.at(0), data);
 }
-
-void GUI::onWorkerFinished() { qDebug() << "Worker has finished processing."; }
 
 void GUI::on_upload_intructions_btn_clicked()
 {
-	qDebug() << "Upload intructions button clicked.";
-
 	// why ui->register_table, or now ui->storage
 	QString filePath = QFileDialog::getOpenFileName(
 		ui->storage, "Open Binary File", QDir::homePath(),
@@ -312,7 +279,6 @@ void GUI::on_base_toggle_checkbox_checkStateChanged(const Qt::CheckState &state)
 
 void GUI::on_step_btn_clicked()
 {
-	qDebug() << "Run step button clicked.";
 	// try to configure first
 	if (!this->ready)
 		this->on_config_clicked();
@@ -323,7 +289,6 @@ void GUI::on_step_btn_clicked()
 	this->set_status(get_running, "busy");
 	int steps = step_values[ui->step_slider->value()];
 	emit sendRunSteps(steps);
-	this->set_status(get_waiting, "idle");
 }
 
 void GUI::on_save_program_state_btn_clicked()
@@ -368,6 +333,8 @@ void GUI::on_config_clicked()
 	else
 		this->set_status(get_initialize, "happy");
 
+	this->curr_cache_levels = ways.size();
+
 	emit sendConfigure(ways, this->p, is_pipelined);
 	make_tabs(2 + ways.size());
 }
@@ -375,27 +342,43 @@ void GUI::on_config_clicked()
 void GUI::make_tabs(int num)
 {
 	int i;
-	QStringList names;
-	QTextEdit *e;
+	StorageView *e;
+	QTableView *t;
 	QString n;
-
-	names = {"Registers", "DRAM"};
+	DigitLabelDelegate *d;
 
 	ui->storage->clear();
-	this->tab_text_boxes.clear();
+
+	qDeleteAll(this->tab_boxes);
+	this->tab_boxes.clear();
 
 	for (i = 0; i < num; ++i) {
-		e = new QTextEdit();
-		e->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+		if (i == 0) {
+			n = "Registers";
+			e = new StorageView(0, this);
+		} else if (i == num - 1) {
+			n = "DRAM";
+			e = new StorageView(MEM_LINES, this);
+		} else {
+			n = QString("L%1").arg(i);
+			e = new StorageView(
+				(1 << cache_size_mapper(this->curr_cache_levels - 1, i - 1)),
+				this);
+		}
 
-		// make the name
-		if (i < names.size())
-			n = names[i];
-		else
-			n = QString("Level %1").arg(i - 1);
+		t = new QTableView(ui->storage);
+		t->setModel(e);
+		d = new DigitLabelDelegate(t);
 
-		ui->storage->addTab(e, n);
-		this->tab_text_boxes.push_back(e);
+		connect(this, &GUI::hex_toggled, e, &StorageView::set_hex_display);
+		connect(
+			this, &GUI::hex_toggled, d, &DigitLabelDelegate::set_hex_display);
+
+		t->setItemDelegate(d);
+		t->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+
+		ui->storage->addTab(t, n);
+		this->tab_boxes.push_back(e);
 	}
 }
 

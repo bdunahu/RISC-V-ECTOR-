@@ -17,7 +17,6 @@
 
 #ifndef INSTR_H
 #define INSTR_H
-#include <functional>
 #include <unordered_map>
 
 enum Mnemonic {
@@ -62,13 +61,9 @@ enum Mnemonic {
 	NOP,
 };
 
-enum Type { R, I, J, INV };
-
 namespace instr
 {
-// clang-format off
-	extern const std::unordered_map<unsigned int, Mnemonic> mnemonic_map;
-// clang-format on
+extern const std::unordered_map<unsigned int, Mnemonic> mnemonic_map;
 } // namespace instr
 
 #endif /* INSTR_H_INCLUDED */

@@ -15,21 +15,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef ACCESSOR_H
-#define ACCESSOR_H
+#include "response.h"
 #include <iostream>
 
-enum Accessor {
-	IDLE,
-	WRITE,
-	MEM,
-	EXEC,
-	DCDE,
-	FETCH,
-	L1CACHE,
-	SIDE,
-};
-
-std::ostream &operator<<(std::ostream &os, Accessor a);
-
-#endif /* ACCESSOR_H_INCLUDED */
+std::ostream &operator<<(std::ostream &os, Response r)
+{
+	const std::string nameR[] = {"OK", "READY", "STALLED"};
+	return os << nameR[r];
+}

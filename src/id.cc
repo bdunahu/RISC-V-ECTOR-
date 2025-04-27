@@ -16,14 +16,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "id.h"
-#include "accessor.h"
 #include "instr.h"
 #include "instrDTO.h"
 #include "logger.h"
 #include "response.h"
 #include "stage.h"
-
-ID::ID(Stage *stage) : Stage(stage) { this->id = DCDE; }
 
 void ID::split_instr(signed int &raw, unsigned int &type, Mnemonic &m)
 {
@@ -60,7 +57,7 @@ void ID::write_guard(signed int &v)
 		// keep track in the instrDTO for displaying to user and writeback
 		// keep track in checked_out so we can still access this information!
 		this->checked_out.push_back(v);
-		this->curr_instr->set_checked_out(v);
+		this->curr_instr->checked_out = v;
 	}
 	v = this->dereference_register(v);
 }
@@ -69,44 +66,39 @@ void ID::advance_helper()
 {
 	signed int s1, s2, s3;
 	Mnemonic m;
-	Type t;
 
-	if (curr_instr->get_mnemonic() == NOP)
+	if (curr_instr->mnemonic == NOP)
 		this->status = OK;
 	else {
-		s1 = curr_instr->get_instr_bits();
-		get_instr_fields(s1, s2, s3, m, t);
+		s1 = curr_instr->slot_A;
+		get_instr_fields(s1, s2, s3, m);
 		if (this->status == OK) {
-			curr_instr->set_s1(s1);
-			curr_instr->set_s2(s2);
-			curr_instr->set_s3(s3);
-			curr_instr->set_mnemonic(m);
-			curr_instr->set_type(t);
+			curr_instr->operands.integer.slot_one = s1;
+			curr_instr->operands.integer.slot_two = s2;
+			curr_instr->operands.integer.slot_three = s3;
+			curr_instr->mnemonic = m;
 		}
 	}
 }
 
 void ID::get_instr_fields(
-	signed int &s1, signed int &s2, signed int &s3, Mnemonic &m, Type &t)
+	signed int &s1, signed int &s2, signed int &s3, Mnemonic &m)
 {
 	unsigned int type;
 	this->split_instr(s1, type, m);
 
 	switch (type) {
 	case 0b00:
-		t = R;
 		this->decode_R_type(s1, s2, s3, m);
 		break;
 	case 0b01:
-		t = I;
 		this->decode_I_type(s1, s2, s3, m);
 		break;
 	case 0b10:
-		t = J;
 		this->decode_J_type(s1, s2, s3, m);
 		break;
 	case 0b11:
-		t = INV;
+		m = NOP;
 		this->status = OK;
 	}
 }
@@ -218,14 +210,4 @@ void ID::decode_J_type(
 		this->status = this->read_guard(s1);
 	}
 
-}
-
-std::vector<int> ID::stage_info()
-{
-	std::vector<int> info;
-	if (this->curr_instr) {
-		info.push_back(this->curr_instr->is_squashed());
-		info.push_back(this->curr_instr->get_instr_bits());
-	}
-	return info;
 }

@@ -40,6 +40,11 @@
 #define V_NUM 8
 
 /**
+ * The size, in 32-bit integers, of a vector register.
+ */
+#define V_R_LIMIT 8
+
+/**
  * The number of bits to specify an instruction type
  */
 #define TYPE_SIZE 2

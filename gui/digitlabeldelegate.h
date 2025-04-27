@@ -15,13 +15,32 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#include "accessor.h"
-#include <iostream>
+#ifndef DIGITLABELDELEGATE_H
+#define DIGITLABELDELEGATE_H
 
-std::ostream &operator<<(std::ostream &os, Accessor a)
+#include <QAbstractItemView>
+#include <QApplication>
+#include <QPainter>
+#include <QString>
+#include <QStyleOptionViewItem>
+#include <QStyledItemDelegate>
+
+class DigitLabelDelegate : public QStyledItemDelegate
 {
-	const std::string nameA[] = {
-		"IDLE", "WRITE", "MEM", "EXEC", "DCDE", "FETCH", "L1CACHE", "SIDE",
-	};
-	return os << nameA[a];
-}
+	Q_OBJECT
+  public:
+	using QStyledItemDelegate::QStyledItemDelegate;
+
+  public slots:
+	void set_hex_display(bool hex);
+
+  private:
+	bool is_hex = true;
+
+	void paint(
+		QPainter *painter,
+		const QStyleOptionViewItem &option,
+		const QModelIndex &index) const override;
+};
+
+#endif // DIGITLABELDELEGATE_H

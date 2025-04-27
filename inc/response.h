@@ -21,8 +21,7 @@
 
 enum Response {
 	OK,
-	WAIT,
-	BLOCKED,
+	READY,
 	STALLED,
 };
 
