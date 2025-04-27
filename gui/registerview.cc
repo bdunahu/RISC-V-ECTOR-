@@ -15,27 +15,13 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#include "storageview.h"
+#include "registerview.h"
 #include "definitions.h"
 #include "util.h"
 #include <QAbstractTableModel>
 #include <QVector>
 
-StorageView::StorageView(int rows, int columns, QObject *parent)
-	: QAbstractTableModel(parent)
-{
-	this->r = rows;
-	this->c = columns;
-	this->d.resize(rows);
-	for (auto &row : this->d)
-		row.resize(LINE_SIZE, 0);
-}
-
-int StorageView::rowCount(const QModelIndex &) const { return this->r; }
-
-int StorageView::columnCount(const QModelIndex &) const { return this->c; }
-
-QVariant StorageView::data(const QModelIndex &i, int role) const
+QVariant RegisterView::data(const QModelIndex &i, int role) const
 {
 	Qt::Alignment a;
 
@@ -48,7 +34,7 @@ QVariant StorageView::data(const QModelIndex &i, int role) const
 	return this->d[i.row()][i.column()];
 }
 
-QVariant StorageView::headerData(int section, Qt::Orientation o, int role) const
+QVariant RegisterView::headerData(int section, Qt::Orientation o, int role) const
 {
 	Qt::Alignment a;
 
@@ -64,26 +50,4 @@ QVariant StorageView::headerData(int section, Qt::Orientation o, int role) const
 		return format_toggled_value(section * 4, this->is_hex);
 	}
 	return QVariant();
-}
-
-Qt::ItemFlags StorageView::flags(const QModelIndex &i) const
-{
-	(void)i;
-	return Qt::ItemIsEnabled;
-}
-
-void StorageView::set_data(const QVector<QVector<int>> &data)
-{
-	beginResetModel();
-	this->d = data;
-	endResetModel();
-}
-
-void StorageView::set_hex_display(bool hex)
-{
-	if (this->is_hex != hex) {
-		beginResetModel();
-		this->is_hex = hex;
-		endResetModel();
-	}
 }

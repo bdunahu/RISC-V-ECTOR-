@@ -21,6 +21,7 @@
 #include "dynamicwaysentry.h"
 #include "messages.h"
 #include "storageview.h"
+#include "registerview.h"
 #include "util.h"
 #include <QHeaderView>
 #include <QPixmap>
@@ -355,14 +356,15 @@ void GUI::make_tabs(int num)
 	for (i = 0; i < num; ++i) {
 		if (i == 0) {
 			n = "Registers";
-			e = new StorageView(0, this);
+			e = new RegisterView(GPR_NUM+V_NUM, V_R_LIMIT, this);
 		} else if (i == num - 1) {
 			n = "DRAM";
-			e = new StorageView(MEM_LINES, this);
+			e = new StorageView(MEM_LINES, LINE_SIZE, this);
 		} else {
 			n = QString("L%1").arg(i);
 			e = new StorageView(
 				(1 << cache_size_mapper(this->curr_cache_levels - 1, i - 1)),
+				LINE_SIZE,
 				this);
 		}
 

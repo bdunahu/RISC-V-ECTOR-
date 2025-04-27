@@ -31,7 +31,7 @@ class StorageView : public QAbstractTableModel
 	 * `rows' rows.
 	 * @param the number of rows
 	 */
-	StorageView(int rows, QObject *parent = nullptr);
+	StorageView(int rows, int columns, QObject *parent = nullptr);
 
 	/**
 	 * Returns the number of rows in this table.
@@ -51,13 +51,13 @@ class StorageView : public QAbstractTableModel
 	 * Returns a properly formatted cell, including alignment.This function is
 	 * specific to the implementation details of QAbstractTableModel.
 	 */
-	QVariant
+	virtual QVariant
 	data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
 	/**
 	 * Adds custom formatting options for row and column headers.
 	 */
-	QVariant headerData(
+	virtual QVariant headerData(
 		int section,
 		Qt::Orientation o,
 		int role = Qt::DisplayRole) const override;
@@ -75,11 +75,15 @@ class StorageView : public QAbstractTableModel
   public slots:
 	void set_hex_display(bool hex);
 
-  private:
+  protected:
 	/**
 	 * The number of rows in this table.
 	 */
 	int r;
+	/**
+	 * The number of columns in this table.
+	 */
+	int c;
 	/**
 	 * Whether or not the headers should be displayed in hex.
 	 */

@@ -136,8 +136,6 @@ Response ID::set_vlen(){
 	return r;
 }
 
-
-
 void ID::decode_R_type(signed int &s1)
 {
 	unsigned int s0b, s1b, s2b;
