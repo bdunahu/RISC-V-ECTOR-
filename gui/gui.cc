@@ -72,6 +72,8 @@ GUI::GUI(QWidget *parent) : QMainWindow(parent), ui(new Ui::GUI)
 
 	connect(worker, &Worker::wb_info, this, &GUI::onWorkerWriteBackInfo);
 
+	connect(worker, &Worker::steps_done, this, &GUI::onWorkerStepsDone);
+
 	// Display cache
 	connect(worker, &Worker::storage, this, &GUI::onWorkerShowStorage);
 
@@ -139,7 +141,6 @@ void GUI::on_worker_refresh_gui(int cycles, int pc)
 {
 	ui->p_counter->set_value(pc);
 	ui->cycle_counter->set_value(cycles);
-	this->set_status(get_waiting, "idle");
 }
 
 void GUI::onWorkerFetchInfo(const InstrDTO *i)
@@ -214,6 +215,8 @@ void GUI::onWorkerWriteBackInfo(const InstrDTO *i)
 		ui->write_s3->clear();
 	}
 }
+
+void GUI::onWorkerStepsDone() { this->set_status(get_waiting, "idle"); }
 
 void GUI::onWorkerShowStorage(const QVector<QVector<int>> &data, int i)
 {

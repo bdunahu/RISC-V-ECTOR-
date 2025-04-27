@@ -72,6 +72,7 @@ void Worker::runSteps(int steps)
 {
 	this->ct->run_for(steps);
 	this->update();
+	emit steps_done();
 }
 
 void Worker::update()
