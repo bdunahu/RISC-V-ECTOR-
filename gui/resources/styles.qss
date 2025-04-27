@@ -74,8 +74,8 @@ QSpinBox::up-arrow {
     height: 7px;
 }
 
-QSpinBox::down-arrow {
-    image: url(:/resources/arrow_down.png);
+QSpinBox::up-arrow:pressed {
+    image: url(:/resources/arrow_up_pressed.png);
     width: 7px;
     height: 7px;
 }
@@ -98,6 +98,18 @@ QSpinBox::down-button {
 QSpinBox::down-button:pressed {
     color: "#00cc00";
     background-color: "#000200";
+}
+
+QSpinBox::down-arrow {
+    image: url(:/resources/arrow_down.png);
+    width: 7px;
+    height: 7px;
+}
+
+QSpinBox::down-arrow:pressed {
+    image: url(:/resources/arrow_down_pressed.png);
+    width: 7px;
+    height: 7px;
 }
 
 QTableView {
