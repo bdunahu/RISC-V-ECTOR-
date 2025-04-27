@@ -28,7 +28,7 @@ void EX::advance_helper()
 {
 	signed int s1, s2, s3;
 	std::array<signed int, V_R_LIMIT> v1, v2, v3;
-	signed int v_len;
+	signed int v_len, v_immediate, v_base_addr;
 	unsigned int pc;
 	Mnemonic m;
 
@@ -39,6 +39,12 @@ void EX::advance_helper()
 		v2 = this->curr_instr->operands.vector.slot_two;
 		v3 = this->curr_instr->operands.vector.slot_three;
 		v_len = this->curr_instr->slot_A;
+		if(this->curr_instr->slot_C){
+			v_immediate = this->curr_instr->slot_C;
+		}
+		if(this->curr_instr->slot_B){
+			v_base_addr = this->curr_instr->slot_B;
+		}
 		/*if(v_len == 0){
 			//clear vector reg
 			v1.fill(0);
@@ -210,8 +216,15 @@ void EX::advance_helper()
 			}
 			break;
 		case CEV:
+			bool equal = true;
+			for(int i=0;i<v_len;i++){
+				if(v1[i] != v2[i]){
+					equal = false;
+				}
+			}
 		case LOADV:
 		case STOREV:
+			v_base_addr = v_base_addr + v_immediate;
 			break;
 		
 		case RET:
