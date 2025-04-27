@@ -51,7 +51,16 @@ void WB::write_handler()
 
 	this->checked_out.pop_front();
 	reg = this->curr_instr->checked_out;
-	this->store_register<signed int>(reg, this->curr_instr->operands.integer.slot_one);
+	
+	if(this->is_vector_type(this->curr_instr->mnemonic)) {
+		if(this->curr_instr->mnemonic != STOREV && this->curr_instr->mnemonic != LOADV) {
+			this->store_register<std::array<signed int, V_R_LIMIT>>(reg, this->curr_instr->operands.vector.slot_one);
+		} else {
+			this->store_register<std::array<signed int, V_R_LIMIT>>(reg, this->curr_instr->operands.load_store_vector.vector_register);
+		}
+	} else{
+		this->store_register<signed int>(reg, this->curr_instr->operands.integer.slot_one);
+	}
 }
 
 void WB::jump_handler()

@@ -33,6 +33,12 @@ struct V_TYPE {
 	std::array<signed int, V_R_LIMIT> slot_three;
 };
 
+struct LOAD_STORE_V_TYPE{
+	signed int base_addr;
+	signed int immediate;
+	std::array<signed int, V_R_LIMIT> vector_register;
+};
+
 struct InstrDTO {
 	/**
 	 * If this instruction is squashed or not.
@@ -43,13 +49,9 @@ struct InstrDTO {
 	 */
 	signed int slot_A;
 	/**
-	 * Optional slot for holding PC / base address
+	 * Optional slot for holding PC
 	 */
 	signed int slot_B;
-	/**
-	 * Optional slot to hold immediates
-	 */
-	signed int slot_C;
 	/**
 	 * The mnemonic of the instruction.
 	 */
@@ -61,6 +63,7 @@ struct InstrDTO {
 	union {
 		struct U_INT_TYPE integer;
 		struct V_TYPE vector;
+		struct LOAD_STORE_V_TYPE load_store_vector;
 	} operands;
 };
 

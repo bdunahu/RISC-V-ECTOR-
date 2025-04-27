@@ -213,30 +213,30 @@ void ID::decode_I_type(signed int &s1)
 		this->status = (r1 == OK && r2 == OK) ? OK : STALLED;
 		return;
 	case STOREV:
-		this->curr_instr->slot_C = s3;
+		this->curr_instr->operands.load_store_vector.immediate = s3;
 		s2 = GET_MID_BITS(s1, s0b, s1b);
 		s1 = GET_LS_BITS(s1, s0b);
 
 		// base address
 		r1 = this->read_guard(s1);
-		this->curr_instr->slot_B = s1;
+		this->curr_instr->operands.load_store_vector.base_addr = s1;
 		// vector value to be stored
-		r2 = this->read_vec_guard(s2,this->curr_instr->operands.vector.slot_two);
+		r2 = this->read_vec_guard(s2,this->curr_instr->operands.load_store_vector.vector_register);
 		r3 = this->set_vlen();
 		
 		this->status = (r1 == OK && r2 == OK && r3 == OK) ? OK : STALLED;
 		return;
 	case LOADV:
-		this->curr_instr->slot_C = s3;
+		this->curr_instr->operands.load_store_vector.immediate = s3;
 		s2 = GET_LS_BITS(s1, s0b);
 		s1 = GET_MID_BITS(s1, s0b, s1b);
 		// base address
 		r1 = this->read_guard(s1);
-		this->curr_instr->slot_B = s1;
+		this->curr_instr->operands.load_store_vector.base_addr = s1;
 		r3 = this->set_vlen();
 		if (r1 == OK && r3 == OK)
 			// vector destination
-			this->write_vec_guard(s2, this->curr_instr->operands.vector.slot_two);
+			this->write_vec_guard(s2, this->curr_instr->operands.load_store_vector.vector_register);
 		this->status = (r1 == OK && r3 == OK) ? OK : STALLED;
 		return;
 	case LOAD:

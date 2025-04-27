@@ -33,29 +33,26 @@ void EX::advance_helper()
 	Mnemonic m;
 
 	m = this->curr_instr->mnemonic;
+	pc = this->curr_instr->slot_B;
 
 	if(this->is_vector_type(m)) {
-		v1 = this->curr_instr->operands.vector.slot_one;
-		v2 = this->curr_instr->operands.vector.slot_two;
-		v3 = this->curr_instr->operands.vector.slot_three;
+		if(this->curr_instr->mnemonic != LOADV && this->curr_instr->mnemonic != STOREV){
+			v1 = this->curr_instr->operands.vector.slot_one;
+			v2 = this->curr_instr->operands.vector.slot_two;
+			v3 = this->curr_instr->operands.vector.slot_three;	
+		} else {
+			v_immediate = this->curr_instr->operands.load_store_vector.immediate;
+			v_base_addr = this->curr_instr->operands.load_store_vector.base_addr;
+		}
 		v_len = this->curr_instr->slot_A;
-		if(this->curr_instr->slot_C){
-			v_immediate = this->curr_instr->slot_C;
-		}
-		if(this->curr_instr->slot_B){
-			v_base_addr = this->curr_instr->slot_B;
-		}
-		/*if(v_len == 0){
-			//clear vector reg
+		if(v_len == 0){
+			//clear destination vector reg
 			v1.fill(0);
-			v2.fill(0);
-			v3.fill(0);
-		}*/	 
+		}	 
 	} else{
 		s1 = this->curr_instr->operands.integer.slot_one;
 		s2 = this->curr_instr->operands.integer.slot_two;
 		s3 = this->curr_instr->operands.integer.slot_three;
-		pc = this->curr_instr->slot_B;
 	}
 
 	if(this->is_logical(m)) {
@@ -216,12 +213,18 @@ void EX::advance_helper()
 			}
 			break;
 		case CEV:
-			bool equal = true;
-			for(int i=0;i<v_len;i++){
+			int i;
+			for(i=0;i<v_len;i++){
 				if(v1[i] != v2[i]){
-					equal = false;
+					break;
 				}
 			}
+			if(i == v_len){
+				this->set_condition(EQ, true);
+			} else {
+				this->set_condition(EQ, false);
+			}
+			break;
 		case LOADV:
 		case STOREV:
 			v_base_addr = v_base_addr + v_immediate;
