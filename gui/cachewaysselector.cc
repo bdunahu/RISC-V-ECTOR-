@@ -32,7 +32,7 @@ CacheWaysSelector::CacheWaysSelector(QWidget *parent) : QWidget(parent)
 	v = new QVBoxLayout(this);
 
 	for (i = 1; i <= 6; ++i) {
-		l = new QHBoxLayout(this);
+		l = new QHBoxLayout;
 
 		b = new QLabel(QString("L%1 2^").arg(i), this);
 
@@ -46,7 +46,6 @@ CacheWaysSelector::CacheWaysSelector(QWidget *parent) : QWidget(parent)
 		v->addLayout(l);
 		this->sbs.append(sb);
 	}
-	v->addStretch();
 }
 
 QList<int> CacheWaysSelector::values() const

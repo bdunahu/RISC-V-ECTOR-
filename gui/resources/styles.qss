@@ -4,6 +4,8 @@
     color: "#00cc00";
     background-color: "#000200";
     border: 0px solid "#000200";
+    selection-background-color: "#00cc00";
+    selection-color: "#000200";
 }
 
 QStatusBar {
@@ -48,6 +50,52 @@ QGroupBox::title {
 }
 
 QLabel {
+}
+
+QSpinBox {
+    padding-right: 15px; /* make room for the arrows */
+    border: none;
+}
+
+QSpinBox::up-button {
+    color: "#000200";
+    background-color: "#00cc00";
+    subcontrol-origin: border;
+    subcontrol-position: top right; /* position at the top right corner */
+
+    width: 16px;
+    border: none;
+    subcontrol-origin: border;
+}
+
+QSpinBox::up-arrow {
+    width: 7px;
+    height: 7px;
+}
+
+QSpinBox::up-button:pressed {
+    color: "#00cc00";
+    background-color: "#000200";
+}
+
+QSpinBox::down-button {
+    color: "#000200";
+    background-color: "#00cc00";
+    subcontrol-origin: border;
+    subcontrol-position: bottom right; /* position at bottom right corner */
+
+    width: 16px;
+    border: none;
+}
+
+QSpinBox::down-arrow {
+    width: 7px;
+    height: 7px;
+}
+
+QSpinBox::down-button:pressed {
+    color: "#00cc00";
+    background-color: "#000200";
 }
 
 QTableView {
