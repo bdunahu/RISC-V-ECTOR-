@@ -69,6 +69,13 @@ QSpinBox::up-button {
 }
 
 QSpinBox::up-arrow {
+    image: url(:/resources/arrow_up.png);
+    width: 7px;
+    height: 7px;
+}
+
+QSpinBox::down-arrow {
+    image: url(:/resources/arrow_down.png);
     width: 7px;
     height: 7px;
 }
@@ -86,11 +93,6 @@ QSpinBox::down-button {
 
     width: 16px;
     border: none;
-}
-
-QSpinBox::down-arrow {
-    width: 7px;
-    height: 7px;
 }
 
 QSpinBox::down-button:pressed {
