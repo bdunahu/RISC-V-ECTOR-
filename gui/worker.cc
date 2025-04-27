@@ -81,10 +81,8 @@ void Worker::update()
 	this->ct_mutex.lock();
 	emit register_storage(this->ct->get_gprs());
 
-	emit storage(this->data_to_QT(this->s.at(0)->get_data()), 1);
-
-	for (i = 1; i < s.size(); ++i)
-		emit storage(this->data_to_QT(this->s.at(i - 1)->get_data()), i + 1);
+	for (i = 0; i < s.size(); ++i)
+		emit storage(this->data_to_QT(this->s.at(i)->get_data()), i + 1);
 
 	emit clock_cycles(this->ct->get_clock_cycle(), this->ct->get_pc());
 	emit if_info(this->if_stage->get_instr());
