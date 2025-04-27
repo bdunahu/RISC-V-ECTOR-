@@ -110,16 +110,6 @@ class Stage
 	template <typename T>
 	void store_register(signed int v, T d)
 	{
-		// if (v < 0 || v >= GPR_NUM + V_NUM) {
-		// 	throw std::out_of_range(
-		// 		"instruction tried to access register which does not exist");
-		// }
-
-		// if (v >= GPR_NUM)
-		// 	this->vrs[v % GPR_NUM] = d;
-		// else
-		// 	this->gprs[v] = d;
-
 		if constexpr (std::is_same_v<T, signed int>) {
 			if (v < 0 || v >= GPR_NUM) {
 				throw std::out_of_range("Invalid GPR index for storing scalar");
@@ -141,16 +131,6 @@ class Stage
 	template <typename T>
 	T dereference_register(signed int v)
 	{
-		// signed int r;
-
-		// if (v < 0 || v >= GPR_NUM + V_NUM) {
-		// 	throw std::out_of_range(
-		// 		"instruction tried to access register which does not exist");
-		// }
-
-		// r = (v >= GPR_NUM) ? this->vrs[v % GPR_NUM] : this->gprs[v];
-		// return r;
-
 		if constexpr (std::is_same_v<T, signed int>) {
 			if (v < 0 || v >= GPR_NUM) {
 				throw std::out_of_range("Invalid GPR index");

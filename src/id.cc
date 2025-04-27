@@ -194,26 +194,33 @@ void ID::decode_I_type(signed int &s1)
 	s0b = REG_SIZE;
 	s1b = s0b + REG_SIZE;
 	s2b = WORD_SPEC - LINE_SPEC - OPCODE_SIZE;
+	// s3 is immediate
 	s3 = GET_BITS_SIGN_EXTEND(s1, s1b, s2b);
 
 	switch (this->curr_instr->mnemonic) {
 	case STORE:
+		this->curr_instr->operands.integer.slot_three = s3;
 		s2 = GET_MID_BITS(s1, s0b, s1b);
 		s1 = GET_LS_BITS(s1, s0b);
 
 		// both operands are read values
+		// s1 is base address
 		r1 = this->read_guard(s1);
 		this->curr_instr->operands.integer.slot_one = s1;
+		// s2 is value to be stored
 		r2 = this->read_guard(s2);
 		this->curr_instr->operands.integer.slot_two = s2;
 		this->status = (r1 == OK && r2 == OK) ? OK : STALLED;
 		return;
 	case STOREV:
+		this->curr_instr->slot_C = s3;
 		s2 = GET_MID_BITS(s1, s0b, s1b);
 		s1 = GET_LS_BITS(s1, s0b);
 
-		// both operands are read values
-		r1 = this->read_vec_guard(s1,this->curr_instr->operands.vector.slot_one);
+		// base address
+		r1 = this->read_guard(s1);
+		this->curr_instr->slot_B = s1;
+		// vector value to be stored
 		r2 = this->read_vec_guard(s2,this->curr_instr->operands.vector.slot_two);
 		r3 = this->set_vlen();
 		
@@ -229,6 +236,7 @@ void ID::decode_I_type(signed int &s1)
 		this->status = (r1 == OK && r3 == OK) ? OK : STALLED;
 		return;
 	case LOAD:
+		this->curr_instr->operands.integer.slot_three = s3;
 		s2 = GET_LS_BITS(s1, s0b);
 		s1 = GET_MID_BITS(s1, s0b, s1b);
 		break;

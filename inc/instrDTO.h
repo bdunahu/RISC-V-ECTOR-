@@ -43,9 +43,13 @@ struct InstrDTO {
 	 */
 	signed int slot_A;
 	/**
-	 * Optional slot for holding PC
+	 * Optional slot for holding PC / base address
 	 */
 	signed int slot_B;
+	/**
+	 * Optional slot to hold immediates
+	 */
+	signed int slot_C;
 	/**
 	 * The mnemonic of the instruction.
 	 */

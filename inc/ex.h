@@ -76,11 +76,6 @@ class EX : public Stage
 	 * @param if the modulo operator should instead be used
 	 */
 	void handle_divide(signed int &s1, signed int s2, bool is_mod);
-	/**
-	 * Maps each mnemonic to a function which carries out the instruction's base
-	 * logic.
-	 * All instructions store the result into s1.
-	 */
 };
 
 #endif /* EX_H_INCLUDED */
