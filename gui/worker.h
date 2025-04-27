@@ -72,6 +72,7 @@ class Worker : public QObject
 	void ex_info(const InstrDTO *);
 	void mm_info(const InstrDTO *);
 	void wb_info(const InstrDTO *);
+	void steps_done();
 	void finished();
 
   private:

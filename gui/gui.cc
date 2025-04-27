@@ -18,7 +18,7 @@
 #include "gui.h"
 #include "./ui_gui.h"
 #include "digitlabeldelegate.h"
-#include "dynamicwaysentry.h"
+#include "cachewaysselector.h"
 #include "messages.h"
 #include "storageview.h"
 #include "registerview.h"
@@ -72,6 +72,8 @@ GUI::GUI(QWidget *parent) : QMainWindow(parent), ui(new Ui::GUI)
 	connect(worker, &Worker::mm_info, this, &GUI::onWorkerMemoryInfo);
 
 	connect(worker, &Worker::wb_info, this, &GUI::onWorkerWriteBackInfo);
+
+	connect(worker, &Worker::steps_done, this, &GUI::onWorkerStepsDone);
 
 	// Display cache
 	connect(worker, &Worker::storage, this, &GUI::onWorkerShowStorage);
@@ -140,7 +142,6 @@ void GUI::on_worker_refresh_gui(int cycles, int pc)
 {
 	ui->p_counter->set_value(pc);
 	ui->cycle_counter->set_value(cycles);
-	this->set_status(get_waiting, "idle");
 }
 
 void GUI::onWorkerFetchInfo(const InstrDTO *i)
@@ -215,6 +216,8 @@ void GUI::onWorkerWriteBackInfo(const InstrDTO *i)
 		ui->write_s3->clear();
 	}
 }
+
+void GUI::onWorkerStepsDone() { this->set_status(get_waiting, "idle"); }
 
 void GUI::onWorkerShowStorage(const QVector<QVector<int>> &data, int i)
 {
@@ -302,21 +305,15 @@ void GUI::on_config_clicked()
 {
 	std::vector<unsigned int> ways;
 	QStringList entries;
-	signed int i;
-	DynamicWaysEntry *dwe = ui->cache_way_selector;
+	CacheWaysSelector *cws = ui->cache_ways_selector;
 
-	for (const QString &s : dwe->get_entries()) {
+	for (int i : cws->values()) {
 
-		if (s.isEmpty())
+		// invalid
+		if (i == -1)
 			continue;
 
-		i = dwe->parse_valid_way(s);
-		if (i >= 0) {
-			ways.push_back((unsigned int)i);
-		} else {
-			this->set_status(get_bad_cache, "angry");
-			return;
-		}
+		ways.push_back((unsigned int)i);
 	}
 
 	if (this->p.empty()) {
