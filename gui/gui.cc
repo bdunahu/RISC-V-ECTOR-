@@ -18,7 +18,7 @@
 #include "gui.h"
 #include "./ui_gui.h"
 #include "digitlabeldelegate.h"
-#include "dynamicwaysentry.h"
+#include "cachewaysselector.h"
 #include "messages.h"
 #include "storageview.h"
 #include "util.h"
@@ -304,21 +304,15 @@ void GUI::on_config_clicked()
 {
 	std::vector<unsigned int> ways;
 	QStringList entries;
-	signed int i;
-	DynamicWaysEntry *dwe = ui->cache_way_selector;
+	CacheWaysSelector *cws = ui->cache_ways_selector;
 
-	for (const QString &s : dwe->get_entries()) {
+	for (int i : cws->values()) {
 
-		if (s.isEmpty())
+		// invalid
+		if (i == -1)
 			continue;
 
-		i = dwe->parse_valid_way(s);
-		if (i >= 0) {
-			ways.push_back((unsigned int)i);
-		} else {
-			this->set_status(get_bad_cache, "angry");
-			return;
-		}
+		ways.push_back((unsigned int)i);
 	}
 
 	if (this->p.empty()) {

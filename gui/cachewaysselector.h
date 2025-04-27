@@ -15,37 +15,36 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef DYNAMICWAYSENTRY_H
-#define DYNAMICWAYSENTRY_H
+#ifndef CACHEWAYSSELECTOR_H
+#define CACHEWAYSSELECTOR_H
 
-
-#include <QLineEdit>
-#include <QStringList>
-#include <QVBoxLayout>
-#include <QVector>
+#include <QSpinBox>
 #include <QWidget>
 
-class DynamicWaysEntry : public QWidget
+class CacheWaysSelector : public QWidget
 {
+	Q_OBJECT
+
   public:
-	DynamicWaysEntry(QWidget *parent = nullptr);
-	QStringList get_entries() const;
 	/**
-	 * Parses a string from this entry field, if it is valid.
-	 * @param a string
-	 * @param -1 if the string is not suitable as a way, an integer compatible
-	 * with the cache constructor otherwise.
+	 * Constructor.
+	 * This class provides a simple group of labeled spinboxs meant for
+	 * selecting cache ways.
+	 * @param The parent widget.
+	 * @param a newly allocated CacheWaysSelector
 	 */
-	int parse_valid_way(QString t);
-  private slots:
-	void on_number_enter(const QString &t);
+	explicit CacheWaysSelector(QWidget *parent = nullptr);
+
+	/**
+	 * @return the values in the spinboxes.
+	 */
+	QList<int> values() const;
 
   private:
-	QVBoxLayout *l;
-	QVector<QLineEdit *> fields;
-	QStringList entries;
-	void add_field();
-	void remove_last_field();
+	/**
+	 * A list of spinboxes.
+	 */
+	QList<QSpinBox *> sbs;
 };
 
-#endif // DYNAMICWAYSENTRY_H
+#endif // CACHEWAYSSELECTOR_H
