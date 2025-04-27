@@ -66,26 +66,21 @@ InstrDTO *Stage::advance(Response p)
 	return r;
 }
 
-bool Stage::is_vector_type(Mnemonic m){
-	return (m == ADDV || m == SUBV || m == MULV || m == DIVV || m == CEV || m == LOADV || m == STOREV);
-}
-
-bool Stage::is_logical(Mnemonic m){
-	return (m == ANDI || m == ORI || m == XORI || m == AND || m == OR || m == XOR || m== NOT);
-}
-
-std::vector<int> Stage::stage_info()
+bool Stage::is_vector_type(Mnemonic m)
 {
-	std::vector<int> info;
-	if (this->curr_instr) {
-		info.push_back(this->curr_instr->mnemonic);
-		info.push_back(this->curr_instr->is_squashed);
-		info.push_back(this->curr_instr->operands.integer.slot_one);
-		info.push_back(this->curr_instr->operands.integer.slot_two);
-		info.push_back(this->curr_instr->operands.integer.slot_three);
-	}
-	return info;
+	return (
+		m == ADDV || m == SUBV || m == MULV || m == DIVV || m == CEV ||
+		m == LOADV || m == STOREV);
 }
+
+bool Stage::is_logical(Mnemonic m)
+{
+	return (
+		m == ANDI || m == ORI || m == XORI || m == AND || m == OR || m == XOR ||
+		m == NOT);
+}
+
+InstrDTO *Stage::get_instr() { return this->curr_instr; }
 
 void Stage::set_condition(CC c, bool v)
 {

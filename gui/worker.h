@@ -50,11 +50,6 @@ class Worker : public QObject
 	Controller *ct = nullptr;
 	QMutex ct_mutex;
 
-	/**
-	 * The size each progressive cache level increases by.
-	 */
-	unsigned int size_inc;
-
   public:
 	explicit Worker(QObject *parent = nullptr);
 	~Worker();
@@ -70,14 +65,28 @@ class Worker : public QObject
   signals:
 	void clock_cycles(int value, int pc);
 	void
-	storage(const std::vector<std::array<signed int, LINE_SIZE>> data, int i);
+	storage(QVector<QVector<int>> data, int i);
 	void register_storage(const std::array<int, GPR_NUM> data);
-	void if_info(const std::vector<int> info);
-	void id_info(const std::vector<int> info);
-	void ex_info(const std::vector<int> info);
-	void mm_info(const std::vector<int> info);
-	void wb_info(const std::vector<int> info);
+	void if_info(const InstrDTO *);
+	void id_info(const InstrDTO *);
+	void ex_info(const InstrDTO *);
+	void mm_info(const InstrDTO *);
+	void wb_info(const InstrDTO *);
 	void finished();
+
+  private:
+	/**
+	 * Converts a vector of arrays into a QVector of QVectors.
+	 * @param the original data
+	 * @return a less universal version of the same thing
+	 */
+	QVector<QVector<int>>
+	data_to_QT(std::vector<std::array<signed int, LINE_SIZE>> data);
+	/**
+	 * Sets the GUI signals to update the storage, clock cycle, and stage
+	 * displays.
+	 */
+	void update();
 };
 
 #endif // WORKER_H

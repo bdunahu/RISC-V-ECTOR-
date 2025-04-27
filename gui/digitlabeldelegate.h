@@ -15,55 +15,32 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef DIGITLABEL_H
-#define DIGITLABEL_H
+#ifndef DIGITLABELDELEGATE_H
+#define DIGITLABELDELEGATE_H
 
-#include <QLabel>
+#include <QAbstractItemView>
+#include <QApplication>
+#include <QPainter>
+#include <QString>
+#include <QStyleOptionViewItem>
+#include <QStyledItemDelegate>
 
-class DigitLabel : public QLabel
+class DigitLabelDelegate : public QStyledItemDelegate
 {
 	Q_OBJECT
-
   public:
-	/**
-	 * Constructor.
-	 * @return a newly allocated DigitLabel.
-	 */
-	explicit DigitLabel(QWidget *parent);
-
-	/**
-	 * Sets the empty flag.
-	 */
-	void clear();
-	/**
-	 * @param the value to set `this->v' with.
-	 */
-	void set_value(int v);
+	using QStyledItemDelegate::QStyledItemDelegate;
 
   public slots:
-	/**
-	 * Toggles the base this label displays in, by setting `this->is_hex'.
-	 */
-	void on_hex_toggle(bool is_hex);
+	void set_hex_display(bool hex);
 
   private:
-	/**
-	 * Refreshes the display of this label, taking base into consideration..
-	 */
-	void update_display();
+	bool is_hex = true;
 
-	/**
-	 * The decimal value associated with this label.
-	 */
-	int v;
-	/**
-	 * If this digit should display in hexidecinmal.
-	 */
-	int is_hex = true;
-	/**
-	 * If this digit should not display.
-	 */
-	bool is_cleared = true;
+	void paint(
+		QPainter *painter,
+		const QStyleOptionViewItem &option,
+		const QModelIndex &index) const override;
 };
 
-#endif // DIGITLABEL_H
+#endif // DIGITLABELDELEGATE_H

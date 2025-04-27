@@ -17,14 +17,13 @@
 
 #include "worker.h"
 #include "storage.h"
+#include "util.h"
 
 Worker::Worker(QObject *parent) : QObject(parent) {}
 
 Worker::~Worker()
 {
 	emit finished();
-	qDebug() << "Worker destructor called in thread:"
-			 << QThread::currentThread();
 	delete this->ct;
 }
 
@@ -41,10 +40,6 @@ void Worker::configure(
 	this->s.clear();
 
 	this->ct_mutex.lock();
-	if (ways.size() != 0) {
-		// TODO optimal proper sizes
-		this->size_inc = ((MEM_LINE_SPEC * 0.75) / ways.size());
-	}
 	d = new Dram(DRAM_DELAY);
 	s = static_cast<Storage *>(d);
 
@@ -53,7 +48,8 @@ void Worker::configure(
 
 	for (i = ways.size(); i > 0; --i) {
 		s = static_cast<Storage *>(new Cache(
-			s, this->size_inc * (i), ways.at(i - 1), CACHE_DELAY + i));
+			s, cache_size_mapper(ways.size() - 1, i - 1), ways.at(i - 1),
+			CACHE_DELAY + i));
 		this->s.push_front(s);
 	}
 
@@ -69,30 +65,45 @@ void Worker::configure(
 		delete old;
 	this->ct_mutex.unlock();
 
-	emit clock_cycles(this->ct->get_clock_cycle(), this->ct->get_pc());
+	this->update();
 }
 
 void Worker::runSteps(int steps)
 {
+	this->ct->run_for(steps);
+	this->update();
+}
+
+void Worker::update()
+{
 	unsigned long i;
 
 	this->ct_mutex.lock();
-	qDebug() << "Running for " << steps << "steps";
-	this->ct->run_for(steps);
-
-	// TODO move these to separate functions
 	emit register_storage(this->ct->get_gprs());
 
-	emit storage(this->s.at(0)->view(0, 255), 1);
-
-	for (i = 1; i < s.size(); ++i)
-		emit storage(this->s.at(i - 1)->view(0, 1 << this->size_inc * i), i + 1);
+	for (i = 0; i < s.size(); ++i)
+		emit storage(this->data_to_QT(this->s.at(i)->get_data()), i + 1);
 
 	emit clock_cycles(this->ct->get_clock_cycle(), this->ct->get_pc());
-	emit if_info(this->if_stage->stage_info());
-	emit id_info(this->id_stage->stage_info());
-	emit ex_info(this->ex_stage->stage_info());
-	emit mm_info(this->mm_stage->stage_info());
-	emit wb_info(this->wb_stage->stage_info());
+	emit if_info(this->if_stage->get_instr());
+	emit id_info(this->id_stage->get_instr());
+	emit ex_info(this->ex_stage->get_instr());
+	emit mm_info(this->mm_stage->get_instr());
+	emit wb_info(this->wb_stage->get_instr());
 	this->ct_mutex.unlock();
+}
+
+QVector<QVector<int>>
+Worker::data_to_QT(std::vector<std::array<signed int, LINE_SIZE>> data)
+{
+	QVector<QVector<int>> r;
+	QVector<int> tmp;
+
+	r.reserve(static_cast<int>(data.size()));
+
+	for (const auto &line : data) {
+		tmp = QVector<int>(line.begin(), line.end());
+		r.append(tmp);
+	}
+	return r;
 }

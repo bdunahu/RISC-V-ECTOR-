@@ -15,21 +15,37 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef IF_H
-#define IF_H
-#include "instrDTO.h"
-#include "response.h"
-#include "stage.h"
+#include "digitlabeldelegate.h"
+#include "util.h"
+#include <QString>
 
-class IF : public Stage
+void DigitLabelDelegate::set_hex_display(bool hex)
 {
-  public:
-	using Stage::Stage;
+	if (this->is_hex != hex) {
+		this->is_hex = hex;
+		if (auto v = qobject_cast<QAbstractItemView *>(parent()))
+			v->viewport()->update();
+	}
+}
 
-	InstrDTO *advance(Response p) override;
+void DigitLabelDelegate::paint(
+	QPainter *painter,
+	const QStyleOptionViewItem &option,
+	const QModelIndex &index) const
+{
+	int v;
+	QString t;
+	QStyleOptionViewItem o;
+	QStyle *s;
 
-  private:
-	void advance_helper() override;
-};
+	v = index.data(Qt::DisplayRole).toInt();
+	t = format_toggled_value(v, this->is_hex);
 
-#endif /* IF_H_INCLUDED */
+	o = option;
+	initStyleOption(&o, index);
+	o.text = t;
+
+	const QWidget *w = option.widget;
+	s = w ? w->style() : QApplication::style();
+	s->drawControl(QStyle::CE_ItemViewItem, &o, painter, w);
+}

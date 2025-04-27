@@ -18,6 +18,7 @@
 #ifndef GUI_H
 #define GUI_H
 
+#include "storageview.h"
 #include "worker.h"
 #include <QFile>
 #include <QFileDialog>
@@ -57,22 +58,19 @@ class GUI : public QMainWindow
   private slots:
 	void on_worker_refresh_gui(int value, int pc);
 
-	void onWorkerFetchInfo(const std::vector<int> info);
+	void onWorkerFetchInfo(const InstrDTO *);
 
-	void onWorkerDecodeInfo(const std::vector<int> info);
+	void onWorkerDecodeInfo(const InstrDTO *);
 
-	void onWorkerExecuteInfo(const std::vector<int> info);
+	void onWorkerExecuteInfo(const InstrDTO *);
 
-	void onWorkerMemoryInfo(const std::vector<int> info);
+	void onWorkerMemoryInfo(const InstrDTO *);
 
-	void onWorkerWriteBackInfo(const std::vector<int> info);
+	void onWorkerWriteBackInfo(const InstrDTO *);
 
-	void onWorkerShowStorage(
-		const std::vector<std::array<signed int, LINE_SIZE>> data, int i);
+	void onWorkerShowStorage(const QVector<QVector<int>> &data, int i);
 
 	void onWorkerShowRegisters(const std::array<int, GPR_NUM> &data);
-
-	void onWorkerFinished();
 
 	void on_upload_intructions_btn_clicked();
 
@@ -101,12 +99,17 @@ class GUI : public QMainWindow
 	/**
 	 * Indicates if the program has been initialized.
 	 */
-	bool ready;
+	bool ready = false;
+
+	/**
+	 * The current number of cache levels.
+	 */
+	int curr_cache_levels = 0;
 
 	/**
 	 * The list of storage displays.
 	 */
-	std::vector<QTextEdit *> tab_text_boxes;
+	std::vector<StorageView *> tab_boxes;
 
 	/**
 	 * Whether or not numerical values are currently displaying in hex.
@@ -135,7 +138,7 @@ class GUI : public QMainWindow
 	/**
 	 * The possible step slider values.
 	 */
-	QVector<int> step_values = {1, 5, 20, 50, 250, 1000, 10000};
+	QVector<int> step_values = {1, 5, 20, 50, 250, 1000, 10000, 100000, 500000, 100000000};
 
 	QThread workerThread;
 

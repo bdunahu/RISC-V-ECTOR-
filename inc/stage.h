@@ -53,8 +53,14 @@ class Stage
 	 * Must set the status to READY when the current instruction is evicted..
 	 */
 	virtual InstrDTO *advance(Response p);
-
-	virtual std::vector<int> stage_info();
+	/**
+	 * @return the current instruction.
+	 */
+	InstrDTO *get_instr();
+	/**
+	 * Squashes the pipeline.
+	 */
+	void squash();
 
 	/* The following methods are made public so that they may be tested, and are
 	 * not to be called from outside classes during standard execution.
@@ -71,11 +77,6 @@ class Stage
 	 * @param the truthy value to set it to.
 	 */
 	void set_condition(CC c, bool v);
-
-	/**
-	 * Squashes the pipeline.
-	 */
-	void squash();
 
 	/**
 	 * The set of registers currently checked out.

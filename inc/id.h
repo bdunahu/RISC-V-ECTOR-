@@ -56,8 +56,6 @@ class ID : public Stage
 
 	Response set_vlen();
 
-	std::vector<int> stage_info() override;
-
   private:
 	/**
 	 * Helper for `get_instr_fields`

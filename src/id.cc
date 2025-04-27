@@ -65,7 +65,7 @@ void ID::write_vec_guard(signed int v, std::array<signed int, V_R_LIMIT> &vrs){
 		// keep track in the instrDTO for displaying to user and writeback
 		// keep track in checked_out so we can still access this information!
 		this->checked_out.push_back(v);
-		this->curr_instr->checked_out = v;		
+		this->curr_instr->checked_out = v;
 	}
 	vrs = this->dereference_register<std::array<signed int, V_R_LIMIT>>(v);
 }
@@ -131,7 +131,7 @@ Response ID::set_vlen(){
 			this->curr_instr->slot_A = V_R_LIMIT;
 		} else {
 			this->curr_instr->slot_A = vlen_reg;
-		}	
+		}
 	}
 	return r;
 }
@@ -223,7 +223,7 @@ void ID::decode_I_type(signed int &s1)
 		// vector value to be stored
 		r2 = this->read_vec_guard(s2,this->curr_instr->operands.load_store_vector.vector_register);
 		r3 = this->set_vlen();
-		
+
 		this->status = (r1 == OK && r2 == OK && r3 == OK) ? OK : STALLED;
 		return;
 	case LOADV:
@@ -305,14 +305,4 @@ void ID::decode_J_type(signed int &s1)
 		this->curr_instr->operands.integer.slot_one = s1;
 	}
 
-}
-
-std::vector<int> ID::stage_info()
-{
-	std::vector<int> info;
-	if (this->curr_instr) {
-		info.push_back(this->curr_instr->is_squashed);
-		info.push_back(this->curr_instr->slot_A);
-	}
-	return info;
 }
