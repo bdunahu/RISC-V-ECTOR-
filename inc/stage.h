@@ -82,6 +82,10 @@ class Stage
 	 */
 	static std::deque<signed int> checked_out;
 
+	bool is_vector_type(Mnemonic m);
+
+	bool is_logical(Mnemonic m);
+
   protected:
 	/**
 	 * The function expected to do the majority of the work.
@@ -103,13 +107,63 @@ class Stage
 	 * @param the register number.
 	 * @param the value to store.
 	 */
-	void store_register(signed int v, signed int d);
+	template <typename T>
+	void store_register(signed int v, T d)
+	{
+		// if (v < 0 || v >= GPR_NUM + V_NUM) {
+		// 	throw std::out_of_range(
+		// 		"instruction tried to access register which does not exist");
+		// }
+
+		// if (v >= GPR_NUM)
+		// 	this->vrs[v % GPR_NUM] = d;
+		// else
+		// 	this->gprs[v] = d;
+
+		if constexpr (std::is_same_v<T, signed int>) {
+			if (v < 0 || v >= GPR_NUM) {
+				throw std::out_of_range("Invalid GPR index for storing scalar");
+			}
+			gprs[v] = d;
+		}
+		else if constexpr (std::is_same_v<T, std::array<signed int, V_R_LIMIT>>) {
+			if (v < GPR_NUM || v >= GPR_NUM + V_NUM) {
+				throw std::out_of_range("Invalid VR index for storing vector");
+			}
+			vrs[v % GPR_NUM] = d;
+		}
+	}
 	/**
 	 * Returns the value of the register corresponding to `v`.
 	 * @param the register number.
 	 * @return the value in the associated register.
 	 */
-	signed int dereference_register(signed int v);
+	template <typename T>
+	T dereference_register(signed int v)
+	{
+		// signed int r;
+
+		// if (v < 0 || v >= GPR_NUM + V_NUM) {
+		// 	throw std::out_of_range(
+		// 		"instruction tried to access register which does not exist");
+		// }
+
+		// r = (v >= GPR_NUM) ? this->vrs[v % GPR_NUM] : this->gprs[v];
+		// return r;
+
+		if constexpr (std::is_same_v<T, signed int>) {
+			if (v < 0 || v >= GPR_NUM) {
+				throw std::out_of_range("Invalid GPR index");
+			}
+			return gprs[v];
+		}
+		else if constexpr (std::is_same_v<T, std::array<signed int, V_R_LIMIT>>) {
+			if (v < GPR_NUM || v >= GPR_NUM + V_NUM) {
+				throw std::out_of_range("Invalid vector register index");
+			}
+			return vrs[v % GPR_NUM];
+		}
+	}
 	/**
 	 * The shared pool of general-purpose integer registers.
 	 */
@@ -117,7 +171,7 @@ class Stage
 	/**
 	 * The shared pool of general-purpose vector registers.
 	 */
-	static std::array<signed int, V_NUM> vrs;
+	static std::array<std::array<signed int, V_R_LIMIT>, V_NUM> vrs;
 	/**
 	 * The address of the currently executing instruction.
 	 */

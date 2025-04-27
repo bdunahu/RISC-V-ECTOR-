@@ -16,6 +16,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "stage.h"
+#include "pipe_spec.h"
 #include <array>
 #include <deque>
 
@@ -29,7 +30,7 @@ Stage::Stage(Stage *next)
 Stage::~Stage() { delete this->next; };
 
 std::array<int, GPR_NUM> Stage::gprs;
-std::array<int, V_NUM> Stage::vrs;
+std::array<std::array<signed int, V_R_LIMIT>, V_NUM> Stage::vrs;
 std::deque<signed int> Stage::checked_out;
 unsigned int Stage::pc;
 Storage *Stage::storage;
@@ -65,6 +66,14 @@ InstrDTO *Stage::advance(Response p)
 	return r;
 }
 
+bool Stage::is_vector_type(Mnemonic m){
+	return (m == ADDV || m == SUBV || m == MULV || m == DIVV || m == CEV || m == LOADV || m == STOREV);
+}
+
+bool Stage::is_logical(Mnemonic m){
+	return (m == ANDI || m == ORI || m == XORI || m == AND || m == OR || m == XOR || m== NOT);
+}
+
 std::vector<int> Stage::stage_info()
 {
 	std::vector<int> info;
@@ -84,32 +93,6 @@ void Stage::set_condition(CC c, bool v)
 		this->gprs[3] = this->gprs[3] | 1 << c;
 	else
 		this->gprs[3] = this->gprs[3] & ~(1 << c);
-}
-
-signed int Stage::dereference_register(signed int v)
-{
-	signed int r;
-
-	if (v < 0 || v >= GPR_NUM + V_NUM) {
-		throw std::out_of_range(
-			"instruction tried to access register which does not exist");
-	}
-
-	r = (v >= GPR_NUM) ? this->vrs[v % GPR_NUM] : this->gprs[v];
-	return r;
-}
-
-void Stage::store_register(signed int v, signed int d)
-{
-	if (v < 0 || v >= GPR_NUM + V_NUM) {
-		throw std::out_of_range(
-			"instruction tried to access register which does not exist");
-	}
-
-	if (v >= GPR_NUM)
-		this->vrs[v % GPR_NUM] = d;
-	else
-		this->gprs[v] = d;
 }
 
 bool Stage::is_checked_out(signed int r)

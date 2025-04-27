@@ -45,13 +45,13 @@ void WB::write_handler()
 		// POP performs a second register write
 		reg = this->checked_out.front();
 		this->checked_out.pop_front();
-		this->store_register(
+		this->store_register<signed int>(
 			reg, this->curr_instr->operands.integer.slot_three);
 	}
 
 	this->checked_out.pop_front();
 	reg = this->curr_instr->checked_out;
-	this->store_register(reg, this->curr_instr->operands.integer.slot_one);
+	this->store_register<signed int>(reg, this->curr_instr->operands.integer.slot_one);
 }
 
 void WB::jump_handler()

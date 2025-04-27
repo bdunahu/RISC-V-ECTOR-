@@ -63,7 +63,7 @@ class EX : public Stage
 	 * @param The next stage in the pipeline.
 	 * @return A newly allocated EX object.
 	 */
-	EX(Stage *next);
+	using Stage::Stage;
 	using Stage::advance;
 
   private:
@@ -81,11 +81,6 @@ class EX : public Stage
 	 * logic.
 	 * All instructions store the result into s1.
 	 */
-	std::unordered_map<
-		Mnemonic,
-		std::function<void(
-			signed int &s1, signed int s2, signed int s3, unsigned int pc)>>
-		instr_map;
 };
 
 #endif /* EX_H_INCLUDED */
