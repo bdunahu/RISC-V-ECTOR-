@@ -37,9 +37,13 @@ void DigitLabelDelegate::paint(
 	QString t;
 	QStyleOptionViewItem o;
 	QStyle *s;
+	QVariant a;
+	bool e;
 
-	v = index.data(Qt::DisplayRole).toInt();
-	t = format_toggled_value(v, this->is_hex);
+	a = index.data(Qt::DisplayRole);
+	v = a.toInt();
+	e = a.isNull();
+	t = format_toggled_value(v, this->is_hex, e);
 
 	o = option;
 	initStyleOption(&o, index);

@@ -1,6 +1,10 @@
 <!DOCTYPE RCC>
 <RCC version="1.0">
     <qresource>
+      <file>resources/arrow_down.png</file>
+      <file>resources/arrow_up.png</file>
+      <file>resources/arrow_down_pressed.png</file>
+      <file>resources/arrow_up_pressed.png</file>
       <file>resources/styles.qss</file>
       <file>resources/idle.png</file>
       <file>resources/angry.png</file>

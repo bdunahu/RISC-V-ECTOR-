@@ -64,14 +64,15 @@ class Worker : public QObject
 
   signals:
 	void clock_cycles(int value, int pc);
-	void
-	storage(QVector<QVector<int>> data, int i);
-	void register_storage(const std::array<int, GPR_NUM> data);
+	void storage(QVector<QVector<int>> data, int i);
+	void register_storage(
+		QVector<signed int> gprs, QVector<QVector<signed int>> vrs);
 	void if_info(const InstrDTO *);
 	void id_info(const InstrDTO *);
 	void ex_info(const InstrDTO *);
 	void mm_info(const InstrDTO *);
 	void wb_info(const InstrDTO *);
+	void steps_done();
 	void finished();
 
   private:
@@ -80,8 +81,21 @@ class Worker : public QObject
 	 * @param the original data
 	 * @return a less universal version of the same thing
 	 */
+	template <size_t N>
 	QVector<QVector<int>>
-	data_to_QT(std::vector<std::array<signed int, LINE_SIZE>> data);
+	data_to_QT(const std::vector<std::array<signed int, N>> &data)
+	{
+		QVector<QVector<int>> r;
+		QVector<int> tmp;
+
+		r.reserve(static_cast<int>(data.size()));
+
+		for (const auto &line : data) {
+			tmp = QVector<int>(line.begin(), line.end());
+			r.append(tmp);
+		}
+		return r;
+	}
 	/**
 	 * Sets the GUI signals to update the storage, clock cycle, and stage
 	 * displays.

@@ -15,6 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+#include "definitions.h"
 #include "controller.h"
 #include "ex.h"
 #include "response.h"
@@ -30,6 +31,7 @@ Controller::Controller(Stage *stage, Storage *storage, bool is_pipelined)
 	this->pc = 0x0;
 	this->checked_out = {};
 	this->gprs = {0};
+	this->vrs.fill({0});
 	this->gprs.at(2) = MEM_WORDS; // set the stack pointer
 }
 
@@ -47,7 +49,12 @@ void Controller::run_for(int number)
 
 int Controller::get_clock_cycle() { return this->clock_cycle; }
 
-std::array<int, GPR_NUM> Controller::get_gprs() { return this->gprs; }
+std::array<signed int, GPR_NUM> Controller::get_gprs() { return this->gprs; }
+
+std::array<std::array<signed int, V_R_LIMIT>, V_NUM> Controller::get_vrs()
+{
+	return this->vrs;
+}
 
 int Controller::get_pc() { return this->pc; }
 

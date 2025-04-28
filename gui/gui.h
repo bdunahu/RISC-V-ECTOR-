@@ -68,9 +68,11 @@ class GUI : public QMainWindow
 
 	void onWorkerWriteBackInfo(const InstrDTO *);
 
+	void onWorkerStepsDone();
+
 	void onWorkerShowStorage(const QVector<QVector<int>> &data, int i);
 
-	void onWorkerShowRegisters(const std::array<int, GPR_NUM> &data);
+	void onWorkerShowRegisters(const QVector<signed int> &gprs, const QVector<QVector<signed int>> &vrs);
 
 	void on_upload_intructions_btn_clicked();
 

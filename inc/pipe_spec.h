@@ -80,6 +80,8 @@
  */
 #define CACHE_DELAY 1
 
+#define VECTOR_MEM_DELAY 10
+
 /**
  * Return the N least-significant bits from integer K using a bit mask
  * @param the integer to be parsed

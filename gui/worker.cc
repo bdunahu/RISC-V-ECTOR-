@@ -72,14 +72,22 @@ void Worker::runSteps(int steps)
 {
 	this->ct->run_for(steps);
 	this->update();
+	emit steps_done();
 }
 
 void Worker::update()
 {
 	unsigned long i;
+	std::array<int, GPR_NUM> gprs;
+	std::array<std::array<signed int, V_R_LIMIT>, V_NUM> vrs;
 
 	this->ct_mutex.lock();
-	emit register_storage(this->ct->get_gprs());
+	gprs = this->ct->get_gprs();
+	vrs = this->ct->get_vrs();
+	std::vector<std::array<signed int, V_R_LIMIT>> v(vrs.begin(), vrs.end());
+
+	emit register_storage(
+		QVector<int>(gprs.begin(), gprs.end()), this->data_to_QT(v));
 
 	for (i = 0; i < s.size(); ++i)
 		emit storage(this->data_to_QT(this->s.at(i)->get_data()), i + 1);
@@ -91,19 +99,4 @@ void Worker::update()
 	emit mm_info(this->mm_stage->get_instr());
 	emit wb_info(this->wb_stage->get_instr());
 	this->ct_mutex.unlock();
-}
-
-QVector<QVector<int>>
-Worker::data_to_QT(std::vector<std::array<signed int, LINE_SIZE>> data)
-{
-	QVector<QVector<int>> r;
-	QVector<int> tmp;
-
-	r.reserve(static_cast<int>(data.size()));
-
-	for (const auto &line : data) {
-		tmp = QVector<int>(line.begin(), line.end());
-		r.append(tmp);
-	}
-	return r;
 }

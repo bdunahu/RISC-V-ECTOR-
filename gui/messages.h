@@ -35,8 +35,6 @@ const std::vector<std::string> load_file = {
 const std::vector<std::string> no_instructions = {
 	"NO PROGRAM PROVIDED", "NOTHING TO DO, GIVING UP", "INSTRUCTIONS MISSING",
 	"404 INSTRUCTIONS NOT FOUND"};
-const std::vector<std::string> bad_cache = {
-	"WAYS CANNOT BE BELOW 0 OR ABOVE 4"};
 const std::vector<std::string> no_pipeline = {
 	"SIMULATION READY: NO PIPE", "PIPE OFF, SIMULATION READY"};
 const std::vector<std::string> no_cache = {
@@ -59,7 +57,6 @@ std::string get_load_file() { return RANDOM_MESSAGE(load_file); }
  * @return a friendly reminder that the simulation is not configured yet
  */
 std::string get_no_instructions() { return RANDOM_MESSAGE(no_instructions); }
-std::string get_bad_cache() { return RANDOM_MESSAGE(bad_cache); }
 
 /**
  * @return unsolicited complaints for successful initialization

@@ -18,6 +18,8 @@
 #ifndef INSTRDTO_H
 #define INSTRDTO_H
 #include "instr.h"
+#include "pipe_spec.h"
+#include<array>
 
 struct U_INT_TYPE {
 	signed int slot_one;
@@ -26,6 +28,15 @@ struct U_INT_TYPE {
 };
 
 struct V_TYPE {
+	std::array<signed int, V_R_LIMIT> slot_one;
+	std::array<signed int, V_R_LIMIT> slot_two;
+	std::array<signed int, V_R_LIMIT> slot_three;
+};
+
+struct LOAD_STORE_V_TYPE{
+	signed int base_addr;
+	signed int immediate;
+	std::array<signed int, V_R_LIMIT> vector_register;
 };
 
 struct InstrDTO {
@@ -52,6 +63,7 @@ struct InstrDTO {
 	union {
 		struct U_INT_TYPE integer;
 		struct V_TYPE vector;
+		struct LOAD_STORE_V_TYPE load_store_vector;
 	} operands;
 };
 

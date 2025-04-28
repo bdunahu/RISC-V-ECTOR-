@@ -15,85 +15,50 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef STORAGEVIEW_H
-#define STORAGEVIEW_H
+#ifndef REGISTERVIEW_H
+#define REGISTERVIEW_H
 
+#include "storageview.h"
 #include <QAbstractTableModel>
 #include <QVector>
 
 // see https://doc.qt.io/qt-6/qabstracttablemodel.html
-class StorageView : public QAbstractTableModel
+class RegisterView : public StorageView
 {
 	Q_OBJECT
   public:
-	/**
-	 * Constructor. Initializes a clean StorageView object with
-	 * `rows' rows.
-	 * @param the number of rows
-	 */
-	StorageView(int rows, int columns, QObject *parent = nullptr);
-
-	/**
-	 * Returns the number of rows in this table.
-	 * @param the parent
-	 * @return the number of rows under the given parent.
-	 */
-	int rowCount(const QModelIndex &) const override;
-	/**
-	 * Returns the number of columns in this table.
-	 * @param the parent
-	 * @return the number of columns under the given parent (hint: it's
-	 * LINE_SIZE)
-	 */
-	int columnCount(const QModelIndex &) const override;
+	using StorageView::StorageView;
 
 	/**
 	 * Returns a properly formatted cell, including alignment.This function is
 	 * specific to the implementation details of QAbstractTableModel.
 	 */
-	virtual QVariant
+	QVariant
 	data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
 	/**
 	 * Adds custom formatting options for row and column headers.
 	 */
-	virtual QVariant headerData(
+	QVariant headerData(
 		int section,
 		Qt::Orientation o,
 		int role = Qt::DisplayRole) const override;
 
 	/**
-	 * Ensures the table is enabled, but not selectable.
+	 * @param field to assign to `this->gprs'.
+	 * @param field to assign to `this->vrs'.
 	 */
-	Qt::ItemFlags flags(const QModelIndex &i) const override;
-
-	/**
-	 * @param field to assign to `this->d'
-	 */
-	void set_data(const QVector<QVector<int>> &data);
-
-  public slots:
-	void set_hex_display(bool hex);
-
-  protected:
-	/**
-	 * The number of rows in this table.
-	 */
-	int r;
-	/**
-	 * The number of columns in this table.
-	 */
-	int c;
-	/**
-	 * Whether or not the headers should be displayed in hex.
-	 */
-	bool is_hex = true;
+	void set_data(const QVector<int> &gprs, const QVector<QVector<int>> &vrs);
 
   private:
 	/**
-	 * The data this table displays.
+	 * The general purpose registers.
 	 */
-	QVector<QVector<int>> d;
+	QVector<int> gprs;
+	/**
+	 * The vector registers.
+	 */
+	QVector<QVector<int>> vrs;
 };
 
-#endif // STORAGEVIEW_H
+#endif // REGISTERVIEW_H
