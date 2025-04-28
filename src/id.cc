@@ -285,6 +285,7 @@ void ID::decode_J_type(signed int &s1)
 		s3 = 2;	 // stack pointer
 		s1 = -1; // increment amount
 		r1 = this->read_guard(s2);
+		this->curr_instr->operands.integer.slot_one = s1;
 		this->curr_instr->operands.integer.slot_two = s2;
 		r2 = (this->is_checked_out(s3)) ? STALLED
 										: OK; // we read the stack pointer
@@ -298,6 +299,7 @@ void ID::decode_J_type(signed int &s1)
 		s2 = s1; // destination
 		s3 = 2;	 // stack pointer
 		s1 = 1;	 // increment amount
+		this->curr_instr->operands.integer.slot_one = s1;
 		r1 = (this->is_checked_out(s3)) ? STALLED
 										: OK; // we read the stack pointer
 		if (r1 == OK) {
@@ -316,7 +318,7 @@ void ID::decode_J_type(signed int &s1)
 		if(this->status == OK){
 			this->curr_instr->operands.integer.slot_one = s1;
 			this->curr_instr->operands.integer.slot_two = s2;
-			this->curr_instr->operands.integer.slot_three = s3;	
+			this->curr_instr->operands.integer.slot_three = s3;
 		}
 	}
 }

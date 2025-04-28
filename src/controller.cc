@@ -31,6 +31,7 @@ Controller::Controller(Stage *stage, Storage *storage, bool is_pipelined)
 	this->pc = 0x0;
 	this->checked_out = {};
 	this->gprs = {0};
+	this->vrs.fill({0});
 	this->gprs.at(2) = MEM_WORDS; // set the stack pointer
 }
 
