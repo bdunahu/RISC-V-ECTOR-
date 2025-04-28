@@ -26,7 +26,7 @@
 
 static Logger *global_log = Logger::getInstance();
 
-static std::string version_number = "v0.1";
+static std::string version_number = "v0.8";
 // clang-format off
 static std::string banner =
   "    _/_/_/    _/_/_/    _/_/_/    _/_/_/   \n"
