@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1522</width>
+    <width>1686</width>
     <height>621</height>
    </rect>
   </property>
@@ -18,14 +18,17 @@
     <item>
      <layout class="QGridLayout" name="gridLayout_2" rowstretch="0" columnstretch="0">
       <item row="0" column="0">
-       <layout class="QHBoxLayout" name="control_separator">
+       <layout class="QHBoxLayout" name="control_separator" stretch="6,1">
+        <property name="spacing">
+         <number>6</number>
+        </property>
         <item>
          <layout class="QVBoxLayout" name="storage_pipe_separator">
           <item>
            <widget class="QTabWidget" name="storage">
             <property name="minimumSize">
              <size>
-              <width>1250</width>
+              <width>0</width>
               <height>0</height>
              </size>
             </property>
@@ -35,7 +38,7 @@
            </widget>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="pipe_view">
+           <layout class="QHBoxLayout" name="pipe_view" stretch="1,2,2,2,2,2">
             <item>
              <widget class="QGroupBox" name="groupBox">
               <property name="maximumSize">
@@ -93,7 +96,7 @@
              <widget class="QGroupBox" name="Fetch">
               <property name="minimumSize">
                <size>
-                <width>200</width>
+                <width>0</width>
                 <height>0</height>
                </size>
               </property>
@@ -146,7 +149,7 @@
              <widget class="QGroupBox" name="Decode">
               <property name="minimumSize">
                <size>
-                <width>200</width>
+                <width>0</width>
                 <height>0</height>
                </size>
               </property>
@@ -199,7 +202,7 @@
              <widget class="QGroupBox" name="Execute">
               <property name="minimumSize">
                <size>
-                <width>200</width>
+                <width>0</width>
                 <height>0</height>
                </size>
               </property>
@@ -255,7 +258,7 @@
              <widget class="QGroupBox" name="Memory">
               <property name="minimumSize">
                <size>
-                <width>200</width>
+                <width>0</width>
                 <height>0</height>
                </size>
               </property>
@@ -308,7 +311,7 @@
              <widget class="QGroupBox" name="WriteBack">
               <property name="minimumSize">
                <size>
-                <width>200</width>
+                <width>0</width>
                 <height>0</height>
                </size>
               </property>

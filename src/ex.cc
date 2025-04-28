@@ -32,6 +32,8 @@ void EX::advance_helper()
 	Mnemonic m;
 
 	s1 = 0, s2 = 0, s3 = 0;
+	v1 = {0}, v2 = {0}, v3 = {0};
+	v_len = 0, v_immediate = 0, v_base_addr = 0;
 	m = this->curr_instr->mnemonic;
 	pc = this->curr_instr->slot_B;
 
