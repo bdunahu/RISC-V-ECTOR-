@@ -183,14 +183,10 @@ void EX::advance_helper()
 			break;
 
 		case ADDV:
-			if(v_len ==0){
-
-			} else {
-				for(int i=0;i<v_len;i++){
-					this->set_condition(OF, ADDITION_OF_GUARD(v1[i],v2[i]));
-					this->set_condition(UF, ADDITION_UF_GUARD(v1[i],v2[i]));
-					v1[i] = v1[i] + v2[i];
-				}		
+			for(int i=0;i<v_len;i++){
+				this->set_condition(OF, ADDITION_OF_GUARD(v1[i],v2[i]));
+				this->set_condition(UF, ADDITION_UF_GUARD(v1[i],v2[i]));
+				v1[i] = v1[i] + v2[i];
 			}
 			break;
 		case SUBV:
@@ -234,8 +230,16 @@ void EX::advance_helper()
 		case NOP:
 			break;			
 		
-	}	
-		
+	}
+	if(this->is_vector_type(m)) {
+		if(this->curr_instr->mnemonic != LOADV && this->curr_instr->mnemonic != STOREV){
+			this->curr_instr->operands.vector.slot_one = v1;	
+		} else {
+			this->curr_instr->operands.load_store_vector.base_addr = v_base_addr;
+		}	 
+	} else{
+		this->curr_instr->operands.integer.slot_one = s1;
+	}
 	this->status = OK;
 }
 

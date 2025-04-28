@@ -253,6 +253,7 @@ void ID::decode_I_type(signed int &s1)
 		s1 = GET_MID_BITS(s1, s0b, s1b);
 		break;
 	default:
+		this->curr_instr->operands.integer.slot_three = s3;
 		s2 = GET_MID_BITS(s1, s0b, s1b);
 		s1 = GET_LS_BITS(s1, s0b);
 	}
@@ -312,6 +313,10 @@ void ID::decode_J_type(signed int &s1)
 		[[fallthrough]];
 	default:
 		this->status = this->read_guard(s1);
-		this->curr_instr->operands.integer.slot_one = s1;
+		if(this->status == OK){
+			this->curr_instr->operands.integer.slot_one = s1;
+			this->curr_instr->operands.integer.slot_two = s2;
+			this->curr_instr->operands.integer.slot_three = s3;	
+		}
 	}
 }

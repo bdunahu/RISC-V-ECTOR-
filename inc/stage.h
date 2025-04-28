@@ -136,6 +136,8 @@ class Stage
 			if (v < 0 || v >= GPR_NUM) {
 				throw std::out_of_range("Invalid GPR index");
 			}
+			cout << "dereference_register: " << v << endl;
+			cout << "gprs[v]: " << gprs[v] << endl;
 			return gprs[v];
 		}
 		else if constexpr (std::is_same_v<T, std::array<signed int, V_R_LIMIT>>) {
