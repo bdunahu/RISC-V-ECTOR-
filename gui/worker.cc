@@ -18,6 +18,7 @@
 #include "worker.h"
 #include "storage.h"
 #include "util.h"
+#include <cmath>
 
 Worker::Worker(QObject *parent) : QObject(parent) {}
 
@@ -49,7 +50,7 @@ void Worker::configure(
 	for (i = ways.size(); i > 0; --i) {
 		s = static_cast<Storage *>(new Cache(
 			s, cache_size_mapper(ways.size() - 1, i - 1), ways.at(i - 1),
-			CACHE_DELAY + i));
+			static_cast<int>(pow(CACHE_DELAY_SCALE, (i - 1)))));
 		this->s.push_front(s);
 	}
 
@@ -68,7 +69,7 @@ void Worker::configure(
 	this->update();
 }
 
-void Worker::runSteps(int steps)
+void Worker::runSteps(long steps)
 {
 	this->ct->run_for(steps);
 	this->update();

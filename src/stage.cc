@@ -59,10 +59,15 @@ InstrDTO *Stage::advance(Response p)
 		this->status = READY;
 	}
 
-	n = (p != READY || this->status != READY) ? STALLED : READY;
+	if (!this->curr_instr)
+		n = READY;
+	else
+		n = (p != READY || this->status != READY) ? STALLED : READY;
+
 	s = this->next->advance(n);
-	if (s)
+	if (s) {
 		this->curr_instr = s;
+	}
 	return r;
 }
 

@@ -73,12 +73,12 @@
 /**
  * The delay on DRAM objects.
  */
-#define DRAM_DELAY 10
+#define DRAM_DELAY 100
 
 /**
- * The (base) on cache objects.
+ * The difference in delays between two adjacent cache levels.
  */
-#define CACHE_DELAY 1
+#define CACHE_DELAY_SCALE 1
 
 #define VECTOR_MEM_DELAY 10
 

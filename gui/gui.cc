@@ -94,7 +94,7 @@ GUI::GUI(QWidget *parent) : QMainWindow(parent), ui(new Ui::GUI)
 
 	// Update the step button with step amount
 	connect(ui->step_slider, &QSlider::valueChanged, this, [=](int index) {
-		int value = step_values[index];
+		long value = step_values[index];
 		ui->step_btn->setText(QString("Step %1").arg(value));
 	});
 
@@ -268,7 +268,7 @@ void GUI::on_step_btn_clicked()
 		return;
 
 	this->set_status(get_running, "busy");
-	int steps = step_values[ui->step_slider->value()];
+	long steps = step_values[ui->step_slider->value()];
 	emit sendRunSteps(steps);
 }
 
