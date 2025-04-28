@@ -64,6 +64,10 @@ RegisterView::headerData(int section, Qt::Orientation o, int role) const
 
 void RegisterView::set_data(const QVector<int> &gprs, const QVector<QVector<int>> &vrs)
 {
+	beginResetModel();
 	this->gprs = gprs;
 	this->vrs = vrs;
+	endResetModel();
 }
+
+
