@@ -56,7 +56,7 @@ class Worker : public QObject
 	QMutex &get_ct_mutex() { return ct_mutex; }
 
   public slots:
-	void runSteps(int steps);
+	void runSteps(long steps);
 	void configure(
 		std::vector<unsigned int> ways,
 		std::vector<signed int> program,

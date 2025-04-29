@@ -41,7 +41,7 @@ class Controller : public Stage
 	 * Direct the simulator to run for `number` clock cycles.
 	 * @param the number of clock cycles to run for.
 	 */
-	void run_for(int number);
+	void run_for(long number);
 	/**
 	 * @return the current clock cycle.
 	 */

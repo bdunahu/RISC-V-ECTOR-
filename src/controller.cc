@@ -35,7 +35,7 @@ Controller::Controller(Stage *stage, Storage *storage, bool is_pipelined)
 	this->gprs.at(2) = MEM_WORDS; // set the stack pointer
 }
 
-void Controller::run_for(int number)
+void Controller::run_for(long number)
 {
 	int i;
 	for (i = 0; i < number; ++i) {

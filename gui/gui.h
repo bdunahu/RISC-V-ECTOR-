@@ -140,7 +140,7 @@ class GUI : public QMainWindow
 	/**
 	 * The possible step slider values.
 	 */
-	QVector<int> step_values = {1, 5, 20, 50, 250, 1000, 10000, 100000, 500000, 100000000};
+	QVector<long> step_values = {1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000, 10000000000};
 
 	QThread workerThread;
 
