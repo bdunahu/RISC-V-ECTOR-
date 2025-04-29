@@ -72,7 +72,9 @@ class GUI : public QMainWindow
 
 	void onWorkerShowStorage(const QVector<QVector<int>> &data, int i);
 
-	void onWorkerShowRegisters(const QVector<signed int> &gprs, const QVector<QVector<signed int>> &vrs);
+	void onWorkerShowRegisters(
+		const QVector<signed int> &gprs,
+		const QVector<QVector<signed int>> &vrs);
 
 	void on_upload_intructions_btn_clicked();
 
@@ -140,32 +142,35 @@ class GUI : public QMainWindow
 	/**
 	 * The possible step slider values.
 	 */
-	QVector<long> step_values = {1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000, 10000000000};
+	QVector<long> step_values = {1,			10,			100,		1000,
+								 10000,		100000,		1000000,	10000000,
+								 100000000, 1000000000, 10000000000};
 
 	QThread workerThread;
 
 	Worker *worker;
 
 	const std::map<Mnemonic, QString> mnemonicNameMap = {
-		{Mnemonic::ADD, "ADD"},		  {Mnemonic::SUB, "SUB"},
-		{Mnemonic::MUL, "MUL"},		  {Mnemonic::QUOT, "QUOT"},
-		{Mnemonic::SFTR, "SFTR"},	  {Mnemonic::SFTL, "SFTL"},
-		{Mnemonic::AND, "AND"},		  {Mnemonic::OR, "OR"},
-		{Mnemonic::NOT, "NOT"},		  {Mnemonic::XOR, "XOR"},
-		{Mnemonic::ADDV, "ADDV"},	  {Mnemonic::SUBV, "SUBV"},
-		{Mnemonic::MULV, "MULV"},	  {Mnemonic::DIVV, "DIVV"},
-		{Mnemonic::CMP, "CMP"},		  {Mnemonic::CEV, "CEV"},
-		{Mnemonic::LOAD, "LOAD"},	  {Mnemonic::LOADV, "LOADV"},
-		{Mnemonic::ADDI, "ADDI"},	  {Mnemonic::SUBI, "SUBI"},
-		{Mnemonic::SFTRI, "SFTRI"},	  {Mnemonic::SFTLI, "SFTLI"},
-		{Mnemonic::ANDI, "ANDI"},	  {Mnemonic::ORI, "ORI"},
-		{Mnemonic::XORI, "XORI"},	  {Mnemonic::STORE, "STORE"},
-		{Mnemonic::STOREV, "STOREV"}, {Mnemonic::JMP, "JMP"},
-		{Mnemonic::JRL, "JRL"},		  {Mnemonic::JAL, "JAL"},
-		{Mnemonic::BEQ, "BEQ"},		  {Mnemonic::BGT, "BGT"},
-		{Mnemonic::BUF, "BUF"},		  {Mnemonic::BOF, "BOF"},
-		{Mnemonic::PUSH, "PUSH"},	  {Mnemonic::POP, "POP"},
-		{Mnemonic::NOP, "NOP"},		  {Mnemonic::RET, "RET"},
+		{Mnemonic::ADD, "ADD"},		{Mnemonic::SUB, "SUB"},
+		{Mnemonic::MUL, "MUL"},		{Mnemonic::QUOT, "QUOT"},
+		{Mnemonic::REM, "REM"},		{Mnemonic::SFTR, "SFTR"},
+		{Mnemonic::SFTL, "SFTL"},	{Mnemonic::AND, "AND"},
+		{Mnemonic::OR, "OR"},		{Mnemonic::NOT, "NOT"},
+		{Mnemonic::XOR, "XOR"},		{Mnemonic::ADDV, "ADDV"},
+		{Mnemonic::SUBV, "SUBV"},	{Mnemonic::MULV, "MULV"},
+		{Mnemonic::DIVV, "DIVV"},	{Mnemonic::CMP, "CMP"},
+		{Mnemonic::CEV, "CEV"},		{Mnemonic::LOAD, "LOAD"},
+		{Mnemonic::LOADV, "LOADV"}, {Mnemonic::ADDI, "ADDI"},
+		{Mnemonic::SUBI, "SUBI"},	{Mnemonic::SFTRI, "SFTRI"},
+		{Mnemonic::SFTLI, "SFTLI"}, {Mnemonic::ANDI, "ANDI"},
+		{Mnemonic::ORI, "ORI"},		{Mnemonic::XORI, "XORI"},
+		{Mnemonic::STORE, "STORE"}, {Mnemonic::STOREV, "STOREV"},
+		{Mnemonic::JMP, "JMP"},		{Mnemonic::JRL, "JRL"},
+		{Mnemonic::JAL, "JAL"},		{Mnemonic::BEQ, "BEQ"},
+		{Mnemonic::BGT, "BGT"},		{Mnemonic::BUF, "BUF"},
+		{Mnemonic::BOF, "BOF"},		{Mnemonic::PUSH, "PUSH"},
+		{Mnemonic::POP, "POP"},		{Mnemonic::NOP, "NOP"},
+		{Mnemonic::RET, "RET"},
 	};
 	QString mnemonicToString(Mnemonic mnemonic)
 	{
