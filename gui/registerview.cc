@@ -40,7 +40,7 @@ QVariant RegisterView::data(const QModelIndex &i, int role) const
 			return QVariant();
 	}
 
-	return this->vrs[i.row() - GPR_NUM][i.column() - GPR_NUM];
+	return this->vrs[i.row() - GPR_NUM][i.column()];
 }
 
 QVariant
@@ -69,5 +69,3 @@ void RegisterView::set_data(const QVector<int> &gprs, const QVector<QVector<int>
 	this->vrs = vrs;
 	endResetModel();
 }
-
-
