@@ -1,5 +1,7 @@
 # RISC V[ECTOR]
 
+![RISC V[ECTOR] UI computing a matrix multiply](./assets/risc_vector.png)
+
 ## Dependencies
 
 This is a ISA simulator for a mini-ISA including vector support.
