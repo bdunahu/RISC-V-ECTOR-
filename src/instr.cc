@@ -37,4 +37,19 @@ const std::unordered_map<unsigned int, Mnemonic> mnemonic_map = {
 	{0b0011010, BUF},	 {0b0011110, BOF},	 {0b0100010, PUSH},
 	{0b0100110, POP},	 {0b0101010, RET},
 };
+
+bool is_vector_type(Mnemonic m)
+{
+	return (
+		m == ADDV || m == SUBV || m == MULV || m == DIVV || m == CEV ||
+		m == LOADV || m == STOREV);
+}
+
+bool is_logical_type(Mnemonic m)
+{
+	return (
+		m == ANDI || m == ORI || m == XORI || m == AND || m == OR || m == XOR ||
+		m == NOT);
+}
+
 } // namespace instr

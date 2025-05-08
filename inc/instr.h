@@ -64,6 +64,8 @@ enum Mnemonic {
 namespace instr
 {
 extern const std::unordered_map<unsigned int, Mnemonic> mnemonic_map;
+bool is_vector_type(Mnemonic m);
+bool is_logical_type(Mnemonic m);
 } // namespace instr
 
 #endif /* INSTR_H_INCLUDED */

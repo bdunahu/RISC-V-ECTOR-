@@ -153,7 +153,7 @@ void ID::decode_R_type(signed int &s1)
 	s2 = GET_MID_BITS(s1, s0b, s1b);
 	s1 = GET_LS_BITS(s1, s0b);
 
-	if (this->is_vector_type(this->curr_instr->mnemonic)) {
+	if (instr::is_vector_type(this->curr_instr->mnemonic)) {
 		r1 = this->read_vec_guard(
 			s1, this->curr_instr->operands.vector.slot_one);
 		r2 = this->read_vec_guard(

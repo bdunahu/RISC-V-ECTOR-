@@ -20,6 +20,7 @@
 #include "pipe_spec.h"
 #include "response.h"
 #include "stage.h"
+#include "instr.h"
 #include <unordered_map>
 
 // Switch statements for each instruction
@@ -37,7 +38,7 @@ void EX::advance_helper()
 	m = this->curr_instr->mnemonic;
 	pc = this->curr_instr->slot_B;
 
-	if (this->is_vector_type(m)) {
+	if (instr::is_vector_type(m)) {
 		if (this->curr_instr->mnemonic != LOADV &&
 			this->curr_instr->mnemonic != STOREV) {
 			v1 = this->curr_instr->operands.vector.slot_one;
@@ -60,7 +61,7 @@ void EX::advance_helper()
 		s3 = this->curr_instr->operands.integer.slot_three;
 	}
 
-	if (this->is_logical(m)) {
+	if (instr::is_logical_type(m)) {
 		this->set_condition(OF, false);
 		this->set_condition(UF, false);
 	}
@@ -235,7 +236,7 @@ void EX::advance_helper()
 	case NOP:
 		break;
 	}
-	if (this->is_vector_type(m)) {
+	if (instr::is_vector_type(m)) {
 		if (this->curr_instr->mnemonic != LOADV &&
 			this->curr_instr->mnemonic != STOREV) {
 			this->curr_instr->operands.vector.slot_one = v1;

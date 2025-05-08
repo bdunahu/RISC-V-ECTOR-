@@ -18,6 +18,7 @@
 #include "wb.h"
 #include "instrDTO.h"
 #include "response.h"
+#include "instr.h"
 #include "stage.h"
 #include <algorithm>
 #include <array>
@@ -51,8 +52,8 @@ void WB::write_handler()
 
 	this->checked_out.pop_front();
 	reg = this->curr_instr->checked_out;
-	
-	if(this->is_vector_type(this->curr_instr->mnemonic)) {
+
+	if(instr::is_vector_type(this->curr_instr->mnemonic)) {
 		if(this->curr_instr->mnemonic != STOREV && this->curr_instr->mnemonic != LOADV) {
 			this->store_register<std::array<signed int, V_R_LIMIT>>(reg, this->curr_instr->operands.vector.slot_one);
 		} else {

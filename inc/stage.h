@@ -83,10 +83,6 @@ class Stage
 	 */
 	static std::deque<signed int> checked_out;
 
-	bool is_vector_type(Mnemonic m);
-
-	bool is_logical(Mnemonic m);
-
   protected:
 	/**
 	 * The function expected to do the majority of the work.
