@@ -47,31 +47,6 @@ ID::read_vec_guard(signed int v, std::array<signed int, V_R_LIMIT> &vrs)
 	return r;
 }
 
-void ID::write_guard(signed int &v)
-{
-	// zero register shouldn't be written.
-	if (v != 0) {
-		// keep track in the instrDTO for displaying to user and writeback
-		// keep track in checked_out so we can still access this information!
-		this->checked_out.push_back(v);
-		this->curr_instr->checked_out = v;
-	}
-	v = this->dereference_register<signed int>(v);
-}
-
-void ID::write_vec_guard(signed int v, std::array<signed int, V_R_LIMIT> &vrs)
-{
-
-	// zero register shouldn't be written.
-	if (v != 0) {
-		// keep track in the instrDTO for displaying to user and writeback
-		// keep track in checked_out so we can still access this information!
-		this->checked_out.push_back(v);
-		this->curr_instr->checked_out = v;
-	}
-	vrs = this->dereference_register<std::array<signed int, V_R_LIMIT>>(v);
-}
-
 void ID::advance_helper()
 {
 	signed int s1;
@@ -177,13 +152,13 @@ void ID::decode_R_type(signed int &s1)
 	case MULV:
 	case DIVV:
 		if (this->status == OK) {
-			this->write_vec_guard(
-				s3, this->curr_instr->operands.vector.slot_three);
+			this->curr_instr->operands.vector.slot_three =
+				this->write_guard<std::array<signed int, V_R_LIMIT>>(s3);
 		}
 		break;
 	default:
 		if (this->status == OK) {
-			this->write_guard(s3);
+			this->write_guard<signed int>(s3);
 			this->curr_instr->operands.integer.slot_three = s3;
 		}
 	}
@@ -242,9 +217,8 @@ void ID::decode_I_type(signed int &s1)
 		r3 = this->set_vlen();
 		if (r1 == OK && r3 == OK)
 			// vector destination
-			this->write_vec_guard(
-				s2,
-				this->curr_instr->operands.load_store_vector.vector_register);
+			this->curr_instr->operands.load_store_vector.vector_register =
+				this->write_guard<std::array<signed int, V_R_LIMIT>>(s2);
 		this->status = (r1 == OK && r3 == OK) ? OK : STALLED;
 		return;
 	case LOAD:
@@ -261,7 +235,7 @@ void ID::decode_I_type(signed int &s1)
 	r1 = this->read_guard(s1);
 	this->curr_instr->operands.integer.slot_one = s1;
 	if (r1 == OK) {
-		this->write_guard(s2);
+		this->write_guard<int>(s2);
 		this->curr_instr->operands.integer.slot_two = s2;
 	}
 	this->status = r1;
@@ -290,7 +264,7 @@ void ID::decode_J_type(signed int &s1)
 		r2 = (this->is_checked_out(s3)) ? STALLED
 										: OK; // we read the stack pointer
 		if (r1 == OK && r2 == OK) {
-			this->write_guard(s3); // we write the stack pointer
+			this->write_guard<int>(s3); // we write the stack pointer
 			this->curr_instr->operands.integer.slot_three = s3;
 		}
 		this->status = (r1 == OK && r2 == OK) ? OK : STALLED;
@@ -303,9 +277,9 @@ void ID::decode_J_type(signed int &s1)
 		r1 = (this->is_checked_out(s3)) ? STALLED
 										: OK; // we read the stack pointer
 		if (r1 == OK) {
-			this->write_guard(s2);
+			this->write_guard<int>(s2);
 			this->curr_instr->operands.integer.slot_two = s2;
-			this->write_guard(s3); // we write the stack pointer
+			this->write_guard<int>(s3); // we write the stack pointer
 			this->curr_instr->operands.integer.slot_three = s3;
 		}
 		this->status = r1;
@@ -315,7 +289,7 @@ void ID::decode_J_type(signed int &s1)
 		[[fallthrough]];
 	default:
 		this->status = this->read_guard(s1);
-		if(this->status == OK){
+		if (this->status == OK) {
 			this->curr_instr->operands.integer.slot_one = s1;
 			this->curr_instr->operands.integer.slot_two = s2;
 			this->curr_instr->operands.integer.slot_three = s3;

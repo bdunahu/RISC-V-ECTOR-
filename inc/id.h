@@ -25,8 +25,8 @@
 class ID : public Stage
 {
   public:
-	using Stage::Stage;
 	using Stage::advance;
+	using Stage::Stage;
 
 	/* The following methods are made public so that they may be tested, and are
 	 * not to be called from outside classes during standard execution.
@@ -42,18 +42,7 @@ class ID : public Stage
 	 * @return OK if `r` is not checked out, STALLED otherwise.
 	 */
 	Response read_guard(signed int &r);
-	/**
-	 * Facilitates register checkout and data hazard management.
-	 * Checks out a register and returns it.
-	 *
-	 * @param the registers number, to be dereferenced and checked out.
-	 */
-	void write_guard(signed int &r);
-
 	Response read_vec_guard(signed int r, std::array<signed int, V_R_LIMIT> &v);
-
-	void write_vec_guard(signed int r, std::array<signed int, V_R_LIMIT> &v);
-
 	Response set_vlen();
 
   private:
@@ -95,6 +84,26 @@ class ID : public Stage
 	 * @param the resulting type.
 	 */
 	void split_instr(signed int &raw, unsigned int &type, Mnemonic &m);
+	/**
+	 * Facilitates register checkout and data hazard management.
+	 * Checks out a register and returns it.
+	 *
+	 * @param the registers number, to be dereferenced and checked out.
+	 */
+	template <typename T> T write_guard(int v)
+	{
+		T r;
+		// these registers shouldn't be written.
+		if (v != 0 && v != 16) {
+			// keep track in the instrDTO for displaying to user and writeback
+			// keep track in checked_out so we can still access this
+			// information!
+			this->checked_out.push_back(v);
+			this->curr_instr->checked_out = v;
+		}
+		r = this->dereference_register<T>(v);
+		return r;
+	}
 };
 
 #endif /* ID_H_INCLUDED */
