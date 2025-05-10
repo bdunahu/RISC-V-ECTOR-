@@ -235,8 +235,8 @@ void ID::decode_I_type(signed int &s1)
 	r1 = this->read_guard(s1);
 	this->curr_instr->operands.integer.slot_one = s1;
 	if (r1 == OK) {
-		this->write_guard<int>(s2);
-		this->curr_instr->operands.integer.slot_two = s2;
+		this->curr_instr->operands.integer.slot_two =
+			this->write_guard<int>(s2);
 	}
 	this->status = r1;
 }
@@ -264,8 +264,9 @@ void ID::decode_J_type(signed int &s1)
 		r2 = (this->is_checked_out(s3)) ? STALLED
 										: OK; // we read the stack pointer
 		if (r1 == OK && r2 == OK) {
-			this->write_guard<int>(s3); // we write the stack pointer
-			this->curr_instr->operands.integer.slot_three = s3;
+			// we write the stack pointer
+			this->curr_instr->operands.integer.slot_three =
+				this->write_guard<int>(s3);
 		}
 		this->status = (r1 == OK && r2 == OK) ? OK : STALLED;
 		break;
@@ -277,10 +278,11 @@ void ID::decode_J_type(signed int &s1)
 		r1 = (this->is_checked_out(s3)) ? STALLED
 										: OK; // we read the stack pointer
 		if (r1 == OK) {
-			this->write_guard<int>(s2);
-			this->curr_instr->operands.integer.slot_two = s2;
-			this->write_guard<int>(s3); // we write the stack pointer
-			this->curr_instr->operands.integer.slot_three = s3;
+			this->curr_instr->operands.integer.slot_two =
+				this->write_guard<int>(s2);
+			// we write the stack pointer
+			this->curr_instr->operands.integer.slot_three =
+				this->write_guard<int>(s3);
 		}
 		this->status = r1;
 		break;
