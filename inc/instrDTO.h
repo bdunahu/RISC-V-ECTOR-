@@ -19,7 +19,7 @@
 #define INSTRDTO_H
 #include "instr.h"
 #include "pipe_spec.h"
-#include<array>
+#include <array>
 
 struct U_INT_TYPE {
 	signed int slot_one;
@@ -33,7 +33,7 @@ struct V_TYPE {
 	std::array<signed int, V_R_LIMIT> slot_three;
 };
 
-struct LOAD_STORE_V_TYPE{
+struct LOAD_STORE_V_TYPE {
 	signed int base_addr;
 	signed int immediate;
 	std::array<signed int, V_R_LIMIT> vector_register;

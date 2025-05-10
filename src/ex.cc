@@ -50,7 +50,7 @@ void EX::advance_helper()
 			v_base_addr =
 				this->curr_instr->operands.load_store_vector.base_addr;
 		}
-		v_len = this->curr_instr->slot_A;
+		v_len = this->curr_instr->slot_B;
 		if (v_len == 0) {
 			// clear destination vector reg
 			v1.fill(0);

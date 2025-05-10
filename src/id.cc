@@ -49,7 +49,6 @@ void ID::get_instr_fields(signed int instr_bits)
 		this->decode_J_type(instr_bits);
 		break;
 	case 0b11:
-		this->curr_instr->mnemonic = NOP;
 		this->status = OK;
 	}
 
@@ -79,9 +78,9 @@ Response ID::set_vlen()
 	vlen_reg = vlen_reg & 0xf;
 	if (r == OK) {
 		if (vlen_reg > V_R_LIMIT) {
-			this->curr_instr->slot_A = V_R_LIMIT;
+			this->curr_instr->slot_B = V_R_LIMIT;
 		} else {
-			this->curr_instr->slot_A = vlen_reg;
+			this->curr_instr->slot_B = vlen_reg;
 		}
 	}
 	return r;

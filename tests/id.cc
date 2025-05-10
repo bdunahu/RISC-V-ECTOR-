@@ -129,6 +129,22 @@ TEST_CASE_METHOD(IDFixture, "Parse arbitrary r-type # two", "[id]")
 	delete i;
 }
 
+TEST_CASE_METHOD(IDFixture, "Parse arbitrary r-type # three", "[id]")
+{
+	signed int t;
+	InstrDTO *i;
+
+	t = this->encode_R_type(0b10000, 0b10001, 0b10101, 0b1110, 0b0);
+	i = this->decode_bits(t);
+
+	CHECK(i->operands.integer.slot_one == 0x00000000); // registers are empty
+	CHECK(i->operands.integer.slot_two == 0x00000000);
+	CHECK(i->operands.integer.slot_three == 0x00000000);
+	CHECK(i->mnemonic == MULV);
+
+	delete i;
+}
+
 TEST_CASE_METHOD(IDFixture, "Parse arbitrary i-type # one", "[id]")
 {
 	signed int t;
