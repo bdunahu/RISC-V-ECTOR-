@@ -61,11 +61,20 @@ enum Mnemonic {
 	NOP,
 };
 
+enum FieldType {
+	SI_INT,
+	R_VECT,
+	I_VECT,
+};
+
 namespace instr
 {
 extern const std::unordered_map<unsigned int, Mnemonic> mnemonic_map;
-bool is_vector_type(Mnemonic m);
-bool is_logical_type(Mnemonic m);
+/**
+ * @param a mnemonic
+ * @return an enum representing the types of the decoded instruction fields.
+ */
+FieldType get_field_types(Mnemonic m);
 } // namespace instr
 
 #endif /* INSTR_H_INCLUDED */

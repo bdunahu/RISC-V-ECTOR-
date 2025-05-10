@@ -60,6 +60,10 @@ struct InstrDTO {
 	 * The register this instruction checks out.
 	 */
 	signed int checked_out;
+	/**
+	 * The currently active union member.
+	 */
+	FieldType type;
 	union {
 		struct U_INT_TYPE integer;
 		struct V_TYPE vector;

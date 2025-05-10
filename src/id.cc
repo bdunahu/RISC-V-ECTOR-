@@ -38,6 +38,7 @@ void ID::get_instr_fields(signed int instr_bits)
 	Mnemonic m;
 	this->split_instr(instr_bits, type, m);
 	this->curr_instr->mnemonic = m;
+	this->curr_instr->type = instr::get_field_types(m);
 	switch (type) {
 	case 0b00:
 		this->decode_R_type(instr_bits);
@@ -100,17 +101,17 @@ void ID::decode_R_type(signed int &s1)
 	s2 = GET_MID_BITS(s1, s0b, s1b);
 	s1 = GET_LS_BITS(s1, s0b);
 
-	if (instr::is_vector_type(this->curr_instr->mnemonic)) {
+	if (this->curr_instr->type == SI_INT) {
+		r1 = this->read_guard<signed int>(s1, s1);
+		this->curr_instr->operands.integer.slot_one = s1;
+		r2 = this->read_guard<signed int>(s2, s2);
+		this->curr_instr->operands.integer.slot_two = s2;
+	} else {
 		r1 = this->read_guard<std::array<signed int, V_R_LIMIT>>(
 			s1, this->curr_instr->operands.vector.slot_one);
 		r2 = this->read_guard<std::array<signed int, V_R_LIMIT>>(
 			s2, this->curr_instr->operands.vector.slot_two);
 		r3 = this->set_vlen();
-	} else {
-		r1 = this->read_guard<signed int>(s1, s1);
-		this->curr_instr->operands.integer.slot_one = s1;
-		r2 = this->read_guard<signed int>(s2, s2);
-		this->curr_instr->operands.integer.slot_two = s2;
 	}
 
 	this->status = (r1 == OK && r2 == OK && r3 == OK) ? OK : STALLED;

@@ -38,18 +38,14 @@ const std::unordered_map<unsigned int, Mnemonic> mnemonic_map = {
 	{0b0100110, POP},	 {0b0101010, RET},
 };
 
-bool is_vector_type(Mnemonic m)
+FieldType get_field_types(Mnemonic m)
 {
-	return (
-		m == ADDV || m == SUBV || m == MULV || m == DIVV || m == CEV ||
-		m == LOADV || m == STOREV);
+	if (m == ADDV || m == SUBV || m == MULV || m == DIVV || m == CEV) {
+		return R_VECT;
+	} else if (m == STOREV || m == LOADV) {
+		return I_VECT;
+	} else {
+		return SI_INT;
+	}
 }
-
-bool is_logical_type(Mnemonic m)
-{
-	return (
-		m == ANDI || m == ORI || m == XORI || m == AND || m == OR || m == XOR ||
-		m == NOT);
-}
-
 } // namespace instr
