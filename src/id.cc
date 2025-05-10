@@ -158,8 +158,8 @@ void ID::decode_R_type(signed int &s1)
 		break;
 	default:
 		if (this->status == OK) {
-			this->write_guard<signed int>(s3);
-			this->curr_instr->operands.integer.slot_three = s3;
+			this->curr_instr->operands.integer.slot_three =
+				this->write_guard<signed int>(s3);
 		}
 	}
 }
