@@ -57,7 +57,7 @@ void WB::write_handler()
 		if(this->curr_instr->mnemonic != STOREV && this->curr_instr->mnemonic != LOADV) {
 			this->store_register<std::array<signed int, V_R_LIMIT>>(reg, this->curr_instr->operands.vector.slot_one);
 		} else {
-			this->store_register<std::array<signed int, V_R_LIMIT>>(reg, this->curr_instr->operands.load_store_vector.vector_register);
+			this->store_register<std::array<signed int, V_R_LIMIT>>(reg, this->curr_instr->operands.i_vector.vector_register);
 		}
 	} else{
 		this->store_register<signed int>(reg, this->curr_instr->operands.integer.slot_one);

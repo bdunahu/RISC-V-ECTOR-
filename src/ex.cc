@@ -16,11 +16,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "ex.h"
+#include "instr.h"
 #include "instrDTO.h"
 #include "pipe_spec.h"
 #include "response.h"
 #include "stage.h"
-#include "instr.h"
 #include <unordered_map>
 
 // Switch statements for each instruction
@@ -46,9 +46,9 @@ void EX::advance_helper()
 			v3 = this->curr_instr->operands.vector.slot_three;
 		} else {
 			v_immediate =
-				this->curr_instr->operands.load_store_vector.immediate;
+				this->curr_instr->operands.i_vector.immediate;
 			v_base_addr =
-				this->curr_instr->operands.load_store_vector.base_addr;
+				this->curr_instr->operands.i_vector.base_addr;
 		}
 		if (v_len == 0) {
 			// clear destination vector reg
@@ -249,7 +249,7 @@ void EX::advance_helper()
 			this->curr_instr->mnemonic != STOREV) {
 			this->curr_instr->operands.vector.slot_one = v1;
 		} else {
-			this->curr_instr->operands.load_store_vector.base_addr =
+			this->curr_instr->operands.i_vector.base_addr =
 				v_base_addr;
 		}
 	} else {

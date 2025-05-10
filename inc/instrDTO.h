@@ -33,7 +33,7 @@ struct V_TYPE {
 	std::array<signed int, V_R_LIMIT> slot_three;
 };
 
-struct LOAD_STORE_V_TYPE {
+struct VI_TYPE {
 	signed int base_addr;
 	signed int immediate;
 	std::array<signed int, V_R_LIMIT> vector_register;
@@ -67,7 +67,7 @@ struct InstrDTO {
 	union {
 		struct U_INT_TYPE integer;
 		struct V_TYPE vector;
-		struct LOAD_STORE_V_TYPE load_store_vector;
+		struct VI_TYPE i_vector;
 	} operands;
 };
 
