@@ -24,37 +24,35 @@
 
 void ID::advance_helper()
 {
-	signed int s1;
-
 	if (this->curr_instr->mnemonic == NOP)
 		this->status = OK;
 	else {
 		// instuction in bits in s1
-		s1 = this->curr_instr->slot_A;
-		get_instr_fields(s1);
+		get_instr_fields(this->curr_instr->slot_A);
 	}
 }
 
-void ID::get_instr_fields(signed int &s1)
+void ID::get_instr_fields(signed int instr_bits)
 {
 	unsigned int type;
 	Mnemonic m;
-	this->split_instr(s1, type, m);
+	this->split_instr(instr_bits, type, m);
 	this->curr_instr->mnemonic = m;
 	switch (type) {
 	case 0b00:
-		this->decode_R_type(s1);
+		this->decode_R_type(instr_bits);
 		break;
 	case 0b01:
-		this->decode_I_type(s1);
+		this->decode_I_type(instr_bits);
 		break;
 	case 0b10:
-		this->decode_J_type(s1);
+		this->decode_J_type(instr_bits);
 		break;
 	case 0b11:
-		// not defined, m = NOP
+		this->curr_instr->mnemonic = NOP;
 		this->status = OK;
 	}
+
 }
 
 void ID::split_instr(signed int &raw, unsigned int &type, Mnemonic &m)
@@ -233,9 +231,10 @@ void ID::decode_J_type(signed int &s1)
 		s2 = s1; // source
 		s3 = 2;	 // stack pointer
 		s1 = -1; // increment amount
-		r1 = this->read_guard<signed int>(s2, s2);
+
 		this->curr_instr->operands.integer.slot_one = s1;
-		this->curr_instr->operands.integer.slot_two = s2;
+		r1 = this->read_guard<signed int>(
+			s2, this->curr_instr->operands.integer.slot_two);
 		r2 = (this->is_checked_out(s3)) ? STALLED
 										: OK; // we read the stack pointer
 		if (r1 == OK && r2 == OK) {
@@ -265,9 +264,9 @@ void ID::decode_J_type(signed int &s1)
 		s1 = 1; // link register
 		[[fallthrough]];
 	default:
-		this->status = this->read_guard<signed int>(s1, s1);
+		this->status = this->read_guard<signed int>(
+			s1, this->curr_instr->operands.integer.slot_one);
 		if (this->status == OK) {
-			this->curr_instr->operands.integer.slot_one = s1;
 			this->curr_instr->operands.integer.slot_two = s2;
 			this->curr_instr->operands.integer.slot_three = s3;
 		}

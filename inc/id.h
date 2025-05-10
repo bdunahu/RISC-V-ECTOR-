@@ -60,7 +60,7 @@ class ID : public Stage
 	 * @param the resulting third field, which varies per type.
 	 * @param the resulting mnemonic.
 	 */
-	void get_instr_fields(signed int &s1);
+	void get_instr_fields(signed int instr_bits);
 	void decode_R_type(signed int &s1);
 	void decode_I_type(signed int &s1);
 	void decode_J_type(signed int &s1);
@@ -96,10 +96,11 @@ class ID : public Stage
 	/**
 	 * Facilitates register checkout and data hazard management.
 	 * It does this by checking that the register passed in is not currently
-	 * checked out. If true, then replaces reg with the value of the register and
-	 * returns OK. If false, returns STALLED.
+	 * checked out. If true, then sets `result' with the value of the register
+	 * and returns OK. If false, returns STALLED.
 	 *
-	 * @param the registers number, to be dereferenced.
+	 * @param the registers number
+	 * @param the dereferenced register value
 	 * @return OK if `reg` is not checked out, STALLED otherwise.
 	 */
 	template <typename T> Response read_guard(int reg, T &result)
