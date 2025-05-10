@@ -118,7 +118,7 @@ TEST_CASE_METHOD(IDFixture, "Parse arbitrary r-type # two", "[id]")
 	signed int t;
 	InstrDTO *i;
 
-	t = this->encode_R_type(0b10000, 0b01000, 0b00100, 0b10, 0b0);
+	t = this->encode_R_type(0b1000, 0b01000, 0b00100, 0b10, 0b0);
 	i = this->decode_bits(t);
 
 	CHECK(i->operands.integer.slot_one == 0x00000000); // registers are empty
@@ -150,7 +150,7 @@ TEST_CASE_METHOD(IDFixture, "Parse arbitrary i-type # two", "[id]")
 	signed int t;
 	InstrDTO *i;
 
-	t = this->encode_I_type(0xCC, 0b101, 0b110, 0b1011, 0b1);
+	t = this->encode_I_type(0xCC, 0b10101, 0b00110, 0b11011, 0b1);
 	i = this->decode_bits(t);
 
 	CHECK(i->operands.integer.slot_one == 0x00000000); // registers are empty
@@ -166,7 +166,7 @@ TEST_CASE_METHOD(IDFixture, "Parse arbitrary j-type # one", "[id]")
 	signed int t;
 	InstrDTO *i;
 
-	t = this->encode_J_type(0x3456, 0b10101, 0b0111, 0b10);
+	t = this->encode_J_type(0x3456, 0b101, 0b0111, 0b10);
 	i = this->decode_bits(t);
 
 	CHECK(i->operands.integer.slot_one == 0x00000000); // registers are empty
@@ -181,7 +181,7 @@ TEST_CASE_METHOD(IDFixture, "Parse arbitrary j-type # two", "[id]")
 	signed int t;
 	InstrDTO *i;
 
-	t = this->encode_J_type(0xBBCCF, 0b10101, 0b0011, 0b10);
+	t = this->encode_J_type(0xBBCCF, 0b00101, 0b0011, 0b10);
 	i = this->decode_bits(t);
 
 	t = 0xFFFBBCCF;

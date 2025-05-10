@@ -136,7 +136,7 @@ class Stage
 		}
 		else if constexpr (std::is_same_v<T, std::array<signed int, V_R_LIMIT>>) {
 			if (v < GPR_NUM || v >= GPR_NUM + V_NUM) {
-				throw std::out_of_range("Invalid vector register index");
+				throw std::out_of_range("Invalid VRS index");
 			}
 			return vrs[v % GPR_NUM];
 		}
