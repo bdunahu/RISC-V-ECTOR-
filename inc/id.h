@@ -32,17 +32,6 @@ class ID : public Stage
 	 * not to be called from outside classes during standard execution.
 	 */
 
-	/**
-	 * Facilitates register checkout and data hazard management.
-	 * It does this by checking that the register passed in is not currently
-	 * checked out. If true, then replaces r with the value of the register and
-	 * returns OK. If false, returns STALLED.
-	 *
-	 * @param the registers number, to be dereferenced.
-	 * @return OK if `r` is not checked out, STALLED otherwise.
-	 */
-	Response read_guard(signed int &r);
-	Response read_vec_guard(signed int r, std::array<signed int, V_R_LIMIT> &v);
 	Response set_vlen();
 
   private:
@@ -103,6 +92,26 @@ class ID : public Stage
 		}
 		r = this->dereference_register<T>(v);
 		return r;
+	}
+	/**
+	 * Facilitates register checkout and data hazard management.
+	 * It does this by checking that the register passed in is not currently
+	 * checked out. If true, then replaces reg with the value of the register and
+	 * returns OK. If false, returns STALLED.
+	 *
+	 * @param the registers number, to be dereferenced.
+	 * @return OK if `reg` is not checked out, STALLED otherwise.
+	 */
+	template <typename T> Response read_guard(int reg, T &result)
+	{
+		Response response;
+		if (this->is_checked_out(reg))
+			response = STALLED;
+		else {
+			response = OK;
+			result = this->dereference_register<T>(reg);
+		}
+		return response;
 	}
 };
 

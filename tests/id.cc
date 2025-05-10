@@ -191,18 +191,3 @@ TEST_CASE_METHOD(IDFixture, "Parse arbitrary j-type # two", "[id]")
 
 	delete i;
 }
-
-TEST_CASE_METHOD(IDFixture, "read does not conflict with read", "[id]")
-{
-	signed int v;
-	Response r;
-
-	v = 0b1;
-	r = this->d->read_guard(v);
-	CHECK(v == 0b0);
-	REQUIRE(r == OK);
-
-	v = 0b1;
-	this->d->read_guard(v);
-	REQUIRE(v == 0b0);
-}

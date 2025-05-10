@@ -22,31 +22,6 @@
 #include "response.h"
 #include "stage.h"
 
-Response ID::read_guard(signed int &v)
-{
-	Response r;
-	if (this->is_checked_out(v))
-		r = STALLED;
-	else {
-		r = OK;
-		v = this->dereference_register<signed int>(v);
-	}
-	return r;
-}
-
-Response
-ID::read_vec_guard(signed int v, std::array<signed int, V_R_LIMIT> &vrs)
-{
-	Response r;
-	if (this->is_checked_out(v))
-		r = STALLED;
-	else {
-		r = OK;
-		vrs = this->dereference_register<std::array<signed int, V_R_LIMIT>>(v);
-	}
-	return r;
-}
-
 void ID::advance_helper()
 {
 	signed int s1;
@@ -102,7 +77,7 @@ Response ID::set_vlen()
 {
 	signed int vlen_reg = 4;
 	Response r;
-	r = this->read_guard(vlen_reg);
+	r = this->read_guard<signed int>(vlen_reg, vlen_reg);
 	vlen_reg = vlen_reg & 0xf;
 	if (r == OK) {
 		if (vlen_reg > V_R_LIMIT) {
@@ -129,15 +104,15 @@ void ID::decode_R_type(signed int &s1)
 	s1 = GET_LS_BITS(s1, s0b);
 
 	if (instr::is_vector_type(this->curr_instr->mnemonic)) {
-		r1 = this->read_vec_guard(
+		r1 = this->read_guard<std::array<signed int, V_R_LIMIT>>(
 			s1, this->curr_instr->operands.vector.slot_one);
-		r2 = this->read_vec_guard(
+		r2 = this->read_guard<std::array<signed int, V_R_LIMIT>>(
 			s2, this->curr_instr->operands.vector.slot_two);
 		r3 = this->set_vlen();
 	} else {
-		r1 = this->read_guard(s1);
+		r1 = this->read_guard<signed int>(s1, s1);
 		this->curr_instr->operands.integer.slot_one = s1;
-		r2 = this->read_guard(s2);
+		r2 = this->read_guard<signed int>(s2, s2);
 		this->curr_instr->operands.integer.slot_two = s2;
 	}
 
@@ -185,10 +160,10 @@ void ID::decode_I_type(signed int &s1)
 
 		// both operands are read values
 		// s1 is base address
-		r1 = this->read_guard(s1);
+		r1 = this->read_guard<signed int>(s1, s1);
 		this->curr_instr->operands.integer.slot_one = s1;
 		// s2 is value to be stored
-		r2 = this->read_guard(s2);
+		r2 = this->read_guard<signed int>(s2, s2);
 		this->curr_instr->operands.integer.slot_two = s2;
 		this->status = (r1 == OK && r2 == OK) ? OK : STALLED;
 		return;
@@ -198,10 +173,10 @@ void ID::decode_I_type(signed int &s1)
 		s1 = GET_LS_BITS(s1, s0b);
 
 		// base address
-		r1 = this->read_guard(s1);
+		r1 = this->read_guard<signed int>(s1, s1);
 		this->curr_instr->operands.load_store_vector.base_addr = s1;
 		// vector value to be stored
-		r2 = this->read_vec_guard(
+		r2 = this->read_guard<std::array<signed int, V_R_LIMIT>>(
 			s2, this->curr_instr->operands.load_store_vector.vector_register);
 		r3 = this->set_vlen();
 
@@ -212,7 +187,7 @@ void ID::decode_I_type(signed int &s1)
 		s2 = GET_LS_BITS(s1, s0b);
 		s1 = GET_MID_BITS(s1, s0b, s1b);
 		// base address
-		r1 = this->read_guard(s1);
+		r1 = this->read_guard<signed int>(s1, s1);
 		this->curr_instr->operands.load_store_vector.base_addr = s1;
 		r3 = this->set_vlen();
 		if (r1 == OK && r3 == OK)
@@ -232,7 +207,7 @@ void ID::decode_I_type(signed int &s1)
 		s1 = GET_LS_BITS(s1, s0b);
 	}
 
-	r1 = this->read_guard(s1);
+	r1 = this->read_guard<signed int>(s1, s1);
 	this->curr_instr->operands.integer.slot_one = s1;
 	if (r1 == OK) {
 		this->curr_instr->operands.integer.slot_two =
@@ -258,7 +233,7 @@ void ID::decode_J_type(signed int &s1)
 		s2 = s1; // source
 		s3 = 2;	 // stack pointer
 		s1 = -1; // increment amount
-		r1 = this->read_guard(s2);
+		r1 = this->read_guard<signed int>(s2, s2);
 		this->curr_instr->operands.integer.slot_one = s1;
 		this->curr_instr->operands.integer.slot_two = s2;
 		r2 = (this->is_checked_out(s3)) ? STALLED
@@ -290,7 +265,7 @@ void ID::decode_J_type(signed int &s1)
 		s1 = 1; // link register
 		[[fallthrough]];
 	default:
-		this->status = this->read_guard(s1);
+		this->status = this->read_guard<signed int>(s1, s1);
 		if (this->status == OK) {
 			this->curr_instr->operands.integer.slot_one = s1;
 			this->curr_instr->operands.integer.slot_two = s2;
