@@ -20,6 +20,7 @@
 #include "pipe_spec.h"
 #include "response.h"
 #include "stage.h"
+#include "instr.h"
 #include <unordered_map>
 
 // Switch statements for each instruction
@@ -35,11 +36,11 @@ void EX::advance_helper()
 	v1 = {0}, v2 = {0}, v3 = {0};
 	v_len = 0, v_immediate = 0, v_base_addr = 0;
 	m = this->curr_instr->mnemonic;
+	v_len = this->curr_instr->slot_B;
 	pc = this->curr_instr->slot_B;
 
-	if (this->is_vector_type(m)) {
-		if (this->curr_instr->mnemonic != LOADV &&
-			this->curr_instr->mnemonic != STOREV) {
+	if (this->curr_instr->type != SI_INT) {
+		if (this->curr_instr->type == R_VECT) {
 			v1 = this->curr_instr->operands.vector.slot_one;
 			v2 = this->curr_instr->operands.vector.slot_two;
 			v3 = this->curr_instr->operands.vector.slot_three;
@@ -49,7 +50,6 @@ void EX::advance_helper()
 			v_base_addr =
 				this->curr_instr->operands.load_store_vector.base_addr;
 		}
-		v_len = this->curr_instr->slot_A;
 		if (v_len == 0) {
 			// clear destination vector reg
 			v1.fill(0);
@@ -58,11 +58,6 @@ void EX::advance_helper()
 		s1 = this->curr_instr->operands.integer.slot_one;
 		s2 = this->curr_instr->operands.integer.slot_two;
 		s3 = this->curr_instr->operands.integer.slot_three;
-	}
-
-	if (this->is_logical(m)) {
-		this->set_condition(OF, false);
-		this->set_condition(UF, false);
 	}
 
 	switch (m) {
@@ -101,18 +96,26 @@ void EX::advance_helper()
 		break;
 
 	case AND:
+		this->set_condition(OF, false);
+		this->set_condition(UF, false);
 		s1 = s1 & s2;
 		break;
 
 	case OR:
+		this->set_condition(OF, false);
+		this->set_condition(UF, false);
 		s1 = s1 | s2;
 		break;
 
 	case XOR:
+		this->set_condition(OF, false);
+		this->set_condition(UF, false);
 		s1 = s1 ^ s2;
 		break;
 
 	case NOT:
+		this->set_condition(OF, false);
+		this->set_condition(UF, false);
 		s1 = ~s1;
 		break;
 
@@ -144,14 +147,20 @@ void EX::advance_helper()
 		break;
 
 	case ANDI:
+		this->set_condition(OF, false);
+		this->set_condition(UF, false);
 		s1 = s1 & s3;
 		break;
 
 	case ORI:
+		this->set_condition(OF, false);
+		this->set_condition(UF, false);
 		s1 = s1 | s3;
 		break;
 
 	case XORI:
+		this->set_condition(OF, false);
+		this->set_condition(UF, false);
 		s1 = s1 ^ s3;
 		break;
 
@@ -235,7 +244,7 @@ void EX::advance_helper()
 	case NOP:
 		break;
 	}
-	if (this->is_vector_type(m)) {
+	if (this->curr_instr->type != SI_INT) {
 		if (this->curr_instr->mnemonic != LOADV &&
 			this->curr_instr->mnemonic != STOREV) {
 			this->curr_instr->operands.vector.slot_one = v1;

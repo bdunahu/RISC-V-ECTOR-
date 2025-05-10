@@ -25,34 +25,12 @@
 class ID : public Stage
 {
   public:
-	using Stage::Stage;
 	using Stage::advance;
+	using Stage::Stage;
 
 	/* The following methods are made public so that they may be tested, and are
 	 * not to be called from outside classes during standard execution.
 	 */
-
-	/**
-	 * Facilitates register checkout and data hazard management.
-	 * It does this by checking that the register passed in is not currently
-	 * checked out. If true, then replaces r with the value of the register and
-	 * returns OK. If false, returns STALLED.
-	 *
-	 * @param the registers number, to be dereferenced.
-	 * @return OK if `r` is not checked out, STALLED otherwise.
-	 */
-	Response read_guard(signed int &r);
-	/**
-	 * Facilitates register checkout and data hazard management.
-	 * Checks out a register and returns it.
-	 *
-	 * @param the registers number, to be dereferenced and checked out.
-	 */
-	void write_guard(signed int &r);
-
-	Response read_vec_guard(signed int r, std::array<signed int, V_R_LIMIT> &v);
-
-	void write_vec_guard(signed int r, std::array<signed int, V_R_LIMIT> &v);
 
 	Response set_vlen();
 
@@ -82,7 +60,7 @@ class ID : public Stage
 	 * @param the resulting third field, which varies per type.
 	 * @param the resulting mnemonic.
 	 */
-	void get_instr_fields(signed int &s1);
+	void get_instr_fields(signed int instr_bits);
 	void decode_R_type(signed int &s1);
 	void decode_I_type(signed int &s1);
 	void decode_J_type(signed int &s1);
@@ -95,6 +73,47 @@ class ID : public Stage
 	 * @param the resulting type.
 	 */
 	void split_instr(signed int &raw, unsigned int &type, Mnemonic &m);
+	/**
+	 * Facilitates register checkout and data hazard management.
+	 * Checks out a register and returns it.
+	 *
+	 * @param the registers number, to be dereferenced and checked out.
+	 */
+	template <typename T> T write_guard(int v)
+	{
+		T r;
+		// these registers shouldn't be written.
+		if (v != 0 && v != 16) {
+			// keep track in the instrDTO for displaying to user and writeback
+			// keep track in checked_out so we can still access this
+			// information!
+			this->checked_out.push_back(v);
+			this->curr_instr->checked_out = v;
+		}
+		r = this->dereference_register<T>(v);
+		return r;
+	}
+	/**
+	 * Facilitates register checkout and data hazard management.
+	 * It does this by checking that the register passed in is not currently
+	 * checked out. If true, then sets `result' with the value of the register
+	 * and returns OK. If false, returns STALLED.
+	 *
+	 * @param the registers number
+	 * @param the dereferenced register value
+	 * @return OK if `reg` is not checked out, STALLED otherwise.
+	 */
+	template <typename T> Response read_guard(int reg, T &result)
+	{
+		Response response;
+		if (this->is_checked_out(reg))
+			response = STALLED;
+		else {
+			response = OK;
+			result = this->dereference_register<T>(reg);
+		}
+		return response;
+	}
 };
 
 #endif /* ID_H_INCLUDED */
