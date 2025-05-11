@@ -163,13 +163,14 @@ class GUI : public QMainWindow
 		{Mnemonic::ADDI, "ADDI"},	{Mnemonic::SUBI, "SUBI"},
 		{Mnemonic::SFTRI, "SFTRI"}, {Mnemonic::SFTLI, "SFTLI"},
 		{Mnemonic::ANDI, "ANDI"},	{Mnemonic::ORI, "ORI"},
-		{Mnemonic::XORI, "XORI"},	{Mnemonic::SRDL, "SRDL"},
-		{Mnemonic::SRDS, "SRDS"},	{Mnemonic::JMP, "JMP"},
-		{Mnemonic::JRL, "JRL"},		{Mnemonic::JAL, "JAL"},
-		{Mnemonic::BEQ, "BEQ"},		{Mnemonic::BGT, "BGT"},
-		{Mnemonic::BUF, "BUF"},		{Mnemonic::BOF, "BOF"},
-		{Mnemonic::PUSH, "PUSH"},	{Mnemonic::POP, "POP"},
-		{Mnemonic::NOP, "NOP"},		{Mnemonic::RET, "RET"},
+		{Mnemonic::XORI, "XORI"},	{Mnemonic::STORE, "STORE"},
+		{Mnemonic::SRDL, "SRDL"},	{Mnemonic::SRDS, "SRDS"},
+		{Mnemonic::JMP, "JMP"},		{Mnemonic::JRL, "JRL"},
+		{Mnemonic::JAL, "JAL"},		{Mnemonic::BEQ, "BEQ"},
+		{Mnemonic::BGT, "BGT"},		{Mnemonic::BUF, "BUF"},
+		{Mnemonic::BOF, "BOF"},		{Mnemonic::PUSH, "PUSH"},
+		{Mnemonic::POP, "POP"},		{Mnemonic::NOP, "NOP"},
+		{Mnemonic::RET, "RET"},
 	};
 	QString mnemonicToString(Mnemonic mnemonic)
 	{

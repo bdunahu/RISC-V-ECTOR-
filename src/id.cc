@@ -135,9 +135,15 @@ void ID::decode_R_type(signed int &s1)
 				this->write_guard<std::array<signed int, V_R_LIMIT>>(s3);
 			break;
 		case SRDL:
-		case SRDS:
 			this->curr_instr->operands.s_vector.slot_three =
 				this->write_guard<std::array<signed int, V_R_LIMIT>>(s3);
+			break;
+		case SRDS:
+			r1 = this->read_guard<std::array<signed int, V_R_LIMIT>>(
+				s3, this->curr_instr->operands.s_vector.slot_three);
+			if (r1 != OK) {
+				this->status = STALLED;
+			}
 			break;
 		default:
 			this->curr_instr->operands.integer.slot_three =

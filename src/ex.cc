@@ -240,13 +240,25 @@ void EX::handle_vector_operations(
 	this->set_condition(UF, underflow);
 }
 
-void EX::handle_s_vector_operations(signed int &s1, signed int s2, Mnemonic m)
+void EX::handle_s_vector_operations(
+	std::array<signed int, V_R_LIMIT> &s1,
+	signed int s2,
+	Mnemonic m,
+	unsigned int v_len)
 {
+	unsigned int i, inc1, inc2;
+
 	switch (m) {
-	// case SRDL:
-	// case SRDS:
-	// 	s1 = s1 + s2;
-	// 	break;
+	case SRDL:
+	case SRDS:
+		inc1 = s1[0];
+		s1[0] = s2;
+		for (i = 1; i < v_len; ++i) {
+			inc2 = s1[i];
+			s1[i] = s1[i - 1] + inc1;
+			inc1 = inc2;
+		}
+		break;
 
 	default:
 		throw std::invalid_argument("handle_s_vector_operations did not "
@@ -270,11 +282,12 @@ void EX::advance_helper()
 		handle_vector_operations(
 			this->curr_instr->operands.vector.slot_one,
 			this->curr_instr->operands.vector.slot_two, m, v_len_or_pc);
-	}//  else {
-	// 	handle_s_vector_operations(
-	// 		this->curr_instr->operands.s_vector.slot_one,
-	// 		this->curr_instr->operands.s_vector.slot_two, m);
-	// }
+	} else {
+		handle_s_vector_operations(
+			this->curr_instr->operands.s_vector.slot_one,
+			this->curr_instr->operands.s_vector.slot_two, m, v_len_or_pc);
+		printArray(this->curr_instr->operands.s_vector.slot_three);
+	}
 
 	this->status = OK;
 }

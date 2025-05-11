@@ -58,15 +58,11 @@ void WB::write_handler()
 		this->store_register<signed int>(
 			reg, this->curr_instr->operands.integer.slot_one);
 		break;
+	case S_VECT:
 	case R_VECT:
 		this->store_register<std::array<signed int, V_R_LIMIT>>(
 			reg, this->copy_extra_vector_elements());
 		break;
-	// case S_VECT:
-	// 	this->store_register<std::array<signed int, V_R_LIMIT>>(
-	// 		reg, this->curr_instr->operands.s_vector.slot_three);
-	// 	// todo, use copy_extra_vector_elements
-	// 	break;
 	}
 }
 
@@ -96,6 +92,13 @@ std::array<signed int, V_R_LIMIT> WB::copy_extra_vector_elements()
 {
 	int i;
 	std::array<signed int, V_R_LIMIT> v;
+
+	if (this->curr_instr->type == S_VECT) {
+		if (this->curr_instr->slot_B == 0) {
+			v = {0};
+			return v;
+		}
+	}
 
 	v = this->curr_instr->operands.vector.slot_one;
 	for (i = V_R_LIMIT - 1; i >= this->curr_instr->slot_B; --i) {

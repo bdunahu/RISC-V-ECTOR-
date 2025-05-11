@@ -29,6 +29,19 @@ class MM : public Stage
 
   private:
 	void advance_helper() override;
+	/**
+	 * Helpers for `advance_helper'. Sets the `this->status' to OK
+	 * If the current memory IO returned OK, and all vector elements
+	 * have been processed. Otherwise, sets `this->status' to STALLED
+	 * @param the response from the storage devices.
+	 */
+	void try_start();
+	void try_finish(int response);
+	/**
+	 * The index element currently being loaded or stored.
+	 * Used for strided load/store.
+	 */
+	int curr_element = 0;
 };
 
 #endif /* MM_H_INCLUDED */
