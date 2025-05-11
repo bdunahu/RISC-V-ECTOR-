@@ -221,17 +221,15 @@ void EX::handle_vector_operations(
 		}
 		break;
 	case CEV:
-
+		bool eq;
+		eq = true;
 		for (i = 0; i < v_len; i++) {
 			if (s1[i] != s2[i]) {
+				eq = false;
 				break;
 			}
 		}
-		if (i == v_len) {
-			this->set_condition(EQ, true);
-		} else {
-			this->set_condition(EQ, false);
-		}
+		this->set_condition(EQ, eq);
 		break;
 
 	default:

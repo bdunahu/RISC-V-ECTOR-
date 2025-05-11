@@ -52,7 +52,6 @@ void ID::get_instr_fields(signed int instr_bits)
 	case 0b11:
 		this->status = OK;
 	}
-
 }
 
 void ID::split_instr(signed int &raw, unsigned int &type, Mnemonic &m)
@@ -91,8 +90,7 @@ void ID::decode_R_type(signed int &s1)
 {
 	unsigned int s0b, s1b, s2b;
 	signed int s2, s3;
-	Response r1, r2;
-	Response r3 = OK;
+	Response r1, r2, r3;
 
 	s0b = REG_SIZE;
 	s1b = s0b + REG_SIZE;
@@ -102,10 +100,11 @@ void ID::decode_R_type(signed int &s1)
 	s1 = GET_LS_BITS(s1, s0b);
 
 	if (this->curr_instr->type == SI_INT) {
-		r1 = this->read_guard<signed int>(s1, s1);
-		this->curr_instr->operands.integer.slot_one = s1;
-		r2 = this->read_guard<signed int>(s2, s2);
-		this->curr_instr->operands.integer.slot_two = s2;
+		r1 = this->read_guard<signed int>(
+			s1, this->curr_instr->operands.integer.slot_one);
+		r2 = this->read_guard<signed int>(
+			s2, this->curr_instr->operands.integer.slot_two);
+		r3 = OK;
 	} else {
 		r1 = this->read_guard<std::array<signed int, V_R_LIMIT>>(
 			s1, this->curr_instr->operands.vector.slot_one);
