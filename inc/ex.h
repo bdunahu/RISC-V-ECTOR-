@@ -96,7 +96,7 @@ class EX : public Stage
 	 * @param the mnemonic
 	 * @param the vector length register
 	 */
-	void handle_i_vector_operations(signed int &s1, signed int s2, Mnemonic m);
+	void handle_s_vector_operations(signed int &s1, signed int s2, Mnemonic m);
 	/**
 	 * Wrapper for division functions, which detects HALT instructinos (division
 	 * by 0).

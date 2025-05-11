@@ -240,7 +240,7 @@ void EX::handle_vector_operations(
 	this->set_condition(UF, underflow);
 }
 
-void EX::handle_i_vector_operations(signed int &s1, signed int s2, Mnemonic m)
+void EX::handle_s_vector_operations(signed int &s1, signed int s2, Mnemonic m)
 {
 	switch (m) {
 	// case SRDL:
@@ -249,7 +249,7 @@ void EX::handle_i_vector_operations(signed int &s1, signed int s2, Mnemonic m)
 	// 	break;
 
 	default:
-		throw std::invalid_argument("handle_i_vector_operations did not "
+		throw std::invalid_argument("handle_s_vector_operations did not "
 									"receive a SRDL or SRDS operation!");
 	}
 }
@@ -270,11 +270,11 @@ void EX::advance_helper()
 		handle_vector_operations(
 			this->curr_instr->operands.vector.slot_one,
 			this->curr_instr->operands.vector.slot_two, m, v_len_or_pc);
-	} else {
-		handle_i_vector_operations(
-			this->curr_instr->operands.i_vector.slot_one,
-			this->curr_instr->operands.i_vector.slot_two, m);
-	}
+	}//  else {
+	// 	handle_s_vector_operations(
+	// 		this->curr_instr->operands.s_vector.slot_one,
+	// 		this->curr_instr->operands.s_vector.slot_two, m);
+	// }
 
 	this->status = OK;
 }
