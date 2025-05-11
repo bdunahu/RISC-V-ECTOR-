@@ -24,8 +24,8 @@
 class WB : public Stage
 {
   public:
-	using Stage::Stage;
 	using Stage::advance;
+	using Stage::Stage;
 
   private:
 	void advance_helper() override;
@@ -47,6 +47,13 @@ class WB : public Stage
 	 * STORE.
 	 */
 	bool should_jump();
+	/**
+	 * @return the vector register to be stored, obtained by copying the
+	 * unfilled elements in the destination register to the source. This is
+	 * required to ensure what is written back only changes VECTOR_LENGTH number
+	 * of elements.
+	 */
+	std::array<signed int, V_R_LIMIT> copy_extra_vector_elements();
 };
 
 #endif /* WB_H_INCLUDED */

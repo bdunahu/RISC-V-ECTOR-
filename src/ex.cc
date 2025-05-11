@@ -231,7 +231,6 @@ void EX::handle_vector_operations(
 		}
 		this->set_condition(EQ, eq);
 		break;
-
 	default:
 		throw std::invalid_argument(
 			"handle_vector_operations received an integer operation!");

@@ -16,9 +16,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "wb.h"
+#include "instr.h"
 #include "instrDTO.h"
 #include "response.h"
-#include "instr.h"
 #include "stage.h"
 #include <algorithm>
 #include <array>
@@ -53,14 +53,20 @@ void WB::write_handler()
 	this->checked_out.pop_front();
 	reg = this->curr_instr->checked_out;
 
-	if(this->curr_instr->type != SI_INT) {
-		if(this->curr_instr->mnemonic != STOREV && this->curr_instr->mnemonic != LOADV) {
-			this->store_register<std::array<signed int, V_R_LIMIT>>(reg, this->curr_instr->operands.vector.slot_one);
-		} else {
-			this->store_register<std::array<signed int, V_R_LIMIT>>(reg, this->curr_instr->operands.i_vector.slot_three);
-		}
-	} else{
-		this->store_register<signed int>(reg, this->curr_instr->operands.integer.slot_one);
+	switch (this->curr_instr->type) {
+	case SI_INT:
+		this->store_register<signed int>(
+			reg, this->curr_instr->operands.integer.slot_one);
+		break;
+	case R_VECT:
+		this->store_register<std::array<signed int, V_R_LIMIT>>(
+			reg, this->copy_extra_vector_elements());
+		break;
+	case I_VECT:
+		this->store_register<std::array<signed int, V_R_LIMIT>>(
+			reg, this->curr_instr->operands.i_vector.slot_three);
+		// todo, use copy_extra_vector_elements
+		break;
 	}
 }
 
@@ -69,7 +75,6 @@ void WB::jump_handler()
 	if (this->curr_instr->operands.integer.slot_one > 0) {
 		if (this->curr_instr->mnemonic == JAL)
 			this->gprs[1] = this->curr_instr->slot_B + 1;
-		;
 		this->pc = this->curr_instr->operands.integer.slot_one;
 		this->checked_out = {};
 		this->next->squash();
@@ -85,4 +90,16 @@ bool WB::should_jump()
 		return true;
 	else
 		return false;
+}
+
+std::array<signed int, V_R_LIMIT> WB::copy_extra_vector_elements()
+{
+	int i;
+	std::array<signed int, V_R_LIMIT> v;
+
+	v = this->curr_instr->operands.vector.slot_one;
+	for (i = V_R_LIMIT - 1; i >= this->curr_instr->slot_B; --i) {
+		v[i] = this->curr_instr->operands.vector.slot_three[i];
+	}
+	return v;
 }
