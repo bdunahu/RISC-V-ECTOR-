@@ -27,31 +27,36 @@
 void EX::handle_int_operations(
 	signed int &s1, signed int s2, signed int s3, Mnemonic m, unsigned int pc)
 {
+	bool overflow, underflow;
+
+	overflow = get_condition(OF), underflow = get_condition(UF);
 	switch (m) {
 	case ADD:
-		this->set_condition(OF, ADDITION_OF_GUARD(s1, s2));
-		this->set_condition(UF, ADDITION_UF_GUARD(s1, s2));
+		overflow = ADDITION_OF_GUARD(s1, s2);
+		underflow = ADDITION_UF_GUARD(s1, s2);
 		s1 = s1 + s2;
 		break;
 
 	case SUB:
-		this->set_condition(OF, SUBTRACTION_OF_GUARD(s1, s2));
-		this->set_condition(UF, SUBTRACTION_UF_GUARD(s1, s2));
+		overflow = SUBTRACTION_OF_GUARD(s1, s2);
+		underflow = SUBTRACTION_UF_GUARD(s1, s2);
 		s1 = s1 - s2;
 		break;
 
 	case MUL:
-		this->set_condition(OF, MULTIPLICATION_OF_GUARD(s1, s2));
-		this->set_condition(UF, MULTIPLICATION_UF_GUARD(s1, s2));
+		overflow = MULTIPLICATION_OF_GUARD(s1, s2);
+		underflow = MULTIPLICATION_UF_GUARD(s1, s2);
 		s1 = s1 * s2;
 		break;
 
 	case QUOT:
-		this->handle_divide(s1, s2, false);
+		overflow = this->handle_divide(s1, s2, false);
+		underflow = 0;
 		break;
 
 	case REM:
-		this->handle_divide(s1, s2, true);
+		overflow = this->handle_divide(s1, s2, true);
+		underflow = 0;
 		break;
 
 	case SFTR:
@@ -63,26 +68,26 @@ void EX::handle_int_operations(
 		break;
 
 	case AND:
-		this->set_condition(OF, false);
-		this->set_condition(UF, false);
+		overflow = false;
+		underflow = false;
 		s1 = s1 & s2;
 		break;
 
 	case OR:
-		this->set_condition(OF, false);
-		this->set_condition(UF, false);
+		overflow = false;
+		underflow = false;
 		s1 = s1 | s2;
 		break;
 
 	case XOR:
-		this->set_condition(OF, false);
-		this->set_condition(UF, false);
+		overflow = false;
+		underflow = false;
 		s1 = s1 ^ s2;
 		break;
 
 	case NOT:
-		this->set_condition(OF, false);
-		this->set_condition(UF, false);
+		overflow = false;
+		underflow = false;
 		s1 = ~s1;
 		break;
 
@@ -94,14 +99,14 @@ void EX::handle_int_operations(
 		break;
 
 	case ADDI:
-		this->set_condition(OF, ADDITION_OF_GUARD(s1, s3));
-		this->set_condition(UF, ADDITION_UF_GUARD(s1, s3));
+		overflow = ADDITION_OF_GUARD(s1, s3);
+		underflow = ADDITION_UF_GUARD(s1, s3);
 		s1 = s1 + s3;
 		break;
 
 	case SUBI:
-		this->set_condition(OF, SUBTRACTION_OF_GUARD(s1, s3));
-		this->set_condition(UF, SUBTRACTION_UF_GUARD(s1, s3));
+		overflow = SUBTRACTION_OF_GUARD(s1, s3);
+		underflow = SUBTRACTION_UF_GUARD(s1, s3);
 		s1 = s1 - s3;
 		break;
 
@@ -114,20 +119,20 @@ void EX::handle_int_operations(
 		break;
 
 	case ANDI:
-		this->set_condition(OF, false);
-		this->set_condition(UF, false);
+		overflow = false;
+		underflow = false;
 		s1 = s1 & s3;
 		break;
 
 	case ORI:
-		this->set_condition(OF, false);
-		this->set_condition(UF, false);
+		overflow = false;
+		underflow = false;
 		s1 = s1 | s3;
 		break;
 
 	case XORI:
-		this->set_condition(OF, false);
-		this->set_condition(UF, false);
+		overflow = false;
+		underflow = false;
 		s1 = s1 ^ s3;
 		break;
 
@@ -171,6 +176,9 @@ void EX::handle_int_operations(
 		throw std::invalid_argument(
 			"handle_int_operations received a vector operation!");
 	}
+
+	this->set_condition(OF, overflow);
+	this->set_condition(UF, underflow);
 }
 
 void EX::handle_vector_operations(
@@ -180,32 +188,36 @@ void EX::handle_vector_operations(
 	unsigned int v_len)
 {
 	unsigned int i;
+	bool overflow, underflow;
+
+	overflow = 0, underflow = 0;
 
 	switch (m) {
 	case ADDV:
 		for (i = 0; i < v_len; i++) {
-			this->set_condition(OF, ADDITION_OF_GUARD(s1[i], s2[i]));
-			this->set_condition(UF, ADDITION_UF_GUARD(s1[i], s2[i]));
+			overflow = overflow || (ADDITION_OF_GUARD(s1[i], s2[i]));
+			underflow = underflow || (ADDITION_UF_GUARD(s1[i], s2[i]));
 			s1[i] = s1[i] + s2[i];
 		}
 		break;
 	case SUBV:
 		for (i = 0; i < v_len; i++) {
-			this->set_condition(OF, SUBTRACTION_OF_GUARD(s1[i], s2[i]));
-			this->set_condition(UF, SUBTRACTION_UF_GUARD(s1[i], s2[i]));
+			overflow = overflow || (SUBTRACTION_OF_GUARD(s1[i], s2[i]));
+			underflow = underflow || (SUBTRACTION_UF_GUARD(s1[i], s2[i]));
 			s1[i] = s1[i] - s2[i];
 		}
 		break;
 	case MULV:
 		for (i = 0; i < v_len; i++) {
-			this->set_condition(OF, MULTIPLICATION_OF_GUARD(s1[i], s2[i]));
-			this->set_condition(UF, MULTIPLICATION_UF_GUARD(s1[i], s2[i]));
+			overflow = overflow || (MULTIPLICATION_OF_GUARD(s1[i], s2[i]));
+			underflow = underflow || (MULTIPLICATION_UF_GUARD(s1[i], s2[i]));
 			s1[i] = s1[i] * s2[i];
 		}
 		break;
 	case DIVV:
 		for (i = 0; i < v_len; i++) {
-			this->handle_divide(s1[i], s2[i], false);
+			// short-circuiting---this order required
+			overflow = this->handle_divide(s1[i], s2[i], false) | overflow;
 		}
 		break;
 	case CEV:
@@ -226,6 +238,9 @@ void EX::handle_vector_operations(
 		throw std::invalid_argument(
 			"handle_vector_operations received an integer operation!");
 	}
+
+	this->set_condition(OF, overflow);
+	this->set_condition(UF, underflow);
 }
 
 void EX::handle_i_vector_operations(signed int &s1, signed int s2, Mnemonic m)
@@ -271,10 +286,11 @@ void EX::advance_helper()
 	this->status = OK;
 }
 
-void EX::handle_divide(signed int &s1, signed int s2, bool is_mod)
+bool EX::handle_divide(signed int &s1, signed int s2, bool is_mod)
 {
-	this->set_condition(OF, DIVISION_OF_GUARD(s1, s2));
-	this->set_condition(UF, false);
+	bool ret;
+
+	ret = DIVISION_OF_GUARD(s1, s2);
 	if (s2 == 0) {
 		// handle everything here
 		this->curr_instr->operands.integer.slot_one = MAX_INT;
@@ -286,4 +302,6 @@ void EX::handle_divide(signed int &s1, signed int s2, bool is_mod)
 	} else {
 		s1 = (is_mod) ? (s1 % s2) : (s1 / s2);
 	}
+
+	return ret;
 }

@@ -103,8 +103,9 @@ class EX : public Stage
 	 * @param the numerator
 	 * @param the denominator
 	 * @param if the modulo operator should instead be used
+	 * @return if the operation overflowed
 	 */
-	void handle_divide(signed int &s1, signed int s2, bool is_mod);
+	bool handle_divide(signed int &s1, signed int s2, bool is_mod);
 };
 
 #endif /* EX_H_INCLUDED */
