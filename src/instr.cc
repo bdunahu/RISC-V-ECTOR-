@@ -40,10 +40,9 @@ const std::unordered_map<unsigned int, Mnemonic> mnemonic_map = {
 
 FieldType get_field_types(Mnemonic m)
 {
-	if (m == ADDV || m == SUBV || m == MULV || m == DIVV || m == CEV) {
+	if (m == ADDV || m == SUBV || m == MULV || m == DIVV || m == CEV ||
+		m == SRDL || m == SRDS) {
 		return R_VECT;
-	} else if (m == SRDL || m == SRDS) {
-		return I_VECT;
 	} else {
 		return SI_INT;
 	}

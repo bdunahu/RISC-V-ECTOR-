@@ -64,7 +64,6 @@ enum Mnemonic {
 enum FieldType {
 	SI_INT,
 	R_VECT,
-	I_VECT,
 };
 
 namespace instr

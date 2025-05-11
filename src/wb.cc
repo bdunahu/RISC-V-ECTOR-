@@ -62,11 +62,11 @@ void WB::write_handler()
 		this->store_register<std::array<signed int, V_R_LIMIT>>(
 			reg, this->copy_extra_vector_elements());
 		break;
-	case I_VECT:
-		this->store_register<std::array<signed int, V_R_LIMIT>>(
-			reg, this->curr_instr->operands.i_vector.slot_three);
-		// todo, use copy_extra_vector_elements
-		break;
+	// case I_VECT:
+	// 	this->store_register<std::array<signed int, V_R_LIMIT>>(
+	// 		reg, this->curr_instr->operands.i_vector.slot_three);
+	// 	// todo, use copy_extra_vector_elements
+	// 	break;
 	}
 }
 
