@@ -19,7 +19,8 @@
 #define INSTRDTO_H
 #include "instr.h"
 #include "pipe_spec.h"
-#include<array>
+#include <array>
+
 
 struct U_INT_TYPE {
 	signed int slot_one;
@@ -33,10 +34,10 @@ struct V_TYPE {
 	std::array<signed int, V_R_LIMIT> slot_three;
 };
 
-struct LOAD_STORE_V_TYPE{
-	signed int base_addr;
-	signed int immediate;
-	std::array<signed int, V_R_LIMIT> vector_register;
+struct VI_TYPE {
+	signed int slot_one;
+	signed int slot_two;
+	std::array<signed int, V_R_LIMIT> slot_three;
 };
 
 struct InstrDTO {
@@ -60,10 +61,14 @@ struct InstrDTO {
 	 * The register this instruction checks out.
 	 */
 	signed int checked_out;
+	/**
+	 * The currently active union member.
+	 */
+	FieldType type;
 	union {
 		struct U_INT_TYPE integer;
 		struct V_TYPE vector;
-		struct LOAD_STORE_V_TYPE load_store_vector;
+		struct VI_TYPE i_vector;
 	} operands;
 };
 

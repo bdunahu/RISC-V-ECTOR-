@@ -16,80 +16,47 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "ex.h"
+#include "instr.h"
 #include "instrDTO.h"
 #include "pipe_spec.h"
 #include "response.h"
 #include "stage.h"
+#include <stdexcept>
 #include <unordered_map>
 
-// Switch statements for each instruction
-void EX::advance_helper()
+void EX::handle_int_operations(
+	signed int &s1, signed int s2, signed int s3, Mnemonic m, unsigned int pc)
 {
-	signed int s1, s2, s3;
-	std::array<signed int, V_R_LIMIT> v1, v2, v3;
-	signed int v_len, v_immediate, v_base_addr;
-	unsigned int pc;
-	Mnemonic m;
+	bool overflow, underflow;
 
-	s1 = 0, s2 = 0, s3 = 0;
-	v1 = {0}, v2 = {0}, v3 = {0};
-	v_len = 0, v_immediate = 0, v_base_addr = 0;
-	m = this->curr_instr->mnemonic;
-	pc = this->curr_instr->slot_B;
-
-	if (this->is_vector_type(m)) {
-		if (this->curr_instr->mnemonic != LOADV &&
-			this->curr_instr->mnemonic != STOREV) {
-			v1 = this->curr_instr->operands.vector.slot_one;
-			v2 = this->curr_instr->operands.vector.slot_two;
-			v3 = this->curr_instr->operands.vector.slot_three;
-		} else {
-			v_immediate =
-				this->curr_instr->operands.load_store_vector.immediate;
-			v_base_addr =
-				this->curr_instr->operands.load_store_vector.base_addr;
-		}
-		v_len = this->curr_instr->slot_A;
-		if (v_len == 0) {
-			// clear destination vector reg
-			v1.fill(0);
-		}
-	} else {
-		s1 = this->curr_instr->operands.integer.slot_one;
-		s2 = this->curr_instr->operands.integer.slot_two;
-		s3 = this->curr_instr->operands.integer.slot_three;
-	}
-
-	if (this->is_logical(m)) {
-		this->set_condition(OF, false);
-		this->set_condition(UF, false);
-	}
-
+	overflow = get_condition(OF), underflow = get_condition(UF);
 	switch (m) {
 	case ADD:
-		this->set_condition(OF, ADDITION_OF_GUARD(s1, s2));
-		this->set_condition(UF, ADDITION_UF_GUARD(s1, s2));
+		overflow = ADDITION_OF_GUARD(s1, s2);
+		underflow = ADDITION_UF_GUARD(s1, s2);
 		s1 = s1 + s2;
 		break;
 
 	case SUB:
-		this->set_condition(OF, SUBTRACTION_OF_GUARD(s1, s2));
-		this->set_condition(UF, SUBTRACTION_UF_GUARD(s1, s2));
+		overflow = SUBTRACTION_OF_GUARD(s1, s2);
+		underflow = SUBTRACTION_UF_GUARD(s1, s2);
 		s1 = s1 - s2;
 		break;
 
 	case MUL:
-		this->set_condition(OF, MULTIPLICATION_OF_GUARD(s1, s2));
-		this->set_condition(UF, MULTIPLICATION_UF_GUARD(s1, s2));
+		overflow = MULTIPLICATION_OF_GUARD(s1, s2);
+		underflow = MULTIPLICATION_UF_GUARD(s1, s2);
 		s1 = s1 * s2;
 		break;
 
 	case QUOT:
-		this->handle_divide(s1, s2, false);
+		overflow = this->handle_divide(s1, s2, false);
+		underflow = 0;
 		break;
 
 	case REM:
-		this->handle_divide(s1, s2, true);
+		overflow = this->handle_divide(s1, s2, true);
+		underflow = 0;
 		break;
 
 	case SFTR:
@@ -101,18 +68,26 @@ void EX::advance_helper()
 		break;
 
 	case AND:
+		overflow = false;
+		underflow = false;
 		s1 = s1 & s2;
 		break;
 
 	case OR:
+		overflow = false;
+		underflow = false;
 		s1 = s1 | s2;
 		break;
 
 	case XOR:
+		overflow = false;
+		underflow = false;
 		s1 = s1 ^ s2;
 		break;
 
 	case NOT:
+		overflow = false;
+		underflow = false;
 		s1 = ~s1;
 		break;
 
@@ -124,14 +99,14 @@ void EX::advance_helper()
 		break;
 
 	case ADDI:
-		this->set_condition(OF, ADDITION_OF_GUARD(s1, s3));
-		this->set_condition(UF, ADDITION_UF_GUARD(s1, s3));
+		overflow = ADDITION_OF_GUARD(s1, s3);
+		underflow = ADDITION_UF_GUARD(s1, s3);
 		s1 = s1 + s3;
 		break;
 
 	case SUBI:
-		this->set_condition(OF, SUBTRACTION_OF_GUARD(s1, s3));
-		this->set_condition(UF, SUBTRACTION_UF_GUARD(s1, s3));
+		overflow = SUBTRACTION_OF_GUARD(s1, s3);
+		underflow = SUBTRACTION_UF_GUARD(s1, s3);
 		s1 = s1 - s3;
 		break;
 
@@ -144,14 +119,20 @@ void EX::advance_helper()
 		break;
 
 	case ANDI:
+		overflow = false;
+		underflow = false;
 		s1 = s1 & s3;
 		break;
 
 	case ORI:
+		overflow = false;
+		underflow = false;
 		s1 = s1 | s3;
 		break;
 
 	case XORI:
+		overflow = false;
+		underflow = false;
 		s1 = s1 ^ s3;
 		break;
 
@@ -187,72 +168,126 @@ void EX::advance_helper()
 		(this->get_condition(OF)) ? s1 = pc + s2 : s1 = -1;
 		break;
 
+	case RET:
+	case NOP:
+		break;
+
+	default:
+		throw std::invalid_argument(
+			"handle_int_operations received a vector operation!");
+	}
+
+	this->set_condition(OF, overflow);
+	this->set_condition(UF, underflow);
+}
+
+void EX::handle_vector_operations(
+	std::array<signed int, V_R_LIMIT> &s1,
+	std::array<signed int, V_R_LIMIT> s2,
+	Mnemonic m,
+	unsigned int v_len)
+{
+	unsigned int i;
+	bool overflow, underflow;
+
+	overflow = 0, underflow = 0;
+
+	switch (m) {
 	case ADDV:
-		for (int i = 0; i < v_len; i++) {
-			this->set_condition(OF, ADDITION_OF_GUARD(v1[i], v2[i]));
-			this->set_condition(UF, ADDITION_UF_GUARD(v1[i], v2[i]));
-			v1[i] = v1[i] + v2[i];
+		for (i = 0; i < v_len; i++) {
+			overflow = overflow || (ADDITION_OF_GUARD(s1[i], s2[i]));
+			underflow = underflow || (ADDITION_UF_GUARD(s1[i], s2[i]));
+			s1[i] = s1[i] + s2[i];
 		}
 		break;
 	case SUBV:
-		for (int i = 0; i < v_len; i++) {
-			this->set_condition(OF, SUBTRACTION_OF_GUARD(v1[i], v2[i]));
-			this->set_condition(UF, SUBTRACTION_UF_GUARD(v1[i], v2[i]));
-			v1[i] = v1[i] - v2[i];
+		for (i = 0; i < v_len; i++) {
+			overflow = overflow || (SUBTRACTION_OF_GUARD(s1[i], s2[i]));
+			underflow = underflow || (SUBTRACTION_UF_GUARD(s1[i], s2[i]));
+			s1[i] = s1[i] - s2[i];
 		}
 		break;
 	case MULV:
-		for (int i = 0; i < v_len; i++) {
-			this->set_condition(OF, MULTIPLICATION_OF_GUARD(v1[i], v2[i]));
-			this->set_condition(UF, MULTIPLICATION_UF_GUARD(v1[i], v2[i]));
-			v1[i] = v1[i] * v2[i];
+		for (i = 0; i < v_len; i++) {
+			overflow = overflow || (MULTIPLICATION_OF_GUARD(s1[i], s2[i]));
+			underflow = underflow || (MULTIPLICATION_UF_GUARD(s1[i], s2[i]));
+			s1[i] = s1[i] * s2[i];
 		}
 		break;
 	case DIVV:
-		for (int i = 0; i < v_len; i++) {
-			this->handle_divide(v1[i], v2[i], false);
+		for (i = 0; i < v_len; i++) {
+			// short-circuiting---this order required
+			overflow = this->handle_divide(s1[i], s2[i], false) | overflow;
 		}
 		break;
 	case CEV:
-		int i;
+		bool eq;
+		eq = true;
 		for (i = 0; i < v_len; i++) {
-			if (v1[i] != v2[i]) {
+			if (s1[i] != s2[i]) {
+				eq = false;
 				break;
 			}
 		}
-		if (i == v_len) {
-			this->set_condition(EQ, true);
-		} else {
-			this->set_condition(EQ, false);
-		}
+		this->set_condition(EQ, eq);
 		break;
+	default:
+		throw std::invalid_argument(
+			"handle_vector_operations received an integer operation!");
+	}
+
+	this->set_condition(OF, overflow);
+	this->set_condition(UF, underflow);
+}
+
+void EX::handle_i_vector_operations(signed int &s1, signed int s2, Mnemonic m)
+{
+	switch (m) {
 	case LOADV:
 	case STOREV:
-		v_base_addr = v_base_addr + v_immediate;
+		s1 = s1 + s2;
 		break;
 
 	case RET:
 	case NOP:
 		break;
+
+	default:
+		throw std::invalid_argument("handle_i_vector_operations did not "
+									"receive a LOADV or STOREV operation!");
 	}
-	if (this->is_vector_type(m)) {
-		if (this->curr_instr->mnemonic != LOADV &&
-			this->curr_instr->mnemonic != STOREV) {
-			this->curr_instr->operands.vector.slot_one = v1;
-		} else {
-			this->curr_instr->operands.load_store_vector.base_addr =
-				v_base_addr;
-		}
+}
+
+void EX::advance_helper()
+{
+	unsigned int v_len_or_pc;
+	Mnemonic m;
+	m = this->curr_instr->mnemonic;
+	v_len_or_pc = this->curr_instr->slot_B;
+
+	if (this->curr_instr->type == FieldType::SI_INT) {
+		handle_int_operations(
+			this->curr_instr->operands.integer.slot_one,
+			this->curr_instr->operands.integer.slot_two,
+			this->curr_instr->operands.integer.slot_three, m, v_len_or_pc);
+	} else if (this->curr_instr->type == FieldType::R_VECT) {
+		handle_vector_operations(
+			this->curr_instr->operands.vector.slot_one,
+			this->curr_instr->operands.vector.slot_two, m, v_len_or_pc);
 	} else {
-		this->curr_instr->operands.integer.slot_one = s1;
+		handle_i_vector_operations(
+			this->curr_instr->operands.i_vector.slot_one,
+			this->curr_instr->operands.i_vector.slot_two, m);
 	}
+
 	this->status = OK;
 }
 
-void EX::handle_divide(signed int &s1, signed int s2, bool is_mod)
+bool EX::handle_divide(signed int &s1, signed int s2, bool is_mod)
 {
-	this->set_condition(OF, DIVISION_OF_GUARD(s1, s2));
-	this->set_condition(UF, false);
+	bool ret;
+
+	ret = DIVISION_OF_GUARD(s1, s2);
 	if (s2 == 0) {
 		// handle everything here
 		this->curr_instr->operands.integer.slot_one = MAX_INT;
@@ -264,4 +299,6 @@ void EX::handle_divide(signed int &s1, signed int s2, bool is_mod)
 	} else {
 		s1 = (is_mod) ? (s1 % s2) : (s1 / s2);
 	}
+
+	return ret;
 }

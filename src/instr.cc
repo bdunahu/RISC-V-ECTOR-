@@ -37,4 +37,15 @@ const std::unordered_map<unsigned int, Mnemonic> mnemonic_map = {
 	{0b0011010, BUF},	 {0b0011110, BOF},	 {0b0100010, PUSH},
 	{0b0100110, POP},	 {0b0101010, RET},
 };
+
+FieldType get_field_types(Mnemonic m)
+{
+	if (m == ADDV || m == SUBV || m == MULV || m == DIVV || m == CEV) {
+		return R_VECT;
+	} else if (m == STOREV || m == LOADV) {
+		return I_VECT;
+	} else {
+		return SI_INT;
+	}
+}
 } // namespace instr

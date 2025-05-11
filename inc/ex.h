@@ -23,36 +23,28 @@
 #include <exception>
 #include <unordered_map>
 
-#define ADDITION_OF_GUARD(a, b) \
-	(b >= 0) && (a > MAX_INT - b)
+#define ADDITION_OF_GUARD(a, b) (b >= 0) && (a > MAX_INT - b)
 
-#define ADDITION_UF_GUARD(a, b) \
-	(b < 0) && (a < (-(MAX_INT)-1) - b)
+#define ADDITION_UF_GUARD(a, b) (b < 0) && (a < (-(MAX_INT)-1) - b)
 
-#define SUBTRACTION_OF_GUARD(a, b) \
-	(b < 0) && (a > MAX_INT + b)
+#define SUBTRACTION_OF_GUARD(a, b) (b < 0) && (a > MAX_INT + b)
 
-#define SUBTRACTION_UF_GUARD(a, b) \
-	(b >= 0) && (a < (-(MAX_INT)-1) + b)
+#define SUBTRACTION_UF_GUARD(a, b) (b >= 0) && (a < (-(MAX_INT)-1) + b)
 
-#define MULTIPLICATION_OF_GUARD(a, b) \
-	(b != 0) && \
-	(((b > 0) && (a > 0) && (a > MAX_INT / b)) || \
-	 ((b < 0) && (a < 0) && (a < MAX_INT / b)))
+#define MULTIPLICATION_OF_GUARD(a, b)                                          \
+	(b != 0) && (((b > 0) && (a > 0) && (a > MAX_INT / b)) ||                  \
+				 ((b < 0) && (a < 0) && (a < MAX_INT / b)))
 
-#define MULTIPLICATION_UF_GUARD(a, b) \
-	(b != 0) && (b != -1) && \
-	(((b > 0) && (a < 0) && (a < (-(MAX_INT)-1) / b)) || \
-	 ((b < 0) && (a > 0) && (a > (-(MAX_INT)-1) / b)))
+#define MULTIPLICATION_UF_GUARD(a, b)                                          \
+	(b != 0) && (b != -1) &&                                                   \
+		(((b > 0) && (a < 0) && (a < (-(MAX_INT)-1) / b)) ||                   \
+		 ((b < 0) && (a > 0) && (a > (-(MAX_INT)-1) / b)))
 
-#define DIVISION_OF_GUARD(a, b) \
-	((a == -(MAX_INT) - 1) && (b == -1)) || (b == 0)
+#define DIVISION_OF_GUARD(a, b) ((a == -(MAX_INT)-1) && (b == -1)) || (b == 0)
 
 class HaltException : public std::exception
 {
-	const char *what() const noexcept override {
-		return "";
-	}
+	const char *what() const noexcept override { return ""; }
 };
 
 class EX : public Stage
@@ -63,19 +55,57 @@ class EX : public Stage
 	 * @param The next stage in the pipeline.
 	 * @return A newly allocated EX object.
 	 */
-	using Stage::Stage;
 	using Stage::advance;
+	using Stage::Stage;
 
   private:
 	void advance_helper();
+	/**
+	 * Handles operations involving three ints.
+	 * @param slot 1, and later, the result of the mnemonic operation.
+	 * @param slot 2
+	 * @param slot 3
+	 * @param the mnemonic
+	 * @param the program counter
+	 */
+	void handle_int_operations(
+		signed int &s1,
+		signed int s2,
+		signed int s3,
+		Mnemonic m,
+		unsigned int pc);
+	/**
+	 * Handles operations involving three vector registers.
+	 * @param slot 1, and later, the result of the mnemonic operation.
+	 * @param slot 2
+	 * @param slot 3
+	 * @param the mnemonic
+	 * @param the vector length register
+	 */
+	void handle_vector_operations(
+		std::array<signed int, V_R_LIMIT> &s1,
+		std::array<signed int, V_R_LIMIT> s2,
+		Mnemonic m,
+		unsigned int v_len);
+
+	/**
+	 * Handles operations involving a single vector register.
+	 * Currently, this is LOADV and STOREV
+	 * @param slot 1, and later, the result of the mnemonic operation.
+	 * @param slot 2
+	 * @param the mnemonic
+	 * @param the vector length register
+	 */
+	void handle_i_vector_operations(signed int &s1, signed int s2, Mnemonic m);
 	/**
 	 * Wrapper for division functions, which detects HALT instructinos (division
 	 * by 0).
 	 * @param the numerator
 	 * @param the denominator
 	 * @param if the modulo operator should instead be used
+	 * @return if the operation overflowed
 	 */
-	void handle_divide(signed int &s1, signed int s2, bool is_mod);
+	bool handle_divide(signed int &s1, signed int s2, bool is_mod);
 };
 
 #endif /* EX_H_INCLUDED */
