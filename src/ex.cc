@@ -21,45 +21,12 @@
 #include "pipe_spec.h"
 #include "response.h"
 #include "stage.h"
+#include <stdexcept>
 #include <unordered_map>
 
-// Switch statements for each instruction
-void EX::advance_helper()
+void EX::handle_int_operations(
+	signed int &s1, signed int s2, signed int s3, Mnemonic m, unsigned int pc)
 {
-	signed int s1, s2, s3;
-	std::array<signed int, V_R_LIMIT> v1, v2, v3;
-	signed int v_len, v_immediate, v_base_addr;
-	unsigned int pc;
-	Mnemonic m;
-
-	s1 = 0, s2 = 0, s3 = 0;
-	v1 = {0}, v2 = {0}, v3 = {0};
-	v_len = 0, v_immediate = 0, v_base_addr = 0;
-	m = this->curr_instr->mnemonic;
-	v_len = this->curr_instr->slot_B;
-	pc = this->curr_instr->slot_B;
-
-	if (this->curr_instr->type != SI_INT) {
-		if (this->curr_instr->type == R_VECT) {
-			v1 = this->curr_instr->operands.vector.slot_one;
-			v2 = this->curr_instr->operands.vector.slot_two;
-			v3 = this->curr_instr->operands.vector.slot_three;
-		} else {
-			v_immediate =
-				this->curr_instr->operands.i_vector.immediate;
-			v_base_addr =
-				this->curr_instr->operands.i_vector.base_addr;
-		}
-		if (v_len == 0) {
-			// clear destination vector reg
-			v1.fill(0);
-		}
-	} else {
-		s1 = this->curr_instr->operands.integer.slot_one;
-		s2 = this->curr_instr->operands.integer.slot_two;
-		s3 = this->curr_instr->operands.integer.slot_three;
-	}
-
 	switch (m) {
 	case ADD:
 		this->set_condition(OF, ADDITION_OF_GUARD(s1, s2));
@@ -196,36 +163,55 @@ void EX::advance_helper()
 		(this->get_condition(OF)) ? s1 = pc + s2 : s1 = -1;
 		break;
 
+	case RET:
+	case NOP:
+		break;
+
+	default:
+		throw std::invalid_argument(
+			"handle_int_operations received a vector operation!");
+	}
+}
+
+void EX::handle_vector_operations(
+	std::array<signed int, V_R_LIMIT> &s1,
+	std::array<signed int, V_R_LIMIT> s2,
+	Mnemonic m,
+	unsigned int v_len)
+{
+	unsigned int i;
+
+	switch (m) {
 	case ADDV:
-		for (int i = 0; i < v_len; i++) {
-			this->set_condition(OF, ADDITION_OF_GUARD(v1[i], v2[i]));
-			this->set_condition(UF, ADDITION_UF_GUARD(v1[i], v2[i]));
-			v1[i] = v1[i] + v2[i];
+		for (i = 0; i < v_len; i++) {
+			this->set_condition(OF, ADDITION_OF_GUARD(s1[i], s2[i]));
+			this->set_condition(UF, ADDITION_UF_GUARD(s1[i], s2[i]));
+			s1[i] = s1[i] + s2[i];
 		}
 		break;
 	case SUBV:
-		for (int i = 0; i < v_len; i++) {
-			this->set_condition(OF, SUBTRACTION_OF_GUARD(v1[i], v2[i]));
-			this->set_condition(UF, SUBTRACTION_UF_GUARD(v1[i], v2[i]));
-			v1[i] = v1[i] - v2[i];
+		for (i = 0; i < v_len; i++) {
+			this->set_condition(OF, SUBTRACTION_OF_GUARD(s1[i], s2[i]));
+			this->set_condition(UF, SUBTRACTION_UF_GUARD(s1[i], s2[i]));
+			s1[i] = s1[i] - s2[i];
 		}
 		break;
 	case MULV:
-		for (int i = 0; i < v_len; i++) {
-			this->set_condition(OF, MULTIPLICATION_OF_GUARD(v1[i], v2[i]));
-			this->set_condition(UF, MULTIPLICATION_UF_GUARD(v1[i], v2[i]));
-			v1[i] = v1[i] * v2[i];
+		for (i = 0; i < v_len; i++) {
+			this->set_condition(OF, MULTIPLICATION_OF_GUARD(s1[i], s2[i]));
+			this->set_condition(UF, MULTIPLICATION_UF_GUARD(s1[i], s2[i]));
+			s1[i] = s1[i] * s2[i];
 		}
 		break;
 	case DIVV:
-		for (int i = 0; i < v_len; i++) {
-			this->handle_divide(v1[i], v2[i], false);
+		for (i = 0; i < v_len; i++) {
+			this->handle_divide(s1[i], s2[i], false);
 		}
 		break;
 	case CEV:
-		int i;
+
 		for (i = 0; i < v_len; i++) {
-			if (v1[i] != v2[i]) {
+			if (s1[i] != s2[i]) {
 				break;
 			}
 		}
@@ -235,26 +221,53 @@ void EX::advance_helper()
 			this->set_condition(EQ, false);
 		}
 		break;
+
+	default:
+		throw std::invalid_argument(
+			"handle_vector_operations received an integer operation!");
+	}
+}
+
+void EX::handle_i_vector_operations(signed int &s1, signed int s2, Mnemonic m)
+{
+	switch (m) {
 	case LOADV:
 	case STOREV:
-		v_base_addr = v_base_addr + v_immediate;
+		s1 = s1 + s2;
 		break;
 
 	case RET:
 	case NOP:
 		break;
+
+	default:
+		throw std::invalid_argument("handle_i_vector_operations did not "
+									"receive a LOADV or STOREV operation!");
 	}
-	if (this->curr_instr->type != SI_INT) {
-		if (this->curr_instr->mnemonic != LOADV &&
-			this->curr_instr->mnemonic != STOREV) {
-			this->curr_instr->operands.vector.slot_one = v1;
-		} else {
-			this->curr_instr->operands.i_vector.base_addr =
-				v_base_addr;
-		}
+}
+
+void EX::advance_helper()
+{
+	unsigned int v_len_or_pc;
+	Mnemonic m;
+	m = this->curr_instr->mnemonic;
+	v_len_or_pc = this->curr_instr->slot_B;
+
+	if (this->curr_instr->type == FieldType::SI_INT) {
+		handle_int_operations(
+			this->curr_instr->operands.integer.slot_one,
+			this->curr_instr->operands.integer.slot_two,
+			this->curr_instr->operands.integer.slot_three, m, v_len_or_pc);
+	} else if (this->curr_instr->type == FieldType::R_VECT) {
+		handle_vector_operations(
+			this->curr_instr->operands.vector.slot_one,
+			this->curr_instr->operands.vector.slot_two, m, v_len_or_pc);
 	} else {
-		this->curr_instr->operands.integer.slot_one = s1;
+		handle_i_vector_operations(
+			this->curr_instr->operands.i_vector.slot_one,
+			this->curr_instr->operands.i_vector.slot_two, m);
 	}
+
 	this->status = OK;
 }
 

@@ -21,6 +21,7 @@
 #include "pipe_spec.h"
 #include <array>
 
+
 struct U_INT_TYPE {
 	signed int slot_one;
 	signed int slot_two;
@@ -34,9 +35,9 @@ struct V_TYPE {
 };
 
 struct VI_TYPE {
-	signed int base_addr;
-	signed int immediate;
-	std::array<signed int, V_R_LIMIT> vector_register;
+	signed int slot_one;
+	signed int slot_two;
+	std::array<signed int, V_R_LIMIT> slot_three;
 };
 
 struct InstrDTO {
