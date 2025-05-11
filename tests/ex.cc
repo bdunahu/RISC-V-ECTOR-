@@ -538,7 +538,7 @@ TEST_CASE_METHOD(EXFixture, "LOAD", "[ex]")
 	delete i;
 }
 
-// TEST_CASE_METHOD(EXFixture, "LOADV", "[ex]")
+// TEST_CASE_METHOD(EXFixture, "SRDL", "[ex]")
 // {
 // }
 
@@ -763,7 +763,7 @@ TEST_CASE_METHOD(EXFixture, "STORE", "[ex]")
 	delete i;
 }
 
-// TEST_CASE_METHOD(EXFixture, "STOREV", "[ex]")
+// TEST_CASE_METHOD(EXFixture, "SRDS", "[ex]")
 // {
 // }
 

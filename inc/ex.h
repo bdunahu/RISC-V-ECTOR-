@@ -90,7 +90,7 @@ class EX : public Stage
 
 	/**
 	 * Handles operations involving a single vector register.
-	 * Currently, this is LOADV and STOREV
+	 * Currently, this is SRDL and SRDS
 	 * @param slot 1, and later, the result of the mnemonic operation.
 	 * @param slot 2
 	 * @param the mnemonic

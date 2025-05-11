@@ -164,35 +164,35 @@ void ID::decode_I_type(signed int &s1)
 		this->curr_instr->operands.integer.slot_two = s2;
 		this->status = (r1 == OK && r2 == OK) ? OK : STALLED;
 		return;
-	case STOREV:
-		this->curr_instr->operands.i_vector.slot_two = s3;
-		s2 = GET_MID_BITS(s1, s0b, s1b);
-		s1 = GET_LS_BITS(s1, s0b);
+	// case SRDS:
+	// 	this->curr_instr->operands.i_vector.slot_two = s3;
+	// 	s2 = GET_MID_BITS(s1, s0b, s1b);
+	// 	s1 = GET_LS_BITS(s1, s0b);
 
-		// base address
-		r1 = this->read_guard<signed int>(s1, s1);
-		this->curr_instr->operands.i_vector.slot_one = s1;
-		// vector value to be stored
-		r2 = this->read_guard<std::array<signed int, V_R_LIMIT>>(
-			s2, this->curr_instr->operands.i_vector.slot_three);
-		r3 = this->set_vlen();
+	// 	// base address
+	// 	r1 = this->read_guard<signed int>(s1, s1);
+	// 	this->curr_instr->operands.i_vector.slot_one = s1;
+	// 	// vector value to be stored
+	// 	r2 = this->read_guard<std::array<signed int, V_R_LIMIT>>(
+	// 		s2, this->curr_instr->operands.i_vector.slot_three);
+	// 	r3 = this->set_vlen();
 
-		this->status = (r1 == OK && r2 == OK && r3 == OK) ? OK : STALLED;
-		return;
-	case LOADV:
-		this->curr_instr->operands.i_vector.slot_two = s3;
-		s2 = GET_LS_BITS(s1, s0b);
-		s1 = GET_MID_BITS(s1, s0b, s1b);
-		// base address
-		r1 = this->read_guard<signed int>(s1, s1);
-		this->curr_instr->operands.i_vector.slot_one = s1;
-		r3 = this->set_vlen();
-		if (r1 == OK && r3 == OK)
-			// vector destination
-			this->curr_instr->operands.i_vector.slot_three =
-				this->write_guard<std::array<signed int, V_R_LIMIT>>(s2);
-		this->status = (r1 == OK && r3 == OK) ? OK : STALLED;
-		return;
+	// 	this->status = (r1 == OK && r2 == OK && r3 == OK) ? OK : STALLED;
+	// 	return;
+	// case SRDL:
+	// 	this->curr_instr->operands.i_vector.slot_two = s3;
+	// 	s2 = GET_LS_BITS(s1, s0b);
+	// 	s1 = GET_MID_BITS(s1, s0b, s1b);
+	// 	// base address
+	// 	r1 = this->read_guard<signed int>(s1, s1);
+	// 	this->curr_instr->operands.i_vector.slot_one = s1;
+	// 	r3 = this->set_vlen();
+	// 	if (r1 == OK && r3 == OK)
+	// 		// vector destination
+	// 		this->curr_instr->operands.i_vector.slot_three =
+	// 			this->write_guard<std::array<signed int, V_R_LIMIT>>(s2);
+	// 	this->status = (r1 == OK && r3 == OK) ? OK : STALLED;
+	// 	return;
 	case LOAD:
 		this->curr_instr->operands.integer.slot_three = s3;
 		s2 = GET_LS_BITS(s1, s0b);

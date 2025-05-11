@@ -243,18 +243,14 @@ void EX::handle_vector_operations(
 void EX::handle_i_vector_operations(signed int &s1, signed int s2, Mnemonic m)
 {
 	switch (m) {
-	case LOADV:
-	case STOREV:
-		s1 = s1 + s2;
-		break;
-
-	case RET:
-	case NOP:
-		break;
+	// case SRDL:
+	// case SRDS:
+	// 	s1 = s1 + s2;
+	// 	break;
 
 	default:
 		throw std::invalid_argument("handle_i_vector_operations did not "
-									"receive a LOADV or STOREV operation!");
+									"receive a SRDL or SRDS operation!");
 	}
 }
 
