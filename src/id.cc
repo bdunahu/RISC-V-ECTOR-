@@ -99,25 +99,29 @@ void ID::decode_R_type(signed int &s1)
 	s2 = GET_MID_BITS(s1, s0b, s1b);
 	s1 = GET_LS_BITS(s1, s0b);
 
-	if (this->curr_instr->type == SI_INT) {
+	switch (this->curr_instr->type) {
+	case SI_INT:
 		r1 = this->read_guard<signed int>(
 			s1, this->curr_instr->operands.integer.slot_one);
 		r2 = this->read_guard<signed int>(
 			s2, this->curr_instr->operands.integer.slot_two);
 		r3 = OK;
-	} else if (this->curr_instr->type == R_VECT) {
+		break;
+	case R_VECT:
 		r1 = this->read_guard<std::array<signed int, V_R_LIMIT>>(
 			s1, this->curr_instr->operands.vector.slot_one);
 		r2 = this->read_guard<std::array<signed int, V_R_LIMIT>>(
 			s2, this->curr_instr->operands.vector.slot_two);
 		r3 = this->set_vlen();
-	} else {
+		break;
+	case S_VECT:
 		// store the second field in s1, to keep execute+mem consistent
 		r1 = this->read_guard<std::array<signed int, V_R_LIMIT>>(
 			s2, this->curr_instr->operands.s_vector.slot_one);
 		r2 = this->read_guard<signed int>(
 			s1, this->curr_instr->operands.s_vector.slot_two);
 		r3 = this->set_vlen();
+		break;
 	}
 
 	this->status = (r1 == OK && r2 == OK && r3 == OK) ? OK : STALLED;
@@ -134,6 +138,7 @@ void ID::decode_R_type(signed int &s1)
 			this->curr_instr->operands.vector.slot_three =
 				this->write_guard<std::array<signed int, V_R_LIMIT>>(s3);
 			break;
+		case ROTV:
 		case SRDL:
 			this->curr_instr->operands.s_vector.slot_three =
 				this->write_guard<std::array<signed int, V_R_LIMIT>>(s3);

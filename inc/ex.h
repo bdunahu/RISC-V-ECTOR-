@@ -89,7 +89,6 @@ class EX : public Stage
 
 	/**
 	 * Handles operations involving a vector result and a scalar.
-	 * Currently, this is SRDL and SRDS
 	 * @param slot 1, and later, the result of the mnemonic operation.
 	 * @param slot 2
 	 * @param the mnemonic

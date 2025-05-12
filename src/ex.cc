@@ -249,6 +249,13 @@ void EX::handle_s_vector_operations(
 	unsigned int i, inc1, inc2;
 
 	switch (m) {
+	case ROTV:
+		s2 = s2 % v_len;
+		if (s2 < 0)
+			s2 += v_len;
+
+		std::rotate(s1.begin(), s1.begin() + s2, s1.begin() + v_len);
+		break;
 	case SRDL:
 	case SRDS:
 		inc1 = s1[0];
@@ -286,7 +293,6 @@ void EX::advance_helper()
 		handle_s_vector_operations(
 			this->curr_instr->operands.s_vector.slot_one,
 			this->curr_instr->operands.s_vector.slot_two, m, v_len_or_pc);
-		printArray(this->curr_instr->operands.s_vector.slot_three);
 	}
 
 	this->status = OK;

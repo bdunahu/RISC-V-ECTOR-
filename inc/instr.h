@@ -39,6 +39,7 @@ enum Mnemonic {
 	CEV,
 	SRDL,
 	SRDS,
+	ROTV,
 	LOAD,
 	ADDI,
 	SUBI,
