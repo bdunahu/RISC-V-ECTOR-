@@ -99,37 +99,58 @@ void ID::decode_R_type(signed int &s1)
 	s2 = GET_MID_BITS(s1, s0b, s1b);
 	s1 = GET_LS_BITS(s1, s0b);
 
-	if (this->curr_instr->type == SI_INT) {
+	switch (this->curr_instr->type) {
+	case SI_INT:
 		r1 = this->read_guard<signed int>(
 			s1, this->curr_instr->operands.integer.slot_one);
 		r2 = this->read_guard<signed int>(
 			s2, this->curr_instr->operands.integer.slot_two);
 		r3 = OK;
-	} else {
+		break;
+	case R_VECT:
 		r1 = this->read_guard<std::array<signed int, V_R_LIMIT>>(
 			s1, this->curr_instr->operands.vector.slot_one);
 		r2 = this->read_guard<std::array<signed int, V_R_LIMIT>>(
 			s2, this->curr_instr->operands.vector.slot_two);
 		r3 = this->set_vlen();
+		break;
+	case S_VECT:
+		// store the second field in s1, to keep execute+mem consistent
+		r1 = this->read_guard<std::array<signed int, V_R_LIMIT>>(
+			s2, this->curr_instr->operands.s_vector.slot_one);
+		r2 = this->read_guard<signed int>(
+			s1, this->curr_instr->operands.s_vector.slot_two);
+		r3 = this->set_vlen();
+		break;
 	}
 
 	this->status = (r1 == OK && r2 == OK && r3 == OK) ? OK : STALLED;
 
-	switch (this->curr_instr->mnemonic) {
-	case CMP:
-	case CEV:
-		break;
-	case ADDV:
-	case SUBV:
-	case MULV:
-	case DIVV:
-		if (this->status == OK) {
+	if (this->status == OK) {
+		switch (this->curr_instr->mnemonic) {
+		case CMP:
+		case CEV:
+			break;
+		case ADDV:
+		case SUBV:
+		case MULV:
+		case DIVV:
 			this->curr_instr->operands.vector.slot_three =
 				this->write_guard<std::array<signed int, V_R_LIMIT>>(s3);
-		}
-		break;
-	default:
-		if (this->status == OK) {
+			break;
+		case ROTV:
+		case SRDL:
+			this->curr_instr->operands.s_vector.slot_three =
+				this->write_guard<std::array<signed int, V_R_LIMIT>>(s3);
+			break;
+		case SRDS:
+			r1 = this->read_guard<std::array<signed int, V_R_LIMIT>>(
+				s3, this->curr_instr->operands.s_vector.slot_three);
+			if (r1 != OK) {
+				this->status = STALLED;
+			}
+			break;
+		default:
 			this->curr_instr->operands.integer.slot_three =
 				this->write_guard<signed int>(s3);
 		}
@@ -141,7 +162,6 @@ void ID::decode_I_type(signed int &s1)
 	unsigned int s0b, s1b, s2b;
 	signed int s2, s3;
 	Response r1, r2;
-	Response r3 = OK;
 
 	s0b = REG_SIZE;
 	s1b = s0b + REG_SIZE;
@@ -163,35 +183,6 @@ void ID::decode_I_type(signed int &s1)
 		r2 = this->read_guard<signed int>(s2, s2);
 		this->curr_instr->operands.integer.slot_two = s2;
 		this->status = (r1 == OK && r2 == OK) ? OK : STALLED;
-		return;
-	case STOREV:
-		this->curr_instr->operands.i_vector.slot_two = s3;
-		s2 = GET_MID_BITS(s1, s0b, s1b);
-		s1 = GET_LS_BITS(s1, s0b);
-
-		// base address
-		r1 = this->read_guard<signed int>(s1, s1);
-		this->curr_instr->operands.i_vector.slot_one = s1;
-		// vector value to be stored
-		r2 = this->read_guard<std::array<signed int, V_R_LIMIT>>(
-			s2, this->curr_instr->operands.i_vector.slot_three);
-		r3 = this->set_vlen();
-
-		this->status = (r1 == OK && r2 == OK && r3 == OK) ? OK : STALLED;
-		return;
-	case LOADV:
-		this->curr_instr->operands.i_vector.slot_two = s3;
-		s2 = GET_LS_BITS(s1, s0b);
-		s1 = GET_MID_BITS(s1, s0b, s1b);
-		// base address
-		r1 = this->read_guard<signed int>(s1, s1);
-		this->curr_instr->operands.i_vector.slot_one = s1;
-		r3 = this->set_vlen();
-		if (r1 == OK && r3 == OK)
-			// vector destination
-			this->curr_instr->operands.i_vector.slot_three =
-				this->write_guard<std::array<signed int, V_R_LIMIT>>(s2);
-		this->status = (r1 == OK && r3 == OK) ? OK : STALLED;
 		return;
 	case LOAD:
 		this->curr_instr->operands.integer.slot_three = s3;

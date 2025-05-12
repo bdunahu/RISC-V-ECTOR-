@@ -35,7 +35,7 @@ struct V_TYPE {
 };
 
 struct VI_TYPE {
-	signed int slot_one;
+	std::array<signed int, V_R_LIMIT> slot_one;
 	signed int slot_two;
 	std::array<signed int, V_R_LIMIT> slot_three;
 };
@@ -68,7 +68,7 @@ struct InstrDTO {
 	union {
 		struct U_INT_TYPE integer;
 		struct V_TYPE vector;
-		struct VI_TYPE i_vector;
+		struct VI_TYPE s_vector;
 	} operands;
 };
 

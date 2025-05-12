@@ -25,15 +25,30 @@ void MM::advance_helper()
 	signed int data;
 	int i;
 
+	this->try_start();
+	if (this->status == OK) {
+		return;
+	}
+
 	switch (this->curr_instr->mnemonic) {
 	case LOAD:
 		i = this->storage->read_word(
 			this, this->curr_instr->operands.integer.slot_one, data);
-		this->status = i ? OK : STALLED;
-		if (this->status == OK) {
+		if (i) {
 			this->curr_instr->operands.integer.slot_one = data;
-		} else
-			this->status = STALLED;
+		}
+		this->try_finish(i);
+		break;
+	case SRDL:
+		i = this->storage->read_word(
+			this,
+			this->curr_instr->operands.s_vector.slot_one[this->curr_element],
+			data);
+		if (i) {
+			this->curr_instr->operands.s_vector.slot_one[this->curr_element] =
+				data;
+		}
+		this->try_finish(i);
 		break;
 
 	case PUSH:
@@ -41,22 +56,47 @@ void MM::advance_helper()
 		i = this->storage->write_word(
 			this, this->curr_instr->operands.integer.slot_two,
 			this->curr_instr->operands.integer.slot_one);
-		this->status = i ? OK : STALLED;
-		if (this->status != OK) {
-			this->status = STALLED;
-		}
+		this->try_finish(i);
+		break;
+	case SRDS:
+		i = this->storage->write_word(
+			this,
+			this->curr_instr->operands.s_vector.slot_three[this->curr_element],
+			this->curr_instr->operands.s_vector.slot_one[this->curr_element]);
+		this->try_finish(i);
 		break;
 
 	case POP:
-		i = this->storage->read_word(this, this->curr_instr->operands.integer.slot_three, data);
+		i = this->storage->read_word(
+			this, this->curr_instr->operands.integer.slot_three, data);
 		this->status = i ? OK : STALLED;
-		if (this->status == OK) {
+		if (i) {
 			this->curr_instr->operands.integer.slot_three = data;
-		} else
-			this->status = STALLED;
+		}
 		break;
 
 	default:
 		this->status = OK;
+	}
+}
+
+void MM::try_start()
+{
+	if (this->curr_instr->type != SI_INT) {
+		this->status =
+			(this->curr_element >= this->curr_instr->slot_B) ? OK : STALLED;
+	}
+	if (this->status == OK)
+		this->curr_element = 0;
+}
+
+void MM::try_finish(int response)
+{
+	if (this->curr_instr->type == SI_INT) {
+		this->status = response ? OK : STALLED;
+	} else {
+		if (response) {
+			++this->curr_element;
+		}
 	}
 }

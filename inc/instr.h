@@ -37,8 +37,10 @@ enum Mnemonic {
 	DIVV,
 	CMP,
 	CEV,
+	SRDL,
+	SRDS,
+	ROTV,
 	LOAD,
-	LOADV,
 	ADDI,
 	SUBI,
 	SFTRI,
@@ -47,7 +49,6 @@ enum Mnemonic {
 	ORI,
 	XORI,
 	STORE,
-	STOREV,
 	JMP,
 	JRL,
 	JAL,
@@ -64,7 +65,7 @@ enum Mnemonic {
 enum FieldType {
 	SI_INT,
 	R_VECT,
-	I_VECT,
+	S_VECT,
 };
 
 namespace instr

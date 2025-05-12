@@ -78,7 +78,6 @@ class EX : public Stage
 	 * Handles operations involving three vector registers.
 	 * @param slot 1, and later, the result of the mnemonic operation.
 	 * @param slot 2
-	 * @param slot 3
 	 * @param the mnemonic
 	 * @param the vector length register
 	 */
@@ -89,14 +88,17 @@ class EX : public Stage
 		unsigned int v_len);
 
 	/**
-	 * Handles operations involving a single vector register.
-	 * Currently, this is LOADV and STOREV
+	 * Handles operations involving a vector result and a scalar.
 	 * @param slot 1, and later, the result of the mnemonic operation.
 	 * @param slot 2
 	 * @param the mnemonic
 	 * @param the vector length register
 	 */
-	void handle_i_vector_operations(signed int &s1, signed int s2, Mnemonic m);
+	void handle_s_vector_operations(
+		std::array<signed int, V_R_LIMIT> &s1,
+		signed int s2,
+		Mnemonic m,
+		unsigned int v_len);
 	/**
 	 * Wrapper for division functions, which detects HALT instructinos (division
 	 * by 0).

@@ -240,21 +240,36 @@ void EX::handle_vector_operations(
 	this->set_condition(UF, underflow);
 }
 
-void EX::handle_i_vector_operations(signed int &s1, signed int s2, Mnemonic m)
+void EX::handle_s_vector_operations(
+	std::array<signed int, V_R_LIMIT> &s1,
+	signed int s2,
+	Mnemonic m,
+	unsigned int v_len)
 {
-	switch (m) {
-	case LOADV:
-	case STOREV:
-		s1 = s1 + s2;
-		break;
+	unsigned int i, inc1, inc2;
 
-	case RET:
-	case NOP:
+	switch (m) {
+	case ROTV:
+		s2 = s2 % v_len;
+		if (s2 < 0)
+			s2 += v_len;
+
+		std::rotate(s1.begin(), s1.begin() + s2, s1.begin() + v_len);
+		break;
+	case SRDL:
+	case SRDS:
+		inc1 = s1[0];
+		s1[0] = s2;
+		for (i = 1; i < v_len; ++i) {
+			inc2 = s1[i];
+			s1[i] = s1[i - 1] + inc1;
+			inc1 = inc2;
+		}
 		break;
 
 	default:
-		throw std::invalid_argument("handle_i_vector_operations did not "
-									"receive a LOADV or STOREV operation!");
+		throw std::invalid_argument("handle_s_vector_operations did not "
+									"receive a SRDL or SRDS operation!");
 	}
 }
 
@@ -275,9 +290,9 @@ void EX::advance_helper()
 			this->curr_instr->operands.vector.slot_one,
 			this->curr_instr->operands.vector.slot_two, m, v_len_or_pc);
 	} else {
-		handle_i_vector_operations(
-			this->curr_instr->operands.i_vector.slot_one,
-			this->curr_instr->operands.i_vector.slot_two, m);
+		handle_s_vector_operations(
+			this->curr_instr->operands.s_vector.slot_one,
+			this->curr_instr->operands.s_vector.slot_two, m, v_len_or_pc);
 	}
 
 	this->status = OK;

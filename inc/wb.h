@@ -51,7 +51,8 @@ class WB : public Stage
 	 * @return the vector register to be stored, obtained by copying the
 	 * unfilled elements in the destination register to the source. This is
 	 * required to ensure what is written back only changes VECTOR_LENGTH number
-	 * of elements.
+	 * of elements. Correctly handles zeroing out ALU operations if the VECTOR
+	 * LENGTH number is zero.
 	 */
 	std::array<signed int, V_R_LIMIT> copy_extra_vector_elements();
 };

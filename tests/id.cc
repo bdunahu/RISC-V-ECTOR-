@@ -166,13 +166,13 @@ TEST_CASE_METHOD(IDFixture, "Parse arbitrary i-type # two", "[id]")
 	signed int t;
 	InstrDTO *i;
 
-	t = this->encode_I_type(0xCC, 0b10101, 0b00110, 0b11011, 0b1);
+	t = this->encode_I_type(0xCC, 0b10101, 0b00110, 0b11010, 0b1);
 	i = this->decode_bits(t);
 
 	CHECK(i->operands.integer.slot_one == 0x00000000); // registers are empty
 	CHECK(i->operands.integer.slot_two == 0x00000000);
 	CHECK(i->operands.integer.slot_three == 0xCC);
-	CHECK(i->mnemonic == STOREV);
+	CHECK(i->mnemonic == STORE);
 
 	delete i;
 }
