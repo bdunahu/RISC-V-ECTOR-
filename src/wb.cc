@@ -93,7 +93,7 @@ std::array<signed int, V_R_LIMIT> WB::copy_extra_vector_elements()
 	int i;
 	std::array<signed int, V_R_LIMIT> v;
 
-	if (this->curr_instr->type == S_VECT) {
+	if (this->curr_instr->type == R_VECT) {
 		if (this->curr_instr->slot_B == 0) {
 			v = {0};
 			return v;
